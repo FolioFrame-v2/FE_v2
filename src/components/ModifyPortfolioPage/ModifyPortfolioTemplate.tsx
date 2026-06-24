@@ -1,4 +1,4 @@
-import { templateInfo } from "@/components/commmon/dummydata/templateInfo.jsx";
+const templateInfo = [ { id: 1, name: "Mock Template" } ];
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { Navigation, Pagination, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import Logo from "@/assets/icons/Logo.png";
 
-const ModifyPortfolioTemplate = ({ templates, setProjectTemplate  }) => {
+const ModifyPortfolioTemplate = ({ templates, setProjectTemplate  }: any) => {
     const [activeTemplateId, setActiveTemplateId] = useState(null); 
 
     function handleClick(templateId) {

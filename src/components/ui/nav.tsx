@@ -15,7 +15,7 @@ function LogoMark() {
 const Nav = () => {
   const navigate = useNavigate();
   const onClickImg = () => {
-    navigate({ to: "/login" });
+    navigate({ to: `/login` });
   };
 
   return (

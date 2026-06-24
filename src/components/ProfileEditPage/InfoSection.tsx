@@ -6,7 +6,7 @@ const InfoSection = ({
   isButton = true,
   button = "설정",
   onSave,
-}) => {
+}: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const [isModified, setIsModified] = useState(false);
@@ -22,7 +22,7 @@ const InfoSection = ({
     setIsModified(false);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const newValue = e.target.value;
     setInputValue(newValue);
     setIsModified(newValue !== value);

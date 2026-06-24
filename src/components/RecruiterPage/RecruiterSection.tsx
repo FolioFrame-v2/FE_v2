@@ -1,10 +1,10 @@
-import SelectBox from "@/components/commmon/SelectBox";
+import SelectBox from "@/components/SelectBox";
 import React from "react";
 import RecruiterPageSearchBar from "@/components/RecruiterPage/RecruiterPageSearchBar";
 
-import StyledButton from "@/components/commmon/StyledButton";
+import StyledButton from "@/components/StyledButton";
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "@tanstack/react-router";
 // removed domain/features import
 
 const RecruiterSection = ({
@@ -16,7 +16,7 @@ const RecruiterSection = ({
   onSearch,
   onSort,
   userId,
-}) => {
+}: any) => {
   const navigate = useNavigate();
 
   return (
@@ -53,7 +53,7 @@ const RecruiterSection = ({
           <StyledButton
             text={"추가"}
             onClick={() => {
-              navigate("/PortfolioPage");
+              navigate({ to: `/portfolio` });
             }} //navigate 넣으면 된다요
           />
         </div>

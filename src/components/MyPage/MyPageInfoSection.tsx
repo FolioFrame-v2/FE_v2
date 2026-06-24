@@ -1,6 +1,6 @@
 import React from "react";
 
-const MyPageInfoSection = ({ label, value }) => {
+const MyPageInfoSection = ({ label, value }: any) => {
   return (
     <>
       <div className="w-full flex gap-[0.5rem] items-center">

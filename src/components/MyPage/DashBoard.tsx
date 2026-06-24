@@ -3,12 +3,12 @@ import PropTypes from "prop-types";
 import defaultProfilePicture from "@/assets/icons/profileIcon.svg"; // 기본 이미지
 
 import MyPageInfoSection from "@/components/MyPage/MyPageInfoSection";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 // removed domain/features import
 
-const DashBoard = ({ name, nickname }) => {
+const DashBoard = ({ name, nickname }: any) => {
   const navigate = useNavigate();
-  const currentUser = null;
+  const currentUser = { name: 'Mock Name', nickname: 'Mock Nickname', id: 'mockid' };
 
   return (
     <div className="flex flex-col w-[45%]">
@@ -26,7 +26,7 @@ const DashBoard = ({ name, nickname }) => {
         <div className="flex justify-end">
           <button
             className="relative inline-block w-auto py-0 px-[1.125rem] appearance-none text-left no-underline leading-none box-border h-[2.25rem] rounded-[0.5rem] font-['OTF_R'] font-semibold text-[0.875rem] select-none cursor-pointer border-[0.0625rem] border-[#ced4da] bg-white text-[#212529]"
-            onClick={() => navigate("/ProfileEditPage")}
+            onClick={() => navigate({ to: `/profileedit` })}
           >
             <div className="flex items-center justify-center h-full overflow-visible pointer-events-none">
               <span className="whitespace-nowrap h-full overflow-hidden flex items-center">프로필 편집</span>

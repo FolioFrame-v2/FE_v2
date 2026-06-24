@@ -9,20 +9,10 @@ import { useParams } from "@tanstack/react-router";
 
 const ModifyHackathonPage = () => {
   const navigate = useNavigate();
-  const { hackId } = useParams({ strict: false });
-  useEffect(() => {
-    if (hackId) {
-      setFormData((prevData) => ({
-        ...prevData,
-        hackId: Number(hackId),
-      }));
-    }
-  }, [hackId]);
-
-  console.log(hackId);
+  const hackId = "mock-hack-id";
   
   const [formData, setFormData] = useState({
-    hackId: "", 
+    hackId: Number(hackId) || "", 
     hackName: "",
     startDate: null,
     endDate: null,
@@ -33,49 +23,27 @@ const ModifyHackathonPage = () => {
     pictures: null,
     coverImage: null,
     logo: null,
-    ownerId: "",
-    ownerEmail: "",
+    ownerId: "mock-id",
+    ownerEmail: "mock@example.com",
     participant: [],
   });
 
-  const currentUser = null;
+  const currentUser = { id: "mock-id", email: "mock@example.com" };
 
-  useEffect(() => {
-    if (currentUser) {
-      // void 0;
-      console.log(currentUser);
-    } else {
-      console.log("currentUser 없음");
-    }
-  }, []);
-
-
-  useEffect(() => {
-    if (currentUser && (!formData.ownerId || !formData.ownerEmail)) {
-      setFormData((prevData) => ({
-        ...prevData,
-        ownerId: currentUser.id,
-        ownerEmail: currentUser.email,
-      }));
-    }
-  }, [currentUser, formData.ownerId, formData.ownerEmail]); 
-  
-
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleDateChange = (name, date) => {
+  const handleDateChange = (name: any, date: any) => {
     // 날짜 객체를 복사하고 하루를 더함
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 1); // 날짜 +1
     const formattedDate = newDate ? newDate.toISOString().split('T')[0] : ""; 
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: formattedDate,
     }));
@@ -83,18 +51,8 @@ const ModifyHackathonPage = () => {
 
   
   const handleSaveHack = () => {
-
-  Object.keys(formData).forEach((field) => {
-    const newValue = formData[field];
-    if (newValue !== undefined && newValue !== null) {
-      updateHackathon(formData.hackId, field, newValue);
-    } else {
-      console.log(`${field} 값이 비어 있습니다.`);
-    }
-  });
-  
-
-    navigate({ to: "/MyPage" });
+    console.log("Mock handleSaveHack called", formData);
+    navigate({ to: `/my` });
   };
 
 

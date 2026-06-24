@@ -8,7 +8,7 @@ import React from 'react';
 import { Navigation, Pagination, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import Logo from "@/assets/icons/Logo.png";
 
-const HackathonPageSlide = ({  }) => {
+const HackathonPageSlide = ({  }: any) => {
     const postIds = new Array(6).fill(null).map((_, index) => `post${index + 1}`);
     const HackathonName = ["우아한테크코스", "UMC", "멋쟁이사자처럼","NEXTERS","AI Stages","K Hackathon"]
     // const explanation = [

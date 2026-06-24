@@ -6,24 +6,12 @@ import remarkGfm from "remark-gfm"; // GitHub 스타일의 마크다운 지원
 //댓글 삭제
 
 
-const CommentList = ({ comments, setComments, portfolioId }) => {
-  // const handleDelete = (index) => {
-  //   const currentUser = null;
-  //   const commentToDelete = comments[index];
-
-  //   if (currentUser && commentToDelete.userId === currentUser.id) {
-  //     [].delete(commentToDelete.commentId); //[]에서 삭제
-
-  //     setComments((prevComments) => prevComments.filter((_, i) => i !== index));
-  //   } else {
-  //     alert("본인이 작성한 댓글만 삭제할 수 있습니다.");
-  //   }
-  // };
+const CommentList = ({ comments, setComments, portfolioId }: any) => {
+  const currentUser = { id: "mock-user-id" };
 
   console.log("comments 데이터 확인:", comments); // 디버깅용 로그
 
-  const handleDelete = async (index) => {
-    const currentUser = null;
+  const handleDelete = async (index: any) => {
     const commentToDelete = comments[index];
 
     if (currentUser && commentToDelete.userId === currentUser.id) {
@@ -32,7 +20,7 @@ const CommentList = ({ comments, setComments, portfolioId }) => {
         await removeComment(commentToDelete.commentId);
 
         // 로컬 상태에서 삭제
-        setComments((prevComments) =>
+        setComments((prevComments: any) =>
           prevComments.filter((_, i) => i !== index)
         );
       } catch (error) {
@@ -51,7 +39,7 @@ const CommentList = ({ comments, setComments, portfolioId }) => {
           <div className="flex items-center gap-[1vw]">
             <span className="font-bold font-['OTF_B']">{comment.userId}</span>
             <span className="font-bold font-['OTF_R']">{comment.date}</span>
-            {comment.userId === null.id && (
+            {comment.userId === currentUser?.id && (
               <button className="py-[8px] px-[12px] border-none rounded-[4px] bg-[#0a27a6] text-white cursor-pointer mt-[5px] font-['OTF_B']" onClick={() => handleDelete(index)}>
                 삭제
               </button>

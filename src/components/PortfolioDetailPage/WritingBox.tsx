@@ -4,20 +4,20 @@ import remarkGfm from "remark-gfm";
 
 
 
-import BoldIcon from "../../../assets/icons/boldIcon.svg";
-import ItalicIcon from "../../../assets/icons/italic-5.svg?react";
-import StrikeThroughIcon from "../../../assets/icons/strikethrough-13.svg?react";
-import ImageIcon from "../../../assets/icons/imageIcon.svg?react";
-import LinkIcon from "../../../assets/icons/linkIcon.svg?react";
+import BoldIcon from "@/assets/icons/boldIcon.svg";
+import ItalicIcon from "@/assets/icons/italic-5.svg?react";
+import StrikeThroughIcon from "@/assets/icons/strikethrough-13.svg?react";
+import ImageIcon from "@/assets/icons/imageIcon.svg?react";
+import LinkIcon from "@/assets/icons/linkIcon.svg?react";
 
-const WritingBox = ({ addComment }) => {
+const WritingBox = ({ addComment }: any) => {
   const [markdown, setMarkdown] = useState("");
   const [lengthCount, setLengthCount] = useState(markdown.length);
   const [fontSize, setFontSize] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const textareaRef = useRef(null);
 
-  const applyFontSize = (e) => {
+  const applyFontSize = (e: any) => {
     const value = e.target.value;
     setFontSize(value);
     if (value === "0") return;
@@ -36,13 +36,13 @@ const WritingBox = ({ addComment }) => {
     textarea.focus();
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
       setFontSize("0");
     }
   };
 
-  const applyFormatting = (syntax) => {
+  const applyFormatting = (syntax: any) => {
     const textarea = textareaRef.current;
     const { selectionStart, selectionEnd } = textarea;
     const before = markdown.substring(0, selectionStart);
@@ -82,7 +82,7 @@ const WritingBox = ({ addComment }) => {
     textarea.focus();
   };
 
-  const handleMarkdownChange = (e) => {
+  const handleMarkdownChange = (e: any) => {
     if (typeof e.target.value !== "string") {
       console.log("markdown의 value가 string이 아님.");
       console(e);

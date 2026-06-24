@@ -1,67 +1,24 @@
 import React, { useEffect, useState } from "react";
-
-
+import TemplateCard from "@/components/TemplateCard";
+import RecruiterSection from "@/components/RecruiterPage/RecruiterSection";
 
 function RecruiterPage() {
-  const [myPortfolioList, setMyPortfolioList] = useState([]); // 상태로 관리되는 포트폴리오 리스트
-  const { userId } = useParams({ strict: false });
-  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
+  const [myPortfolioList, setMyPortfolioList] = useState([
+    { projectId: "mock-1", title: "Mock Portfolio 1" },
+    { projectId: "mock-2", title: "Mock Portfolio 2" },
+  ]);
+  const userId = "mock-user-id";
 
-  //LinkedList를 배열로 바꾸는 함수
-  const linkedListToArray = (linkedList) => {
-    const array = [];
-    let currentNode = linkedList.head;
-    while (currentNode) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
-    return array;
+  const handleSearchApply = (searchTerm: any) => {
+    console.log("Search term:", searchTerm);
   };
 
-  useEffect(() => {
-    //console.log("Recruiter userId:", userId);
-    void 0;
-
-    if (userId) {
-      const updatedUser = null;
-      if (updatedUser) {
-        setLocalCurrentUser(updatedUser); // 로컬 상태 업데이트
-        void 0; // localStorage에 반영
-        [].updateContacts(updatedUser.contacts); // 매니저에 업데이트된 contacts 전달
-      }
-      console.log("CurrentUser: ", updatedUser);
-
-      const userPortfolios = Array.from([]).filter(
-        (project) =>
-          project.contacts.some(
-            (contact) =>
-              contact === updatedUser.id || contact === updatedUser.email
-          )
-      );
-      console.log("User Portfolios:", userPortfolios);
-      setMyPortfolioList(userPortfolios);
-
-      const initialList = [];
-      setMyPortfolioList(linkedListToArray(initialList));
-    }
-  }, [[]]);
-
-  const handleSearchApply = (searchTerm) => {
-    const searchedPortfolios = [];
-    setMyPortfolioList(linkedListToArray(searchedPortfolios));
-  };
-
-  const handleSortApply = (category, sortOption, filterOption) => {
-    const sortedPortfolios = [].sort(
-      category,
-      sortOption,
-      filterOption
-    );
-    setMyPortfolioList(linkedListToArray(sortedPortfolios));
+  const handleSortApply = (category: any, sortOption: any, filterOption: any) => {
+    console.log("Sort applied:", category, sortOption, filterOption);
   };
 
   // 템플릿카드 렌더링
-  const renderTemplateCard = (item) => (
+  const renderTemplateCard = (item: any) => (
     <TemplateCard
       key={item.projectId}
       portfolioId={item.projectId}

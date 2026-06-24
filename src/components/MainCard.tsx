@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "@tanstack/react-router";
 import { getCurrentUser, setCurrentUser } from "../../components/features/currentUser";
 // 템플릿 카드 1개
 //templateName, description, templateThumnail을 props로!
@@ -11,11 +11,11 @@ const TemplateCard = () => {
   const templateName = ["포트폴리오", "해커톤", "채용"];
   const description = ["나만의 포토폴리오 만들기", "함께 경험 쌓는 프로젝트", "나에게 맞는 채용 정보"];
   const pages = ["/PortfolioPage","/HackathonPage", "/RecruiterPage"];
-  // const handleButtonClick = (index) => {
+  // const handleButtonClick = (index: any) => {
   //   navigate(pages[index]); // 해당 인덱스에 맞는 페이지로 이동
     
   // };
-  const handleButtonClick = (index) => {
+  const handleButtonClick = (index: any) => {
     if (pages[index] === "/RecruiterPage") {
       // recruiter 조건 확인
       if (!currentUser?.recruiter) {

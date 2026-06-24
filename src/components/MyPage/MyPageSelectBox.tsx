@@ -1,27 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
 import arrow from "@/assets/icons/SelectBox/arrow.png";
-import StyledButton from "@/components/commmon/StyledButton";
+import StyledButton from "@/components/StyledButton";
 
 const categories = ["프론트엔드", "백엔드", "디자인"];
 const sortOptions = ["인기순", "댓글순"];
 const filterOptions = ["언어", "Java", "Python", "JavaScript"];
 
 //기능구현으로부터 sort 함수 받음.
-const MyPageSelectBox = ({ onSort }) => {
+const MyPageSelectBox = ({ onSort }: any) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSort, setSelectedSort] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
 
   const categoryRef = useRef(null);
   const sortRef = useRef(null);
   const filterRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       if (categoryRef.current && !categoryRef.current.contains(event.target)) {
         setIsCategoryOpen(false);
       }
@@ -56,19 +56,19 @@ const MyPageSelectBox = ({ onSort }) => {
     }
   }, [selectedFilters]); // selectedFilters가 변경될 때마다 실행
 
-  const handleCategoryClick = (option) => {
+  const handleCategoryClick = (option: any) => {
     selectedCategory === option //selectedCagory 와 item 비교
       ? setSelectedCategory(null) // item이랑 같으면 null
       : setSelectedCategory(option); // item이랑 다르면 selectedCatgory에 item set
     setIsCategoryOpen(false); // 그리고 카테고리 메뉴를 닫는다.
   };
 
-  const handleSortClick = (option) => {
+  const handleSortClick = (option: any) => {
     selectedSort === option ? setSelectedSort(null) : setSelectedSort(option);
     setIsSortOpen(false);
   };
 
-  const handleFilterClick = (option) => {
+  const handleFilterClick = (option: any) => {
     setSelectedFilters((prevSelected) =>
       prevSelected.includes(option)
         ? prevSelected.filter((item) => item !== option)

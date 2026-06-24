@@ -2,9 +2,9 @@ import MyPageSelectBox from "@/components/MyPage/MyPageSelectBox";
 import React from "react";
 import MyPageSearchBar from "@/components/MyPage/MyPageSearchBar";
 
-import StyledButton from "@/components/commmon/StyledButton";
+import StyledButton from "@/components/StyledButton";
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "@tanstack/react-router";
 // removed domain/features import
 
 const MyPageSection = ({
@@ -18,7 +18,7 @@ const MyPageSection = ({
   userId,
   userEmail,
   userNickname,
-}) => {
+}: any) => {
   const navigate = useNavigate();
 
   const handleCreatePortfolioClick = () => {
@@ -26,12 +26,12 @@ const MyPageSection = ({
       if (!userEmail || !userNickname) {
         alert("이메일과 닉네임을 등록해 주세요");
       } else {
-        navigate("/CreatePortfolioPage");
+        navigate({ to: `/createportfolio` });
       }
     } else if (buttonKey == "해커톤") {
-      navigate("/CreateHackathonPage");
+      navigate({ to: `/createhackathon` });
     } else {
-      navigate("/MergerCreatePortfolioPage");
+      navigate({ to: `/mergercreateportfolio` });
     }
   };
 

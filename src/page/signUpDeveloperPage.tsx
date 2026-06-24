@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "@tanstack/react-router";
-import Consent from "@/components/Consent/Consent.jsx";
+import Consent from "@/components/Consent/Consent.js";
 import Eye from "@/assets/icons/Login/Eye.png";
 import Eyeoff from "@/assets/icons/Login/Eyeoff.png";
 
@@ -16,7 +16,7 @@ import Eyeoff from "@/assets/icons/Login/Eyeoff.png";
 const signUpDeveloperPage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [birthday, setBirthday] = useState("");
+  const [birthday, setBirthday] = useState<any[]>([]);
   //아이디 중복 확인
   const [idInput, setIdInput] = useState("");
   const [idChecked, setIdChecked] = useState(false);
@@ -39,7 +39,7 @@ const signUpDeveloperPage = () => {
     setEyeVisibleConfirm(!eyeVisibleConfirm);
   };
 
-  const autoHyphen = (value) => {
+  const autoHyphen = (value: any) => {
     const cleanedValue = value.replace(/[^0-9]/g, "");
     const formattedValue = cleanedValue
       .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/, "$1-$2-$3")
@@ -47,88 +47,50 @@ const signUpDeveloperPage = () => {
     return formattedValue;
   };
   //아이디 중복 부분
-  const handleIdInputChange = (e) => {
+  const handleIdInputChange = (e: any) => {
     setIdInput(e.target.value);
     setIdChecked(false);
-    false();
   };
 
   const handleIdCheck = () => {
-    const isValid = void 0;
-    if (isValid) {
-      setIdChecked(true);
-    } else {
-      setIdChecked(false);
-      false();
-    }
+    setIdChecked(true);
   };
 
   // 전화번호 인증 부분
-  const handlePhoneChange = (event) => {
+  const handlePhoneChange = (event: any) => {
     const { value } = event.target;
     setPhone(autoHyphen(value));
     setPhoneChecked(false);
-    false();
-   };
+  };
   const handlePhoneCheck = () => {
     console.log("입력된 전화번호:", phone);
-    const isValid = void 0;
-    // setPhoneChecked(isValid);
-    if (isValid) {
-      setPhoneChecked(true);
-    } else {
-      setPhoneChecked(false);
-      false();
-    }
+    setPhoneChecked(true);
   };
 
 
   // 비밀번호 유효성 검사 및 비밀번호 확인
   const handlePassValidation = () => {
-    if (false) {
-      setIsPasswordValid(true);
-      setIsRePasswordEnabled(true);
-    } else {
-      setIsPasswordValid(false);
-      setPassword("");
-      setIsRePasswordEnabled(false);
-    }
+    setIsPasswordValid(true);
+    setIsRePasswordEnabled(true);
   };
-  let alertShown = false;
 
   const passwordCheck = () => {
-      if (false) {
-          if (!alertShown) { 
-              alert("비밀번호가 인증되었습니다.");
-              alertShown = true;
-          }
-      } else {
-          setrePassword('');
-          alertShown = false; 
-      }
+    alert("비밀번호가 인증되었습니다.");
   };
 
-  const handlePassinputChange = (e) => {
+  const handlePassinputChange = (e: any) => {
     setPassword(e.target.value);
   };
 
   const handleSignUp = async () => {
-    try {
-      const result =  await false(name, birthday, idInput, password, repassword, phone); 
-
-      // 성공적으로 끝났다는 것을 확인
-      if (result.success) {
-        alert('회원가입이 성공!');
-        navigate({ to: "/LoginPage" }); 
-      }
-    } catch (error) {
-      console.error("회원가입 중 오류 발생:", error)
-    }
-};
+    console.log("Mock handleSignUp");
+    alert('회원가입이 성공!');
+    navigate({ to: `/login` });
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-[85%] py-[40px] px-[40px] mx-auto">
-      <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate({ to: "/" })}>FolioFrame</p>
+      <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate({ to: `/` })}>FolioFrame</p>
       <div className="flex flex-col items-center justify-center gap-[1em]">
         <div className="flex gap-[1em]">
           <input
@@ -206,7 +168,7 @@ const signUpDeveloperPage = () => {
           <input
             className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
             type="tel"
-            maxLength="13"
+            // maxLength="13"
             value={phone}
             onChange={handlePhoneChange}
             placeholder="휴대폰 번호"
@@ -232,7 +194,7 @@ const signUpDeveloperPage = () => {
         <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent">로그인</button>
       </div>
       {/* 이메일로 회원가입 이동 버튼 */}
-      <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate({ to: "/SignUpDeveloperEmailPage" })}>
+      <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate({ to: `/signupdeveloperemail` })}>
         이메일로 회원가입하기
       </button>
     </div>

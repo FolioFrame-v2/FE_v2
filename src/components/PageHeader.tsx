@@ -1,8 +1,8 @@
 import React from "react";
-import Logo from "../../assets/icons/Logo.png";
+import Logo from "@/assets/icons/Logo.png";
 import SearchBar from "@/components/SearchBar";
 
-const PageHeader = ({ pageTitle, large, onSearch, onCancelSearch }) => {
+const PageHeader = ({ pageTitle, large, onSearch, onCancelSearch }: any) => {
   return (
     <>
       <div className={`flex z-[2] relative top-0 left-0 flex-col items-center justify-center w-full h-[10em] gap-[1em] max-md:${large ? 'mb-[3em]' : 'mb-[0em]'}`}>

@@ -1,12 +1,13 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 
 
 
-import Logo from "../../assets/icons/Logo.png";
+import Logo from "@/assets/icons/Logo.png";
 
-const PortfolioTemplateCard = ({ portfolioId, templateButton }) => {
+const PortfolioTemplateCard = ({ portfolioId, templateButton }: any) => {
   const navigate = useNavigate();
   const [portfolioData, setPortfolioData] = useState(null);
   const currentUser = null;
@@ -27,7 +28,7 @@ const PortfolioTemplateCard = ({ portfolioId, templateButton }) => {
     //   patchHits(currentUser.id, portfolioId); // 조회수 증가 호출
     // }
 
-    navigate(`/MyProjectsPage/${portfolioId}`);
+    navigate({ to: `/myprojects/${portfolioId}` });
   };
 
   if (!portfolioData) {

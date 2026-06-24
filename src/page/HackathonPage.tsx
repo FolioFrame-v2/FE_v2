@@ -1,56 +1,32 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useEffect, useState } from "react";
 
-import HackPageHeader from "@/components/commmon/HackPageHeader.jsx";
-import HackTemplateCard from "@/components/commmon/HackTemplateCard.jsx";
-
-
+import HackPageHeader from "@/components/HackPageHeader.jsx";
+import HackTemplateCard from "@/components/HackTemplateCard.jsx";
+import SelectBox_NoFilter from "@/components/SelectBox _NoFilter.tsx";
+import HackathonPageSlide from "@/components/HackathonPage/HackathonPageSlide";
 
 
 const HackathonPage = () => {
   const navigate = useNavigate();
 
-  const [sharedHackathonList, setsharedHackathonList] = useState([]);
+  const [sharedHackathonList, setsharedHackathonList] = useState([
+    { hackId: "mock-hack-1", title: "Mock Hackathon 1" },
+    { hackId: "mock-hack-2", title: "Mock Hackathon 2" },
+    { hackId: "mock-hack-3", title: "Mock Hackathon 3" },
+    { hackId: "mock-hack-4", title: "Mock Hackathon 4" },
+  ]);
 
-  //LinkedList를 배열로 바꾸는 함수
-  const linkedListToArray = (linkedList) => {
-    const array = [];
-    let currentNode = linkedList.head;
-    while (currentNode) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
-    return array;
+  const handleSortApply = (category: any, sortOption: any) => {
+    console.log("Sort applied:", category, sortOption);
   };
 
-  useEffect(() => {
-    void 0; // 데이터를 초기화
-    console.log("[] 값:", []); //-> O
-
-    const sharedHackathonArray = Array.from([]); // Map을 배열로 변환
-    console.log("sharedHackathonArray 값:", sharedHackathonArray); //-> O
-
-    setsharedHackathonList(sharedHackathonArray); // 상태 업데이트
-
-    const initialList = [];
-    setsharedHackathonList(linkedListToArray(initialList));
-  }, []);
-
-  const handleSortApply = (category, sortOption) => {
-    const sortedLinkedList = [].sort(
-      category,
-      sortOption
-    );
-    setsharedHackathonList(linkedListToArray(sortedLinkedList));
-  };
-
-  const handleSearchApply = (searchTerm) => {
-    const searchedLinkedList = [];
-    setsharedHackathonList(linkedListToArray(searchedLinkedList));
+  const handleSearchApply = (searchTerm: any) => {
+    console.log("Search term:", searchTerm);
   };
 
   const handleCancelSearch = () => {
-    const resetList = []; // 최신순 정렬된 리스트
-    setsharedHackathonList(linkedListToArray(resetList));
+    console.log("Cancel search");
   };
 
   const currentUser = null;
@@ -89,7 +65,7 @@ const HackathonPage = () => {
 
         <div className="flex justify-center">
           {/* 포트폴리오 제작 페이지로 넘어갈 수 있는 버튼 추가 */}
-          <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] font-['OTF_R'] flex items-center justify-center relative" onClick={() => navigate({ to: "/CreateHackathonPage" })}>
+          <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] font-['OTF_R'] flex items-center justify-center relative" onClick={() => navigate({ to: `/createhackathon` })}>
             해커톤 제작하기
           </button>
         </div>

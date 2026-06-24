@@ -1,19 +1,22 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+import Logo from "@/assets/icons/Logo.png";
 
-
-
-import Logo from "../../assets/icons/Logo.png";
-
-const HackTemplateCard = ({ hackId, templateButton }) => {
+const HackTemplateCard = ({ hackId, templateButton }: any) => {
   const navigate = useNavigate();
-  const [hackData, setHackData] = useState(null);
-  const currentUser = null; // 현재 사용자 정보 가져오기
+  const [hackData, setHackData] = useState<any>(null);
+  const currentUser: any = null; // 현재 사용자 정보 가져오기
 
   useEffect(() => {
-    // 해커톤 정보를 hackId로 가져옴
-    const hackathon = [].get(hackId);
+    // 해커톤 정보를 hackId로 가져옴 (Mock Data)
+    const hackathon = {
+      hackId: hackId,
+      coverImage: "",
+      hackName: "Mock Hackathon",
+      description: "Mock Description"
+    };
     if (hackathon) {
       setHackData(hackathon);
     }
@@ -23,12 +26,11 @@ const HackTemplateCard = ({ hackId, templateButton }) => {
     console.log(currentUser);
     console.log("patchHits 불러옴.");
     if (currentUser && hackData) {
-      patchHackHits(currentUser.id, hackId);
+      // patchHackHits(currentUser.id, hackId);
     }
 
     // 해커톤 상세 페이지로 이동
-    navigate(`/HackathonDetailPage/${hackId}`);
-    // navigate(`/PortfolioDetailPage2/${portfolioId}`);
+    navigate({ to: `/hackathondetail` });
   };
 
   if (!hackData) {

@@ -1,6 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import defaultProfilePicture from "../../assets/icons/Header/profileIcon.png"; // 기본 이미지
+import defaultProfilePicture from "@/assets/icons/Header/profileIcon.png"; // 기본 이미지
 import StyledButton from "@/components/StyledButton";
 
 
@@ -25,7 +26,7 @@ function Header({}) {
   const currentUser = null;
   const location = useLocation();
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path: any) => location.pathname === path;
 
   // useEffect로 컴포넌트가 처음 렌더링될 때 accessToken 업데이트
   useEffect(() => {
@@ -33,7 +34,7 @@ function Header({}) {
     //   setAccessToken(localStorage.getItem("accessToken"));
     // };
     // 여기 추가
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsProfileMenuOpen(false);
       }
@@ -53,14 +54,14 @@ function Header({}) {
     clearCurrentUser();
     //setAccessToken(null); // 로그아웃 시 상태 초기화
     //void 0;
-    navigate("./");
+    navigate({ to: `./` });
   };
 
-  const handleMenuClick = (option) => {
+  const handleMenuClick = (option: any) => {
     if (option === "마이페이지") {
-      navigate("/MyPage");
+      navigate({ to: `/my` });
     } else if (option === "프로필 편집") {
-      navigate("/ProfileEditPage");
+      navigate({ to: `/profileedit` });
     } else if (option === "로그아웃") {
       handleLogout();
     }
@@ -68,7 +69,7 @@ function Header({}) {
   };
 
   // const onProfileClick = () => {
-  //   navigate("./MyPage");
+  //   navigate({ to: `./MyPage` });
   // };
 
   return (
@@ -76,21 +77,21 @@ function Header({}) {
       {/* 로고와 메뉴를 포함하는 메뉴박스 */}
       <div className="flex items-center relative w-[70%] h-[5em]">
         {/* 프로젝트 로고 들어가야함 */}
-        <div className="font-['OTF_B'] not-italic font-[700] text-[2.2em] leading-[43px] text-[#0a27a6] absolute left-0 top-[calc(50%-48px/2)] cursor-pointer" onClick={() => navigate("./")}>FolioFrame</div>
+        <div className="font-['OTF_B'] not-italic font-[700] text-[2.2em] leading-[43px] text-[#0a27a6] absolute left-0 top-[calc(50%-48px/2)] cursor-pointer" onClick={() => navigate({ to: `./` })}>FolioFrame</div>
         {/* 네비게이션바에 있는 메뉴들 */}
         <nav className="flex items-center ml-[200px]">
           <a 
             className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive("/PortfolioPage") ? "text-[#0a27a6]" : "text-[#919194]"}`}
-            onClick={() => navigate("/PortfolioPage")}
+            onClick={() => navigate({ to: `/portfolio` })}
           >포트폴리오</a>
           <a 
             className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive("/HackathonPage") ? "text-[#0a27a6]" : "text-[#919194]"}`}
-            onClick={() => navigate("/HackathonPage")}
+            onClick={() => navigate({ to: `/hackathon` })}
           >해커톤</a>
           {currentUser?.recruiter && (
             <a 
               className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive(`/RecruiterPage/${currentUser.id}`) ? "text-[#0a27a6]" : "text-[#919194]"}`}
-              onClick={() => navigate(`/RecruiterPage/${currentUser.id}`)}
+              onClick={() => navigate({ to: `/recruiter/${currentUser.id}` })}
             >채용
             </a>
           )}
@@ -136,7 +137,7 @@ function Header({}) {
             </div>
           </>
         ) : (
-          <StyledButton text="로그인" onClick={() => navigate("/LoginPage")} />
+          <StyledButton text="로그인" onClick={() => navigate({ to: `/login` })} />
         )}
       </div>
     </header>

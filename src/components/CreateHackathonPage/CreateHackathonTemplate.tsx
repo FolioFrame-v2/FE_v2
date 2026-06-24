@@ -1,5 +1,5 @@
 import React from "react";
-import SearchBar from "@/components/commmon/SearchBar.jsx";
+import SearchBar from "@/components/SearchBar.jsx";
 import CreatePortfolioSlide from "@/components/CreateHackathonPage/CreateHackathonSlide.jsx";
 const CreatePortfolioTemplate = () => {
     return(

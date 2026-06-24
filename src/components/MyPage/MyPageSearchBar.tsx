@@ -14,12 +14,12 @@ import { ImCancelCircle } from "react-icons/im";
 //   "마라탕후루",
 // ];
 
-const MyPageSearchBar = ({ userId, onSearch }) => {
+const MyPageSearchBar = ({ userId, onSearch }: any) => {
   const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [nowIndex, setNowIndex] = useState(-1);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const newValue = e.target.value;
     setInputValue(newValue); // 입력 값을 상태에 저장
 
@@ -46,7 +46,7 @@ const MyPageSearchBar = ({ userId, onSearch }) => {
     //search(inputValue);
   };
 
-  const handleKeyUp = (e) => {
+  const handleKeyUp = (e: any) => {
     if (e.key === "ArrowUp") {
       setNowIndex((prevIndex) => Math.max(prevIndex - 1, 0));
     } else if (e.key === "ArrowDown") {

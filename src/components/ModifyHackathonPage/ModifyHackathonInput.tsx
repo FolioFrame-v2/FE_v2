@@ -1,8 +1,9 @@
+import { useParams } from '@tanstack/react-router';
 import React,{useEffect} from "react";
 
 // removed domain/features import
 
-const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
+const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }: any) => {
   // 업로드 이미지 미리보기 코드
   const [LogoPreview, setLogoPreview] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
@@ -19,7 +20,7 @@ const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
     null,
   ]);
 
-  const { hackId } = useParams();
+  const hackId = "mock-hack-id";
   const [HackathonData, setHackathonData] = useState({}); 
 
   // 해커톤 데이터 로드
@@ -30,9 +31,9 @@ const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
     }
   }, [hackId]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setHackathonData((prevData) => ({
+    setHackathonData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -40,7 +41,7 @@ const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
    };
 
 
-  const handleCoverImageChange = (e) => {
+  const handleCoverImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const imageURL = URL.createObjectURL(file);
@@ -82,7 +83,7 @@ const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
   };
 
   //로고 업데이트
-  const handleLogoChange = (e) => {
+  const handleLogoChange = (e: any) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const imageURL = URL.createObjectURL(file);
@@ -111,7 +112,7 @@ const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
     }
   };
 
-  const handlePhotosChange = (index) => (e) => {
+  const handlePhotosChange = (index: any) => (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const newPhotosPreview = [...photosPreview];

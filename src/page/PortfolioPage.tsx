@@ -1,74 +1,42 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useRef, useEffect, useState } from "react";
-import SearchBar from "@/components/commmon/SearchBar";
-import SelectBox from "@/components/commmon/SelectBox";
-import TemplateCard from "@/components/commmon/TemplateCard";
-import StyledButton from "@/components/commmon/StyledButton";
+import SearchBar from "@/components/SearchBar";
+import SelectBox from "@/components/SelectBox";
+import TemplateCard from "@/components/TemplateCard";
+import StyledButton from "@/components/StyledButton";
 
 //// removed domain/features import
 
-import PageHeader from "@/components/commmon/PageHeader";
+import PageHeader from "@/components/PageHeader";
 
 
 const PortfolioPage = () => {
   const navigate = useNavigate();
 
-  const [sharedPortfolioList, setsharedPortfolioList] = useState([]);
+  const [sharedPortfolioList, setsharedPortfolioList] = useState([
+    { projectId: "mock-port-1", title: "Mock Portfolio 1", share: true },
+    { projectId: "mock-port-2", title: "Mock Portfolio 2", share: true },
+    { projectId: "mock-port-3", title: "Mock Portfolio 3", share: true },
+    { projectId: "mock-port-4", title: "Mock Portfolio 4", share: true },
+  ]);
 
-  //LinkedList를 배열로 바꾸는 함수
-  const linkedListToArray = (linkedList) => {
-    const array = [];
-    let currentNode = linkedList.head;
-    while (currentNode) {
-      array.push(currentNode.value);
-      currentNode = currentNode.next;
-    }
-    return array;
+  const handleSortApply = (category: any, sortOption: any, filterOption: any) => {
+    console.log("Sort applied:", category, sortOption, filterOption);
   };
 
-  useEffect(() => {
-    void 0;
-    const sharedPortfolios = Array.from([]).filter(
-      (portfolio) => portfolio.share === true
-    );
-    console.log(sharedPortfolios);
-    setsharedPortfolioList(sharedPortfolios);
-
-    const initialList = [];
-    setsharedPortfolioList(linkedListToArray(initialList));
-  }, []);
-
-  const handleSortApply = (category, sortOption, filterOption) => {
-    const sortedLinkedList = [].sort(
-      category,
-      sortOption,
-      filterOption
-    );
-    setsharedPortfolioList(linkedListToArray(sortedLinkedList));
-  };
-
-  const handleSearchApply = (searchTerm) => {
-    const searchedLinkedList = [];
-    setsharedPortfolioList(linkedListToArray(searchedLinkedList));
+  const handleSearchApply = (searchTerm: any) => {
+    console.log("Search term:", searchTerm);
   };
 
   const handleCancelSearch = () => {
-    const resetList = []; // 최신순 정렬된 리스트
-    setsharedPortfolioList(linkedListToArray(resetList));
+    console.log("Cancel search");
   };
 
-  const [accessToken, setAccessToken] = useState(
-    localStorage.getItem("accessToken")
-  );
-
-  const currentUser = null;
+  const accessToken = "mock-token";
+  const currentUser = { recruiter: false, email: "mock@example.com", nickname: "MockUser" };
 
   const handleCreatePortfolioClick = () => {
-    console.log(currentUser);
-    if (!currentUser?.email || !currentUser?.nickname) {
-      alert("이메일과 닉네임을 등록해 주세요.");
-    } else {
-      navigate({ to: "/CreatePortfolioPage" });
-    }
+    navigate({ to: `/createportfolio` });
   };
 
   return (

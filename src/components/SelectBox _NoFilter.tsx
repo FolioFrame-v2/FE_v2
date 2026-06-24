@@ -1,26 +1,26 @@
 import React, { useState } from "react";
-import arrow from "../../assets/icons/SelectBox/arrow.png";
+import arrow from "@/assets/icons/SelectBox/arrow.png";
 import StyledButton from "@/components/StyledButton";
 //sort 함수 import
 
 const categories = ["프론트엔드", "백엔드", "디자인"];
 const sortOptions = ["인기순"];
 
-const SelectBox_NoFilter = ({ onSort }) => {
+const SelectBox_NoFilter = ({ onSort }: any) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSort, setSelectedSort] = useState(null);
 
-  const handleCategoryClick = (option) => {
+  const handleCategoryClick = (option: any) => {
     selectedCategory === option //selectedCagory 와 item 비교
       ? setSelectedCategory(null) // item이랑 같으면 null
       : setSelectedCategory(option); // item이랑 다르면 selectedCatgory에 item set
     setIsCategoryOpen(false); // 그리고 카테고리 메뉴를 닫는다.
   };
 
-  const handleSortClick = (option) => {
+  const handleSortClick = (option: any) => {
     selectedSort === option ? setSelectedSort(null) : setSelectedSort(option);
     setIsSortOpen(false);
   };
@@ -79,7 +79,7 @@ const SelectBox_NoFilter = ({ onSort }) => {
         </div>
       </div>
 
-      <div className="w-full">
+      <div className="w-full font-['OTF_B']">
         <StyledButton
           text={"적용"}
           onClick={() => {

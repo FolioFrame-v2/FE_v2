@@ -2,33 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "@tanstack/react-router";
 // removed domain/features import
 // removed domain/features import
-import TemplateCard from "@/components/commmon/TemplateCard";
+import TemplateCard from "@/components/TemplateCard";
 
 const MyProjectsPage = () => {
-  const { portfolioId } = useParams({ strict: false });
-  const [userProjects, setUserProjects] = useState([]);
-  const [userPortfolios, setUserPortfolios] = useState([]);
+  // const portfolioId = "mock-portfolio-id";
+  const [userProjects, setUserProjects] = useState([
+    { projectId: "mock-proj-1" },
+    { projectId: "mock-proj-2" },
+  ]);
+  const [userPortfolios, setUserPortfolios] = useState({
+    portfolioName: "Mock Portfolio",
+    ownerName: "Mock Owner",
+    ownerEmail: "owner@example.com",
+    usedLanguage: "React, TS",
+    frontend: "React",
+    backend: "Node.js"
+  });
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [showModal, setShowModal] = useState(false); // "연락" 버튼 눌렀을 때 true
   const [modalMessage, setModalMessage] = useState(""); //"연락" 버튼 눌렀을 때 창에 띄워지는 메세지
-  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
-
-  useEffect(() => {
-    // 현재 포트폴리오와 사용자 정보를 기반으로 데이터 필터링
-    const portfolio = oriPortfolios.get(Number(portfolioId));
-    setUserPortfolios(portfolio);
-    if (portfolio) {
-      // projects 배열에서 projectId를 추출
-      const portfolioProjectIds = portfolio.projects;
-
-      // projectId가 portfolio.projects에 포함된 프로젝트 필터링
-      const filteredProjects = Array.from([]).filter(
-        (project) => portfolioProjectIds.includes(project.projectId)
-      );
-
-      setUserProjects(filteredProjects); // 필터링된 프로젝트 업데이트
-    }
-  }, [portfolioId]);
+  const currentUser = { recruiter: true };
 
   //기업 연락
   const handleContactClick = () => {

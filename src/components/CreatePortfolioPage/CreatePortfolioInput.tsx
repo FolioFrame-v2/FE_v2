@@ -4,7 +4,7 @@ import { useState } from "react";
 import CalendarInput from "@/components/CreatePortfolioPage/CalendarInput.jsx";
 // removed domain/features import
 
-const CreatePortfolioInput = ({ onInputChange, formData, onDateChange }) => {
+const CreatePortfolioInput = ({ onInputChange, formData, onDateChange }: any) => {
   // 업로드 이미지 미리보기 코드
   // const [coverimagePreview, setCoverImagePreview] = useState(null);
   const [LogoPreview, setLogoPreview] = useState(null);
@@ -24,7 +24,7 @@ const CreatePortfolioInput = ({ onInputChange, formData, onDateChange }) => {
   const [isOn, setIsOn] = useState(true);
 
     // 파일 선택 핸들러
-    const handleCoverImageChange = (e) => {
+    const handleCoverImageChange = (e: any) => {
       const file = e.target.files[0];
       if (file && file.type.startsWith("image/")) {
         const imageURL = URL.createObjectURL(file);
@@ -66,7 +66,7 @@ const CreatePortfolioInput = ({ onInputChange, formData, onDateChange }) => {
     };
 
     //로고 업데이트
-    const handleLogoChange = (e) => {
+    const handleLogoChange = (e: any) => {
       const file = e.target.files[0];
       if (file && file.type.startsWith("image/")) {
         const imageURL = URL.createObjectURL(file);
@@ -95,7 +95,7 @@ const CreatePortfolioInput = ({ onInputChange, formData, onDateChange }) => {
       }
     };
 
-    const handlePhotosChange = (index) => (e) => {
+    const handlePhotosChange = (index: any) => (e) => {
       const file = e.target.files[0];
       if (file && file.type.startsWith("image/")) {
         const newPhotosPreview = [...photosPreview];

@@ -10,7 +10,7 @@ import { useNavigate } from "@tanstack/react-router";
 import infoIcon from "@/assets/images/PortfolioEditPage/InfoIcon.svg";
 
 // 모달 컴포넌트
-const Modal = ({ isOpen, onClose, onConfirm }) => {
+const Modal = ({ isOpen, onClose, onConfirm }: any) => {
   if (!isOpen) return null;
 
   return (
@@ -29,52 +29,35 @@ const Modal = ({ isOpen, onClose, onConfirm }) => {
 };
 
 const ProfileEditPage = () => {
-  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
+  const [currentUser, setLocalCurrentUser] = useState({ id: "mock-id", name: "MockUser", nickname: "MockNick", email: "mock@example.com", phoneNumber: "010-0000-0000" }); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    void 0;
-    // []에서 현재 유저 정보 동기화
-    const userId = currentUser?.id;
-    if (userId) {
-      const updatedUser = [].get(userId);
-      if (updatedUser) {
-        setLocalCurrentUser(updatedUser); // 로컬 상태 업데이트
-        void 0; // localStorage에 반영
-      }
-    }
-    console.log(currentUser);
-  }, [[]]); // [] 변경 시 실행
-
-  const handleUpdateName = (newName) => {
-    updateName(currentUser.id, newName);
+  const handleUpdateName = (newName: any) => {
+    console.log("Mock handleUpdateName", newName);
   };
 
-  const handleUpdateNickname = (newNickname) => {
-    updateNickname(currentUser.id, newNickname);
+  const handleUpdateNickname = (newNickname: any) => {
+    console.log("Mock handleUpdateNickname", newNickname);
   };
 
-  const handleUpdateEmail = (newEmail) => {
-    updateEmail(currentUser.id, newEmail);
+  const handleUpdateEmail = (newEmail: any) => {
+    console.log("Mock handleUpdateEmail", newEmail);
   };
 
-  const handleUpdatePassword = (newPassword) => {
-    updatePassword(currentUser.id, newPassword);
+  const handleUpdatePassword = (newPassword: any) => {
+    console.log("Mock handleUpdatePassword", newPassword);
   };
 
-  const handleUpdatePhone = (newPhone) => {
-    updatePhoneNumber(currentUser.id, newPhone);
+  const handleUpdatePhone = (newPhone: any) => {
+    console.log("Mock handleUpdatePhone", newPhone);
   };
 
   const handleDeleteAccount = () => {
     setIsModalOpen(false);
-    //alert("계정이 성공적으로 삭제되었습니다.");
-    // 추가 작업: 로그아웃 처리 또는 메인 페이지로 리다이렉트
-    clearCurrentUser();
-    navigate({ to: "/" });
-    deleteAccount(currentUser.id);
+    console.log("Mock handleDeleteAccount");
+    navigate({ to: `/` });
   };
 
   return (

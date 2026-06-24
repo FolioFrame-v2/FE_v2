@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 // removed domain/features import
 // removed domain/features import
-import TemplateCard from "@/components/commmon/TemplateCard";
+import TemplateCard from "@/components/TemplateCard";
 import { useNavigate } from "@tanstack/react-router";
 // removed domain/features import
 import MergerCreatePortfolioPageInput from "@/components/MergerCreatePortfolioPage/MergerCreatePortfolioPageInput";
@@ -10,8 +10,8 @@ import Logo from "@/assets/icons/Logo.png";
 
 const MergerCreatePortfolioPage = () => {
   const navigate = useNavigate();
-  const currentUser = null;
-  const [selectedProjects, setSelectedProjects] = useState([]);
+  const currentUser = { id: "mock-id", name: "MockUser", email: "mock@example.com" };
+  const [selectedProjects, setSelectedProjects] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     portfolioName: "",
     usedLanguage: "",
@@ -20,19 +20,14 @@ const MergerCreatePortfolioPage = () => {
     share: false,
   });
 
-  const [userProjects, setUserProjects] = useState([]);
+  const [userProjects, setUserProjects] = useState([
+    { projectId: "mock-project-1", title: "Mock Project 1" },
+    { projectId: "mock-project-2", title: "Mock Project 2" },
+  ]);
 
-  useEffect(() => {
-    if (currentUser) {
-      const projects = Array.from([]).filter(
-        (project) => project.ownerId === currentUser.id
-      );
-      setUserProjects(projects);
-    }
-  }, [currentUser]);
 
-  const handleSelectProject = (projectId) => {
-    setSelectedProjects((prev) =>
+  const handleSelectProject = (projectId: any) => {
+    setSelectedProjects((prev: any) =>
       prev.includes(projectId)
         ? prev.filter((id) => id !== projectId)
         : [...prev, projectId]
@@ -40,9 +35,9 @@ const MergerCreatePortfolioPage = () => {
     console.log(selectedProjects);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       [name]: value,
     }));
@@ -53,18 +48,7 @@ const MergerCreatePortfolioPage = () => {
       alert("최소 한 개의 프로젝트를 선택해야 합니다.");
       return;
     }
-    savePortfolio(
-      currentUser.name,
-      currentUser.id,
-      currentUser.email,
-      formData.portfolioName,
-      selectedProjects,
-      formData.usedLanguage,
-      formData.frontend,
-      formData.backend,
-      formData.share
-    );
-    navigate({ to: "/MyPage" });
+    console.log("Mock handleSavePortfolio called", formData, selectedProjects);
   };
 
   return (
@@ -104,7 +88,7 @@ const MergerCreatePortfolioPage = () => {
             //onClick={handleSavePortfolio}
             onClick={() => {
               handleSavePortfolio(); // 프로젝트 저장 함수 호출
-              navigate({ to: "/MyPage" });
+              navigate({ to: `/my` });
             }}
           >
             제작하기

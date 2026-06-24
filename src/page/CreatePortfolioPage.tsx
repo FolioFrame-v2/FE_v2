@@ -5,7 +5,7 @@ import CreatePortfolioTemplate from "@/components/CreatePortfolioPage/CreatePort
 // removed domain/features import
 // removed domain/features import
 import { Navigate, useNavigate } from "@tanstack/react-router";
-import { templateInfo } from "@/components/commmon/dummydata/templateInfo.jsx";
+const templateInfo = [ { id: 1, name: "Mock Template" } ];
 
 
 const CreatePortfolioPage = () => {
@@ -26,71 +26,38 @@ const CreatePortfolioPage = () => {
     category: "",
     video: null,
     coverImage: null,
-    images: [],
+    images: [] as any[],
     logo: null,
   });
 
-  // const [currentUser, setCurrentUser] = useState(null);
-  const currentUser = null;
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [uploadedImages, setUploadedImages] = useState([]);
+  const currentUser = { name: "Mock Name", id: "mock-id", nickname: "MockNick", email: "mock@example.com" };
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (currentUser) {
-      // void 0;
-      console.log(currentUser);
-    } else {
-      console.log("currentUser 없음");
-    }
-  }, []);
-
-  // 필수 항목 채워졌는지 확인
-  useEffect(() => {
-    const {
-      projectTitle,
-      description,
-      startDate,
-      endDate,
-      solving,
-      challenge,
-      usedLanguage,
-    } = formData;
-
-    const isFormValid =
-      projectTitle &&
-      description &&
-      startDate &&
-      endDate &&
-      solving &&
-      challenge &&
-      usedLanguage;
-    setIsButtonDisabled(!isFormValid);
-  }, [formData]);
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     if (name === "images") {
       setUploadedImages(value); // 업로드된 이미지를 상태로 저장
       console.log("업로드된 이미지 경로가 상태에 저장됨:", value);
     }
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
   };
 // YYYY-MM-DD 형식 -> 서버와 연결할 때 오류가 나옴! 수정함
-  const handleDateChange = (name, date) => {
+  const handleDateChange = (name: any, date: any) => {
       // 날짜 객체를 복사하고 하루를 더함
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 1); // 날짜 +1
     const formattedDate = newDate ? newDate.toISOString().split('T')[0] : ""; 
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [name]: formattedDate,
     }));
   };
-  const setProjectTemplate = (templateId) => {
-    setFormData((prevData) => ({
+  const setProjectTemplate = (templateId: any) => {
+    setFormData((prevData: any) => ({
       ...prevData,
       projectTemplate: templateId,
     }));
@@ -99,32 +66,8 @@ const CreatePortfolioPage = () => {
 
 
   const handleSaveProject = () => {
-    console.log("handleSaveProject 호출됨"); // 호출 확인 로그 추가
-    console.log("formData : ", formData);
-  
-    saveProject(
-      currentUser.name, // 사용자 이름
-      currentUser.id, // 사용자 아이디
-      currentUser.nickname, // 사용자 닉네임
-      currentUser.email, // 사용자 이메일
-      formData.projectTemplate, // projectTemplate
-      formData.projectTitle,
-      formData.description,
-      formData.startDate,
-      formData.endDate,
-      formData.category,
-      formData.usedLanguage,
-      formData.projectLink,
-      formData.solving,
-      formData.challenge,
-      formData.video,
-      formData.coverImage,
-      formData.images,
-      formData.logo,
-      formData.share
-    );
-    console.log(formData.startDate, formData.endDate);
-    navigate({ to: "/MyPage" }); 
+    console.log("Mock handleSaveProject 호출됨", formData);
+    navigate({ to: `/my` }); 
   };
   //이미지, 비디오 업로드
   

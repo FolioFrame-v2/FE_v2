@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
  // dataList를 import 할 경로 지정
 
 
-import searchImg from "../../assets/icons/Header/search.png";
+import searchImg from "@/assets/icons/Header/search.png";
 import { ImCancelCircle } from "react-icons/im";
 
 //나중에 삭제
@@ -15,15 +15,15 @@ import { ImCancelCircle } from "react-icons/im";
 //   "마라탕후루",
 // ];
 
-const SearchBar = ({ onSearch, onCancelSearch }) => {
+const SearchBar = ({ onSearch, onCancelSearch }: any) => {
   const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [nowIndex, setNowIndex] = useState(-1);
 
   const searchBarRef = useRef(null);
   const inputRef = useRef(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const newValue = e.target.value;
     setInputValue(newValue); // 입력 값을 상태에 저장
 
@@ -54,7 +54,7 @@ const SearchBar = ({ onSearch, onCancelSearch }) => {
   };
 
   //기존 코드
-  // const handleKeyUp = (e) => {
+  // const handleKeyUp = (e: any) => {
   //   if (e.key === "ArrowUp") {
   //     setNowIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   //   } else if (e.key === "ArrowDown") {
@@ -68,7 +68,7 @@ const SearchBar = ({ onSearch, onCancelSearch }) => {
   // };
 
   // 키보드 검색어 이동
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: any) => {
     if (e.key === "ArrowDown") {
       setNowIndex((prevIndex) => (prevIndex + 1) % suggestions.length);
     } else if (e.key === "ArrowUp") {
@@ -101,7 +101,7 @@ const SearchBar = ({ onSearch, onCancelSearch }) => {
 
   //검색창 외부 클릭 시 검색창을 닫음
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = (e: any) => {
       if (
         searchBarRef.current &&
         !searchBarRef.current.contains(e.target) &&

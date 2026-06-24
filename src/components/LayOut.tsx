@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "@tanstack/react-router";
 import Header from "@/components/ui/nav.tsx";
 import Footer from "@/components/ui/footer.tsx";
 

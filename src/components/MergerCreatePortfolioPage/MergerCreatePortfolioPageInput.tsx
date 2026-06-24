@@ -4,7 +4,7 @@ const MergerCreatePortfolioPageInput = ({
   formData,
   onInputChange,
   onToggleChange,
-}) => {
+}: any) => {
   const handleToggle = () => {
     const newShareValue = !formData.share;
     onToggleChange({

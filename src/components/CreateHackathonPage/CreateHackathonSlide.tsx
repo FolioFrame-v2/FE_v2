@@ -8,7 +8,7 @@ import React from 'react';
 import { Navigation, Pagination, A11y, Autoplay, Scrollbar } from 'swiper/modules';
 import Logo from "@/assets/icons/Logo.png";
 
-const CreatePortfolioSlide = ({  }) => {
+const CreatePortfolioSlide = ({  }: any) => {
     const postIds = new Array(6).fill(null).map((_, index) => `post${index + 1}`);
 
     return (

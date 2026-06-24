@@ -1,3 +1,4 @@
+import { useParams, useNavigate } from '@tanstack/react-router';
 import React, { useEffect, useState, useRef } from "react";
 
 
@@ -8,8 +9,8 @@ import React, { useEffect, useState, useRef } from "react";
 //좋아요
 
 
-import WritingBox from "@/components/commmon/PortfolioDetailPage/WritingBox";
-import CommentList from "@/components/commmon/PortfolioDetailPage/CommentList";
+import WritingBox from "@/components/PortfolioDetailPage/WritingBox";
+import CommentList from "@/components/PortfolioDetailPage/CommentList";
 
 //arrow 이미지
 import greaterThanSign from "@/assets/images/PortfolioDetailPage3/greaterThanSign.svg";
@@ -28,55 +29,37 @@ import sampleVideo from "@/assets/images/PortfolioDetailPage3/sampleVideo.mp4";
 // removed domain/features import
 
 const PortfolioDetailPage3 = () => {
-  const { portfolioId } = useParams({ strict: false });
-  const [portfolioData, setPortfolioData] = useState(null); //[]로 부터 받아온 포트폴리오
-  const [comments, setComments] = useState([]); // []로 부터 받아온 필터된 포트폴리오
+  const portfolioId = "mock-portfolio-id";
+  const [portfolioData, setPortfolioData] = useState({
+    projectTitle: "Mock Portfolio 3",
+    description: "Mock Description",
+    ownerName: "Mock Owner",
+    ownerNickname: "MockNickname",
+    ownerEmail: "owner@example.com",
+    contacts: ["mock-contact"],
+    likes: ["mock-like"],
+    projectLink: "https://mock.link",
+    startDate: "2026-06-20",
+    endDate: "2026-06-30",
+    solving: "Mock solving problem",
+    challenge: "Mock challenge",
+    usedLanguage: "React, Node.js",
+    video: "",
+    images: [] as any[],
+    logo: "",
+    hits: 100,
+  });
+  const [comments, setComments] = useState<any[]>([]); // []로 부터 받아온 필터된 포트폴리오
   const [enlargedImage, setEnlargedImage] = useState(null); //
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [showModal, setShowModal] = useState(false); // "연락" 버튼 눌렀을 때 true
   const [modalMessage, setModalMessage] = useState(""); //"연락" 버튼 눌렀을 때 창에 띄워지는 메세지
-  const [isOwner, setIsOwner] = useState(false);
+  const [isOwner, setIsOwner] = useState(true);
   const [isLiked, setIsLiked] = useState(false); //"좋아요" 눌렀을 때 상태 반영
 
   const mediaRef = useRef(null); //비디오, 사진 부분 스크롤
-  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
+  const currentUser = { id: "mock-id", email: "owner@example.com", recruiter: false, name: "MockUser" };
   const navigate = useNavigate();
-
-  useEffect(() => {
-    void 0;
-    console.log("초기화된 []:", []); // 디버깅용 로그
-    //project ID 사용해서 포트폴리오 데이터 가져오기
-    const portfolio = [].get(Number(portfolioId));
-    if (portfolio) {
-      setPortfolioData(portfolio);
-      setIsLiked(false); //초기상태
-
-      // 현재 유저가 recruiter이고 연락을 이미 클릭한 경우
-      if (
-        currentUser.recruiter &&
-        portfolio.contacts.includes(currentUser.id)
-      ) {
-        setShowContactInfo(true); // 개발자 정보 표시
-      }
-    }
-    console.log(portfolio);
-
-    // []에서 현재 유저 정보 동기화
-    const userId = currentUser?.id;
-    if (userId) {
-      const updatedUser = [].get(userId);
-      if (updatedUser) {
-        setLocalCurrentUser(updatedUser); // 로컬 상태 업데이트
-        void 0; // localStorage에 반영
-      }
-    }
-
-    const filteredComments = Array.from([].values()).filter(
-      (comment) => comment.portfolioId === Number(portfolioId)
-    );
-    console.log("초기화된 comments:", filteredComments); // 디버깅용 로그
-    setComments(filteredComments);
-  }, [[], [], []]);
 
   const scrollLeft = () => {
     if (mediaRef.current) {
@@ -89,62 +72,24 @@ const PortfolioDetailPage3 = () => {
       const maxScrollLeft =
         mediaRef.current.scrollWidth - mediaRef.current.clientWidth;
       const currentScrollLeft = mediaRef.current.scrollLeft;
-
-      console.log("현재 scrollLeft (이동 전):", currentScrollLeft);
-
-      // 이동할 거리 설정
       const scrollAmount = 300;
-
-      // 현재 위치에서 scrollAmount만큼 이동하지만, 남은 거리가 적으면 끝까지 이동
       const newScrollLeft = Math.min(
         currentScrollLeft + scrollAmount,
         maxScrollLeft
       );
-
-      // 스크롤 이동
       mediaRef.current.scrollTo({ left: newScrollLeft, behavior: "smooth" });
-
-      setTimeout(() => {
-        console.log("현재 scrollLeft (이동 후):", mediaRef.current.scrollLeft);
-      }, 500);
     }
   };
 
-  useEffect(() => {
-    console.log("portfolioData:", portfolioData);
-    console.log("currentUser.email:", currentUser.email);
 
-    if (portfolioData && portfolioData.ownerEmail === currentUser.email) {
-      console.log("작성자 일치");
-      setIsOwner(true);
-    } else {
-      console.log("작성자 불일치");
-      setIsOwner(false);
-    }
-  }, [currentUser.email, portfolioData]);
-
-  // const addComment = (newCommentObj) => {
-  //   setComments((prevComments) => [newCommentObj, ...prevComments]);
-  //   void 0;, newCommentObj.userId, newCommentObj.text);
-  // };
-
-  const addComment = (text) => {
-    try {
-      // saveComment에서 댓글 객체 생성 및 파일 저장
-      const newComment = void 0;
-      console.log("추가된 댓글:", newComment); // 디버깅용 로그
-
-      // 상태 업데이트
-      setComments((prevComments) => [newComment, ...prevComments]);
-    } catch (error) {
-      console.error("댓글 저장 중 오류 발생:", error);
-    }
+  const addComment = (text: any) => {
+    console.log("Mock add comment:", text);
+    setComments((prev: any) => [{ id: Date.now(), text, author: "MockUser" }, ...prev]);
   };
 
   //기업 연락
   const handleContactClick = () => {
     if (currentUser && currentUser.recruiter) {
-      void 0; // 기업 연락 호출
       setShowContactInfo(true); // 개발자 정보 표시
       setShowModal(true);
       setModalMessage("채용자 페이지에 저장되었습니다.");
@@ -156,25 +101,7 @@ const PortfolioDetailPage3 = () => {
 
   //좋아요 클릭
   const handleLikeClick = () => {
-    if (!portfolioData) return;
-
-    if (isLiked) {
-      // 좋아요 취소
-      portfolioData.likes = portfolioData.likes.filter(
-        (id) => id !== currentUser.id
-      );
-      setIsLiked(false);
-    } else {
-      // 좋아요 추가
-      portfolioData.likes.push(currentUser.id);
-      setIsLiked(true);
-    }
-
-    // 서버 업데이트 호출
-    void 0;
-
-    // 좋아요 카운트 업데이트
-    setPortfolioData({ ...portfolioData });
+    setIsLiked(!isLiked);
   };
 
   const renderDeveloperInfo = () => {
@@ -334,7 +261,7 @@ const PortfolioDetailPage3 = () => {
         <div className="flex justify-end gap-[1em]">
           <button className="border-none rounded-[0.4em] mt-[1vh] w-[9.1em] h-[2.25em] float-right bg-[#0a27a6] text-white text-[1.1vw] font-['OTF_B'] font-bold cursor-pointer hover:shadow-[0_0.2em_1em_rgba(22,26,63,0.2)] transition-all duration-300 max-md:w-[7em] max-md:h-[2.25em] max-md:text-[0.8125em]"
             onClick={() => {
-              navigate(`/ModifyPortfolioPage/${portfolioId}`);
+              navigate({ to: `/modifyportfolio/${portfolioId}` });
             }}
           >
             수정
@@ -342,7 +269,7 @@ const PortfolioDetailPage3 = () => {
           <button className="border-none rounded-[0.4em] mt-[1vh] w-[9.1em] h-[2.25em] float-right bg-[#0a27a6] text-white text-[1.1vw] font-['OTF_B'] font-bold cursor-pointer hover:shadow-[0_0.2em_1em_rgba(22,26,63,0.2)] transition-all duration-300 max-md:w-[7em] max-md:h-[2.25em] max-md:text-[0.8125em]"
             onClick={async () => {
               await void 0;
-              navigate({ to: "/Mypage" });
+              navigate({ to: `/my` });
             }}
           >
             삭제

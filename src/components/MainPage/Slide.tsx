@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, A11y, Autoplay } from 'swiper/modules';
 import { useState } from 'react';
-import { Navigate, useNavigate} from "react-router-dom";
+import { Navigate, useNavigate} from "@tanstack/react-router";
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -95,7 +95,7 @@ export default () => {
                       </video>
                       <div className="flex-col absolute -mt-[2em]">
                           <p className="text-[5em] font-[800] text-[#0A27A6] font-['OTF_B'] flex items-center justify-center text-center ml-[1em]">함께 만드는 <br></br>포토폴리오</p>
-                          <button className="text-[#fff] text-[1em] font-[800] rounded-[2em] border-none bg-[#0A27A6] h-[3em] w-[50%] -mt-[1em] font-['OTF_R'] ml-[10em]" onClick={() => navigate("/LoginPage")}>지금 시작하기</button>
+                          <button className="text-[#fff] text-[1em] font-[800] rounded-[2em] border-none bg-[#0A27A6] h-[3em] w-[50%] -mt-[1em] font-['OTF_R'] ml-[10em]" onClick={() => navigate({ to: `/login` })}>지금 시작하기</button>
                       </div>
                   </div>
           </SwiperSlide>

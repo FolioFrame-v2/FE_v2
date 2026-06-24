@@ -3,7 +3,7 @@ import PrevMonth from "@/assets/icons/Calendar/arrow_left.png";
 import NextMonth from "@/assets/icons/Calendar/arrow_right.png";
 import { Color } from "@/components/CreateHackathonPage/Color.jsx";
 
-const CreateHackCalendar = ({ onStartDateChange, onEndDateChange }) => {
+const CreateHackCalendar = ({ onStartDateChange, onEndDateChange }: any) => {
     const [date, setDate] = useState(new Date());
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -23,7 +23,7 @@ const CreateHackCalendar = ({ onStartDateChange, onEndDateChange }) => {
     const cells = [];
     const today = new Date();
 
-    const isDateSelected = (day) => {
+    const isDateSelected = (day: any) => {
         const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
         return (
             startDate &&
@@ -33,13 +33,13 @@ const CreateHackCalendar = ({ onStartDateChange, onEndDateChange }) => {
         );
     };
 
-    const isInSelectionRange = (day) => {
+    const isInSelectionRange = (day: any) => {
         if (!startDate || !endDate) return false;
         const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
         return currentDate >= startDate && currentDate <= endDate;
     };
 
-    const handleDateClick = (day) => {
+    const handleDateClick = (day: any) => {
         const selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
 
         if (!startDate) {
@@ -62,7 +62,7 @@ const CreateHackCalendar = ({ onStartDateChange, onEndDateChange }) => {
         }
     };
 
-    const getCellClass = ({ isToday, isStart, isEnd, isInRange, className }) => {
+    const getCellClass = ({ isToday, isStart, isEnd, isInRange, className }: any) => {
       return `p-[1em] box-border flex items-center justify-center h-[2.5em] w-[2.5em] cursor-pointer transition-all duration-300 rounded-[50%] relative max-[1100px]:text-[0.8125em] max-[900px]:text-[0.75em] max-md:text-[1em] max-md:h-[2em] max-md:w-[2em] max-md:p-[0.4em] before:content-[''] before:absolute before:inset-0 before:-z-[1] before:transition-all before:duration-300 ${className || ""} ${isToday ? "font-[600]" : "font-[400]"} ${isToday || isStart || isEnd ? "text-[#FFFFFF]" : "text-[#000000]"} ${isToday ? "bg-[#CFDDFB]" : isStart || isEnd ? "bg-[#0A27A6]" : "bg-transparent"} ${isToday ? "shadow-[0px_4px_10px_rgba(129,76,161,0.19)]" : "shadow-none"} ${isInRange ? "before:bg-[#CFDDFB] before:visible" : "before:bg-transparent before:hidden"} ${isStart ? "before:rounded-[20px_0_0_20px]" : isEnd ? "before:rounded-[0_20px_20px_0]" : "before:rounded-[0]"}`;
     };
 

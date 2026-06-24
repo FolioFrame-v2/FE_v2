@@ -1,8 +1,9 @@
+import { useParams } from '@tanstack/react-router';
 import React,{useEffect} from "react";
 
 // removed domain/features import
 
-const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
+const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }: any) => {
   // 업로드 이미지 미리보기 코드
   const [LogoPreview, setLogoPreview] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
@@ -18,10 +19,10 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
     null,
     null,
   ]);
-  const { portfolioId } = useParams();
+  const portfolioId = "mock-portfolio-id";
   const [portfolioData, setPortfolioData] = useState(null);
   
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<any[]>([]);
   const [isOn, setIsOn] = useState(true);
 
   useEffect(() => {
@@ -44,9 +45,9 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   }, [portfolioId, portfolioData]);
 
   
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setPortfolioData((prevData) => ({
+    setPortfolioData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -70,7 +71,7 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   }, [portfolioId, portfolioData?.contacts.length, portfolioData?.hits]);
 
 
-  const handleCoverImageChange = (e) => {
+  const handleCoverImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const imageURL = URL.createObjectURL(file);
@@ -112,7 +113,7 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   };
 
   //로고 업데이트
-  const handleLogoChange = (e) => {
+  const handleLogoChange = (e: any) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const imageURL = URL.createObjectURL(file);
@@ -141,7 +142,7 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
     }
   };
 
-  const handlePhotosChange = (index) => (e) => {
+  const handlePhotosChange = (index: any) => (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const newPhotosPreview = [...photosPreview];
@@ -178,7 +179,7 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   };
 
   //토글 기능
-  const handleToggle = (value = null) => {
+  const handleToggle = (value: any = null) => {
     if (value !== null) {
         setIsOn(value);
         return;

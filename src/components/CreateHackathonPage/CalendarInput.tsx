@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "@/components/CreateHackathonPage/Calendar.jsx";
 // import { useDispatch } from 'react-redux';
 
-const CalendarInput = ({ startDate, endDate, onDateChange }) => {
+const CalendarInput = ({ startDate, endDate, onDateChange }: any) => {
   // state 관리
   const [recruitmentStartDate, setRecruitmentStartDate] = useState(null);
   const [recruitmentEndDate, setRecruitmentEndDate] = useState(null);
@@ -14,7 +14,7 @@ const CalendarInput = ({ startDate, endDate, onDateChange }) => {
   // const dispatch = useDispatch();
 
   // 날짜 형식 함수
-  const formatDate = (date) => {
+  const formatDate = (date: any) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -22,7 +22,7 @@ const CalendarInput = ({ startDate, endDate, onDateChange }) => {
   };
 
   // 모집 날짜 불러오기
-  const handleRecruitStartDateChange = (date) => {
+  const handleRecruitStartDateChange = (date: any) => {
     if (isRecruitmentActive) {
       setRecruitmentStartDate(date);
     } else if (isStudyPeriodActive) {
@@ -35,7 +35,7 @@ const CalendarInput = ({ startDate, endDate, onDateChange }) => {
     // dispatch(setRecruitStartDay(formattedDate));
   };
 
-  const handleRecruitEndDateChange = (date) => {
+  const handleRecruitEndDateChange = (date: any) => {
     if (isRecruitmentActive) {
       setRecruitmentEndDate(date);
     } else if (isStudyPeriodActive) {

@@ -1,19 +1,23 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+import Logo from "@/assets/icons/Logo.png";
 
-
-
-import Logo from "../../assets/icons/Logo.png";
-
-const TemplateCard = ({ portfolioId, templateButton, isButton = true }) => {
+const TemplateCard = ({ portfolioId, templateButton, isButton = true }: any) => {
   const navigate = useNavigate();
-  const [portfolioData, setPortfolioData] = useState(null);
-  const currentUser = null;
+  const [portfolioData, setPortfolioData] = useState<any>(null);
+  const currentUser: any = null;
 
   useEffect(() => {
-    //프롭스로 받은 포트폴리오 ID 사용해서 oriPortfolios에서 포트폴리오 데이터 가져오기
-    const portfolio = [].get(portfolioId);
+    // Mock portfolio data for UI prototyping
+    const portfolio = {
+      projectId: portfolioId,
+      coverImage: "",
+      projectTitle: "Mock Title",
+      description: "Mock Description",
+      projectTemplate: 1
+    };
     if (portfolio) {
       setPortfolioData(portfolio);
     }
@@ -24,17 +28,8 @@ const TemplateCard = ({ portfolioId, templateButton, isButton = true }) => {
       console.log(currentUser);
       console.log("patchHits 불러옴.");
       if (currentUser && portfolioData) {
-        patchHits(currentUser.id, portfolioId); // 조회수 증가 호출
+        // patchHits(currentUser.id, portfolioId); // 조회수 증가 호출
       }
-
-      // navigate(`/PortfolioDetailPage/${portfolioId}`);
-      // if (portfolioId === 8) {
-      //   navigate(`/PortfolioDetailPage2/${portfolioId}`);
-      // } else if (portfolioId === 7) {
-      //   navigate(`/PortfolioDetailPage3/${portfolioId}`);
-      // } else {
-      //   navigate(`/PortfolioDetailPage/${portfolioId}`);
-      // }
     }
   };
 
@@ -54,11 +49,11 @@ const TemplateCard = ({ portfolioId, templateButton, isButton = true }) => {
         onClick={() => {
           handleViewClick();
           if (portfolioData.projectTemplate === 2) {
-            navigate(`/PortfolioDetailPage2/${portfolioId}`);
+            navigate({ to: `/portfoliodetailpage2` });
           } else if (portfolioData.projectTemplate === 3) {
-            navigate(`/PortfolioDetailPage3/${portfolioId}`);
+            navigate({ to: `/portfoliodetailpage3` });
           } else {
-            navigate(`/PortfolioDetailPage/${portfolioId}`);
+            navigate({ to: `/portfoliodetail` });
           }
         }}
       >
@@ -67,12 +62,5 @@ const TemplateCard = ({ portfolioId, templateButton, isButton = true }) => {
     </div>
   );
 };
-
-// // TemplateCard의 프롭타입
-// TemplateCard.propTypes = {
-//   templateName: PropTypes.string.isRequired,
-//   description: PropTypes.string.isRequired,
-//   templateThumnail: PropTypes.string.isRequired,
-// };
 
 export default TemplateCard;

@@ -43,6 +43,26 @@
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 }
 
+/* src/styles.css */
+
+/* --- 이 부분을 추가하세요 --- */
+@font-face {
+  font-family: 'OTF B';
+  src: url('./fonts/Hakgyoansim Dunggeunmiso OTF B.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OTF R';
+  src: url('./fonts/Hakgyoansim Dunggeunmiso OTF R.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ------------------------ */
+
+
 :root {
   --radius: 0.875rem;
 
@@ -109,8 +129,14 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { font-family: var(--font-sans); }
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-family: var(--font-sans);
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -120,8 +146,20 @@
       radial-gradient(circle at 90% 0%, color-mix(in oklch, var(--color-coral) 14%, transparent), transparent 38%);
     background-attachment: fixed;
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
-  .font-mono, code, kbd { font-family: var(--font-mono); }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono,
+  code,
+  kbd {
+    font-family: var(--font-mono);
+  }
 }
 
 @utility grid-paper {
@@ -149,5 +187,5 @@
   border: 1px solid var(--color-line);
   border-radius: var(--radius-lg);
   box-shadow: 0 1px 0 0 color-mix(in oklch, var(--color-line) 50%, transparent),
-              0 24px 60px -40px oklch(0.18 0.02 260 / 0.25);
+    0 24px 60px -40px oklch(0.18 0.02 260 / 0.25);
 }
