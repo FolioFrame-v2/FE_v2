@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getCurrentUser } from "../../features/currentUser";
-import Comment from "../../domain/Comment";
+
+
 
 import BoldIcon from "../../../assets/icons/boldIcon.svg";
 import ItalicIcon from "../../../assets/icons/italic-5.svg?react";
@@ -108,7 +108,7 @@ const WritingBox = ({ addComment }) => {
   };
 
   // const handleSubmit = () => {
-  //   const currentUser = getCurrentUser();
+  //   const currentUser = null;
   //   console.log(currentUser);
   //   if (markdown.trim() !== "") {
   //     const newComment = new Comment(

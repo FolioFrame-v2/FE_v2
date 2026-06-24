@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../assets/icons/Logo.png";
 import CreateHackathonInput from "../components/CreateHackathonPage/CreateHackathonInput";
-import { getCurrentUser } from "../components/features/currentUser";
-import { saveHackathon } from "../components/features/hackathonFeatures";
-import { Navigate, useNavigate } from "react-router-dom";
+// import { getCurrentUser } from "../components/features/currentUser";
+// import { saveHackathon } from "../components/features/hackathonFeatures";
+import { Navigate, useNavigate } from "@tanstack/react-router";
 
 const CreateHackathonPage = () => {
   const navigate = useNavigate();
@@ -29,14 +29,14 @@ const CreateHackathonPage = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {
-    const user = getCurrentUser();
+    const user = null;
     if (user) {
-      setCurrentUser(user);
+      void 0;
     } else {
       console.log("user 없음");
     }
   }, []);
-  
+
   useEffect(() => {
     if (currentUser) {
       setFormData((prevData) => ({
@@ -46,7 +46,7 @@ const CreateHackathonPage = () => {
       }));
     }
   }, [currentUser]);
-  
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -55,17 +55,17 @@ const CreateHackathonPage = () => {
       [name]: value,
     }));
   };
-    const handleDateChange = (name, date) => {
-      // 날짜 객체를 복사하고 하루를 더함
+  const handleDateChange = (name, date) => {
+    // 날짜 객체를 복사하고 하루를 더함
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 1); // 날짜 +1
-    const formattedDate = newDate ? newDate.toISOString().split('T')[0] : ""; 
+    const formattedDate = newDate ? newDate.toISOString().split('T')[0] : "";
     setFormData((prevData) => ({
       ...prevData,
       [name]: formattedDate,
     }));
   };
-  
+
 
   const handleSaveHack = () => {
     saveHackathon(
@@ -83,10 +83,10 @@ const CreateHackathonPage = () => {
       formData.ownerId,
       formData.ownerEmail,
       formData.participant
-      
+
     );
     console.log(formData.startDate, formData.endDate);
-    navigate("/MyPage"); 
+    navigate({ to: "/MyPage" });
   };
   // 필수 항목에 모두 입력이 되었는지 확인하고 "제작하기" 버튼 활성화 여부를 정한다.
   useEffect(() => {
@@ -117,12 +117,12 @@ const CreateHackathonPage = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
-        <CreateHackathonInput 
+        <CreateHackathonInput
           onInputChange={handleInputChange}
           formData={formData}
           onDateChange={handleDateChange}
         />
-        <button 
+        <button
           className="text-[#fff] text-[1em] font-[800] rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] -mt-[6em] font-['OTF_R'] cursor-pointer flex items-center justify-center relative disabled:bg-[#0a27a6] disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isButtonDisabled}
           onClick={handleSaveHack}>제작하기</button>

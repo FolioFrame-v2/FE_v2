@@ -7,12 +7,12 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import N1 from "../../assets/icons/Mainpage/N1.svg";
-import N2 from "../../assets/icons/Mainpage/N2.svg";
-import N3 from "../../assets/icons/Mainpage/N3.svg";
-import N4 from "../../assets/icons/Mainpage/N4.svg";
-import job from "../../assets/images/Mainpage/JOB.jpg";
-import hackathon from "../../assets/images/Mainpage/hackathon.jpg";
+import N1 from "@/assets/icons/Mainpage/N1.svg";
+import N2 from "@/assets/icons/Mainpage/N2.svg";
+import N3 from "@/assets/icons/Mainpage/N3.svg";
+import N4 from "@/assets/icons/Mainpage/N4.svg";
+import job from "@/assets/images/Mainpage/JOB.jpg";
+import hackathon from "@/assets/images/Mainpage/hackathon.jpg";
 
 export default () => {
     const [swiperIndex, setSwiperIndex] = useState(0); // -> 페이지네이션용

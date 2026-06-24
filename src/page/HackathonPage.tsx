@@ -1,24 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import HackPageHeader from "../components/commmon/HackPageHeader.jsx";
-import HackTemplateCard from "../components/commmon/HackTemplateCard.jsx";
-import { dummydata } from "../components/commmon/dummydata/dummydata";
-//import SelectBox from "../components/commmon/SelectBox.jsx";
-import SelectBox_NoFilter from "../components/commmon/SelectBox _NoFilter.jsx";
-import HackSearchBar from "../components/commmon/HackSearchBar";
-import StyledButton from "../components/commmon/StyledButton";
-import HackathonPageSlide from "../components/HackathonPage/HackathonPageSlide.jsx";
-import { Navigate, useNavigate } from "react-router-dom";
-import {
-  getCurrentUser,
-  setCurrentUser,
-} from "../components/features/currentUser";
+import HackPageHeader from "@/components/commmon/HackPageHeader.jsx";
+import HackTemplateCard from "@/components/commmon/HackTemplateCard.jsx";
 
-import {
-  oriHackathons,
-  hackathonSearchSortManeger,
-  initializeData,
-} from "../components/domain/startProgram";
+
+
 
 const HackathonPage = () => {
   const navigate = useNavigate();
@@ -37,20 +23,20 @@ const HackathonPage = () => {
   };
 
   useEffect(() => {
-    initializeData(); // 데이터를 초기화
-    console.log("oriHackathons 값:", oriHackathons); //-> O
+    void 0; // 데이터를 초기화
+    console.log("[] 값:", []); //-> O
 
-    const sharedHackathonArray = Array.from(oriHackathons.values()); // Map을 배열로 변환
+    const sharedHackathonArray = Array.from([]); // Map을 배열로 변환
     console.log("sharedHackathonArray 값:", sharedHackathonArray); //-> O
 
     setsharedHackathonList(sharedHackathonArray); // 상태 업데이트
 
-    const initialList = hackathonSearchSortManeger.sort(null, null);
+    const initialList = [];
     setsharedHackathonList(linkedListToArray(initialList));
   }, []);
 
   const handleSortApply = (category, sortOption) => {
-    const sortedLinkedList = hackathonSearchSortManeger.sort(
+    const sortedLinkedList = [].sort(
       category,
       sortOption
     );
@@ -58,16 +44,16 @@ const HackathonPage = () => {
   };
 
   const handleSearchApply = (searchTerm) => {
-    const searchedLinkedList = hackathonSearchSortManeger.search(searchTerm);
+    const searchedLinkedList = [];
     setsharedHackathonList(linkedListToArray(searchedLinkedList));
   };
 
   const handleCancelSearch = () => {
-    const resetList = hackathonSearchSortManeger.resetToLatest(); // 최신순 정렬된 리스트
+    const resetList = []; // 최신순 정렬된 리스트
     setsharedHackathonList(linkedListToArray(resetList));
   };
 
-  const currentUser = getCurrentUser();
+  const currentUser = null;
 
   return (
     <>
@@ -103,7 +89,7 @@ const HackathonPage = () => {
 
         <div className="flex justify-center">
           {/* 포트폴리오 제작 페이지로 넘어갈 수 있는 버튼 추가 */}
-          <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] font-['OTF_R'] flex items-center justify-center relative" onClick={() => navigate("/CreateHackathonPage")}>
+          <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] font-['OTF_R'] flex items-center justify-center relative" onClick={() => navigate({ to: "/CreateHackathonPage" })}>
             해커톤 제작하기
           </button>
         </div>

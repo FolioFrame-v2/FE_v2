@@ -1,49 +1,36 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import {
-  oriProjects,
-  oriUsers,
-  oriComments,
-  initializeData,
-} from "../components/domain/startProgram";
-import {
-  getCurrentUser,
-  setCurrentUser,
-} from "../components/features/currentUser";
-import Comment from "../components/domain/Comment";
-import saveComment from "../components/features/saveComment";
-//기업 연락
-import { patchContacts } from "../components/features/recruiterFeatures";
-//좋아요
-import {
-  patchLikes,
-  isIncludedLikes,
-} from "../components/features/likeFeatures";
 
-import WritingBox from "../components/commmon/PortfolioDetailPage/WritingBox";
-import CommentList from "../components/commmon/PortfolioDetailPage/CommentList";
+
+// removed domain/features import
+// removed domain/features import
+//기업 연락
+// removed domain/features import
+//좋아요
+
+
+import WritingBox from "@/components/commmon/PortfolioDetailPage/WritingBox";
+import CommentList from "@/components/commmon/PortfolioDetailPage/CommentList";
 
 //arrow 이미지
-import greaterThanSign from "../assets/images/PortfolioDetailPage3/greaterThanSign.svg";
-import lessThanSign from "../assets/images/PortfolioDetailPage3/lessThanSign.svg";
+import greaterThanSign from "@/assets/images/PortfolioDetailPage3/greaterThanSign.svg";
+import lessThanSign from "@/assets/images/PortfolioDetailPage3/lessThanSign.svg";
 
 //logo 이미지
-import logo from "../assets/icons/Logo.png";
+import logo from "@/assets/icons/Logo.png";
 //heart 이미지
-import heart_none from "../assets/images/PortfolioDetailPage3/heart-none.svg";
-import heart_fill from "../assets/images/PortfolioDetailPage3/heart-fill.svg";
+import heart_none from "@/assets/images/PortfolioDetailPage3/heart-none.svg";
+import heart_fill from "@/assets/images/PortfolioDetailPage3/heart-fill.svg";
 //sample 이미지
-import sample from "../assets/images/PortfolioDetailPage3/sample.png";
+import sample from "@/assets/images/PortfolioDetailPage3/sample.png";
 //sample 비디오
-import sampleVideo from "../assets/images/PortfolioDetailPage3/sampleVideo.mp4";
+import sampleVideo from "@/assets/images/PortfolioDetailPage3/sampleVideo.mp4";
 
-import { deleteProject } from "../components/features/projectFeatures";
+// removed domain/features import
 
 const PortfolioDetailPage3 = () => {
-  const { portfolioId } = useParams();
-  const [portfolioData, setPortfolioData] = useState(null); //oriProjects로 부터 받아온 포트폴리오
-  const [comments, setComments] = useState([]); // oriComments로 부터 받아온 필터된 포트폴리오
+  const { portfolioId } = useParams({ strict: false });
+  const [portfolioData, setPortfolioData] = useState(null); //[]로 부터 받아온 포트폴리오
+  const [comments, setComments] = useState([]); // []로 부터 받아온 필터된 포트폴리오
   const [enlargedImage, setEnlargedImage] = useState(null); //
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [showModal, setShowModal] = useState(false); // "연락" 버튼 눌렀을 때 true
@@ -52,17 +39,17 @@ const PortfolioDetailPage3 = () => {
   const [isLiked, setIsLiked] = useState(false); //"좋아요" 눌렀을 때 상태 반영
 
   const mediaRef = useRef(null); //비디오, 사진 부분 스크롤
-  const [currentUser, setLocalCurrentUser] = useState(getCurrentUser()); // 초기값 가져오기
+  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
   const navigate = useNavigate();
 
   useEffect(() => {
-    initializeData();
-    console.log("초기화된 oriProjects:", oriProjects); // 디버깅용 로그
+    void 0;
+    console.log("초기화된 []:", []); // 디버깅용 로그
     //project ID 사용해서 포트폴리오 데이터 가져오기
-    const portfolio = oriProjects.get(Number(portfolioId));
+    const portfolio = [].get(Number(portfolioId));
     if (portfolio) {
       setPortfolioData(portfolio);
-      setIsLiked(isIncludedLikes(portfolio.projectId, currentUser.id)); //초기상태
+      setIsLiked(false); //초기상태
 
       // 현재 유저가 recruiter이고 연락을 이미 클릭한 경우
       if (
@@ -74,22 +61,22 @@ const PortfolioDetailPage3 = () => {
     }
     console.log(portfolio);
 
-    // oriUsers에서 현재 유저 정보 동기화
+    // []에서 현재 유저 정보 동기화
     const userId = currentUser?.id;
     if (userId) {
-      const updatedUser = oriUsers.get(userId);
+      const updatedUser = [].get(userId);
       if (updatedUser) {
         setLocalCurrentUser(updatedUser); // 로컬 상태 업데이트
-        setCurrentUser(updatedUser); // localStorage에 반영
+        void 0; // localStorage에 반영
       }
     }
 
-    const filteredComments = Array.from(oriComments.values()).filter(
+    const filteredComments = Array.from([].values()).filter(
       (comment) => comment.portfolioId === Number(portfolioId)
     );
     console.log("초기화된 comments:", filteredComments); // 디버깅용 로그
     setComments(filteredComments);
-  }, [oriProjects, oriUsers, oriComments]);
+  }, [[], [], []]);
 
   const scrollLeft = () => {
     if (mediaRef.current) {
@@ -138,13 +125,13 @@ const PortfolioDetailPage3 = () => {
 
   // const addComment = (newCommentObj) => {
   //   setComments((prevComments) => [newCommentObj, ...prevComments]);
-  //   saveComment(Number(portfolioId), newCommentObj.userId, newCommentObj.text);
+  //   void 0;, newCommentObj.userId, newCommentObj.text);
   // };
 
   const addComment = (text) => {
     try {
       // saveComment에서 댓글 객체 생성 및 파일 저장
-      const newComment = saveComment(Number(portfolioId), currentUser.id, text);
+      const newComment = void 0;
       console.log("추가된 댓글:", newComment); // 디버깅용 로그
 
       // 상태 업데이트
@@ -157,7 +144,7 @@ const PortfolioDetailPage3 = () => {
   //기업 연락
   const handleContactClick = () => {
     if (currentUser && currentUser.recruiter) {
-      patchContacts(Number(portfolioId), currentUser.id); // 기업 연락 호출
+      void 0; // 기업 연락 호출
       setShowContactInfo(true); // 개발자 정보 표시
       setShowModal(true);
       setModalMessage("채용자 페이지에 저장되었습니다.");
@@ -184,7 +171,7 @@ const PortfolioDetailPage3 = () => {
     }
 
     // 서버 업데이트 호출
-    patchLikes(portfolioData.projectId, currentUser.id);
+    void 0;
 
     // 좋아요 카운트 업데이트
     setPortfolioData({ ...portfolioData });
@@ -354,8 +341,8 @@ const PortfolioDetailPage3 = () => {
           </button>
           <button className="border-none rounded-[0.4em] mt-[1vh] w-[9.1em] h-[2.25em] float-right bg-[#0a27a6] text-white text-[1.1vw] font-['OTF_B'] font-bold cursor-pointer hover:shadow-[0_0.2em_1em_rgba(22,26,63,0.2)] transition-all duration-300 max-md:w-[7em] max-md:h-[2.25em] max-md:text-[0.8125em]"
             onClick={async () => {
-              await deleteProject(portfolioId);
-              navigate("/Mypage");
+              await void 0;
+              navigate({ to: "/Mypage" });
             }}
           >
             삭제

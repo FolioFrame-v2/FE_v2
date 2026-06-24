@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from "react";
-import DashBoard from "../components/MyPage/DashBoard";
-import MyPageSection from "../components/MyPage/MyPageSection";
-import TemplateCard from "../components/commmon/TemplateCard";
-import HackTemplateCard from "../components/commmon/HackTemplateCard";
-import PortfolioTemplateCard from "../components/commmon/PortfolioTemplateCard";
+import DashBoard from "@/components/MyPage/DashBoard";
+import MyPageSection from "@/components/MyPage/MyPageSection";
+import TemplateCard from "@/components/commmon/TemplateCard";
+import HackTemplateCard from "@/components/commmon/HackTemplateCard";
+import PortfolioTemplateCard from "@/components/commmon/PortfolioTemplateCard";
 
-import {
-  initializeData,
-  oriProjects,
-  oriHackathons,
-  oriPortfolios,
-  myProjectsSearchSortManager,
-  hackathonSearchSortManeger,
-} from "../components/domain/startProgram";
-import {
-  getCurrentUser,
-  setCurrentUser,
-} from "../components/features/currentUser";
+
+
 
 function MyPage() {
   const [myPortfolioList, setmyPortfolioList] = useState([]); // 상태로 관리되는 포트폴리오 리스트
   const [myHackathonList, setmyHackathonList] = useState([]);
   const [myPortfoliosList, setMyPortfoliosList] = useState([]);
-  const [currentUser, setLocalCurrentUser] = useState(getCurrentUser()); // 초기값 가져오기
+  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
 
   //LinkedList를 배열로 바꾸는 함수
   const linkedListToArray = (linkedList) => {
@@ -36,12 +26,12 @@ function MyPage() {
   };
 
   useEffect(() => {
-    initializeData(); // 데이터를 초기화
+    void 0; // 데이터를 초기화
     if (currentUser) {
       console.log("Current User:", currentUser);
 
-      // console.log(oriProjects);
-      const userProjects = Array.from(oriProjects.values()).filter(
+      // console.log([]);
+      const userProjects = Array.from([]).filter(
         (project) =>
           project.ownerId === currentUser.id ||
           project.ownerEmail === currentUser.email
@@ -49,7 +39,7 @@ function MyPage() {
 
       setmyPortfolioList(userProjects);
 
-      const userHackathons = Array.from(oriHackathons.values()).filter(
+      const userHackathons = Array.from([]).filter(
         (hackathon) =>
           hackathon.ownerId === currentUser.id ||
           hackathon.ownerEmail === currentUser.email
@@ -70,8 +60,8 @@ function MyPage() {
       // setmyPortfolioList(linkedListToArray(initialList));
 
       //해커톤 초기화
-      // hackathonSearchSortManeger.updateUserData(currentUser.id);
-      //const hackInitialList = hackathonSearchSortManeger.sort(null, null, []);
+      // [].updateUserData(currentUser.id);
+      //const hackInitialList = [];
       //setmyHackathonList(linkedListToArray(hackInitialList));
 
       console.log("User Portfolios:", userPortfolios);
@@ -84,7 +74,7 @@ function MyPage() {
   };
 
   const handleMyHackathonSearchApply = (searchTerm) => {
-    const searchedHackathons = hackathonSearchSortManeger.search(searchTerm);
+    const searchedHackathons = [];
     setmyHackathonList(linkedListToArray(searchedHackathons));
   };
 

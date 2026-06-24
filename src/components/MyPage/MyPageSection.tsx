@@ -1,11 +1,11 @@
-import MyPageSelectBox from "../MyPage/MyPageSelectBox";
+import MyPageSelectBox from "@/components/MyPage/MyPageSelectBox";
 import React from "react";
-import MyPageSearchBar from "./MyPageSearchBar";
+import MyPageSearchBar from "@/components/MyPage/MyPageSearchBar";
 
-import StyledButton from "../commmon/StyledButton";
+import StyledButton from "@/components/commmon/StyledButton";
 
 import { Navigate, useNavigate } from "react-router-dom";
-import { oriProjects, searchSortManager } from "../domain/startProgram";
+// removed domain/features import
 
 const MyPageSection = ({
   title,

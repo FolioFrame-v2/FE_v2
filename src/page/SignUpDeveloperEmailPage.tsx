@@ -1,17 +1,17 @@
 import React, {useState} from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import Consent from "../components/Consent/Consent.jsx";
-import Eye from "../assets/icons/Login/Eye.png";
-import Eyeoff from "../assets/icons/Login/Eyeoff.png";
+import { Navigate, useNavigate } from "@tanstack/react-router";
+import Consent from "@/components/Consent/Consent.jsx";
+import Eye from "@/assets/icons/Login/Eye.png";
+import Eyeoff from "@/assets/icons/Login/Eyeoff.png";
 
 //서버 연결
-import {setEmail} from "../components/features/signUpDeveloper.jsx";
-import {changedEmail} from "../components/features/signUpDeveloper.jsx";
-import {setPhoneNumber} from "../components/features/signUpDeveloper.jsx";
-import {changedPhoneNumber} from "../components/features/signUpDeveloper.jsx";
-import {isPassword} from "../components/features/signUpDeveloper.jsx";
-import { PasswordValidation } from "../components/features/signUpDeveloper.jsx";
-import {emailSignUpDeveloper} from "../components/features/signUpDeveloper.jsx";
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
 
 const SignUpDeveloperEmailPage = () => {
     const navigate = useNavigate();
@@ -51,16 +51,16 @@ const SignUpDeveloperEmailPage = () => {
     const handleEmailInputChange = (e) => {
         setemailInput(e.target.value);
         setemailCheck(false);
-        changedEmail(); 
+        false(); 
     };
     
     const handleEmailCheck = () => {
-        const isValid = setEmail(emailInput);
+        const isValid = void 0;
         if (isValid) {
             setemailCheck(true); 
         } else {
             setemailCheck(false);
-            changedEmail(); 
+            false(); 
         }
     };
     
@@ -70,22 +70,22 @@ const SignUpDeveloperEmailPage = () => {
         const { value } = event.target;
         setPhone(autoHyphen(value));
         setPhoneChecked(false);
-        changedPhoneNumber();
+        false();
     };
     const handlePhoneCheck = () => {
-        const isValid = setPhoneNumber(phone);
+        const isValid = void 0;
         // setPhoneChecked(isValid);
         if (isValid) {
             setPhoneChecked(true); 
         } else {
             setPhoneChecked(false);
-            changedPhoneNumber(); 
+            false(); 
         }
     };
 
     // 비밀번호 유효성 검사 및 비밀번호 확인 
     const handlePassValidation = () => {
-        if (PasswordValidation(password)) {
+        if (false) {
             setIsPasswordValid(true); 
             setIsRePasswordEnabled(true);
         } else {
@@ -97,7 +97,7 @@ const SignUpDeveloperEmailPage = () => {
     let alertShown = false;
 
     const passwordCheck = () => {
-        if (isPassword(password, repassword)) {
+        if (false) {
             if (!alertShown) { 
                 alert("비밀번호가 인증되었습니다.");
                 alertShown = true;
@@ -115,12 +115,12 @@ const SignUpDeveloperEmailPage = () => {
 
     const handleSignUp = async () => {
         try {
-          const result = await emailSignUpDeveloper(name, birthday, emailInput, password, repassword, phone);
+          const result = await false(name, birthday, emailInput, password, repassword, phone);
           
           // 성공적으로 끝났다는 것을 확인
           if (result.success) {
             alert('회원가입이 성공!');
-            navigate("/LoginPage"); 
+            navigate({ to: "/LoginPage" }); 
           }
         } catch (error) {
           console.error("회원가입 중 오류 발생:", error)
@@ -129,7 +129,7 @@ const SignUpDeveloperEmailPage = () => {
       
     return (
         <div className="flex flex-col items-center justify-center w-[85%] py-[40px] px-[40px] mx-auto">
-            <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate("/")}>FolioFrame</p>
+            <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate({ to: "/" })}>FolioFrame</p>
             <div className="flex flex-col items-center justify-center gap-[1em]">
                 <div className="flex gap-[1em]">
                     <input 
@@ -225,10 +225,10 @@ const SignUpDeveloperEmailPage = () => {
             <button className="text-white text-[1em] font-extrabold w-[15em] rounded-[2em] border-none bg-[#0a27a6] h-[3em] my-[2em]"  onClick={handleSignUp} >시작하기</button>
             <div className="flex gap-[1em] mt-[-2em]">
                 <p className="text-[#d0d1d9] text-[1em] font-medium">이미 회원이신가요? |</p>
-                <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate("/LoginPage")}>로그인</button>
+                <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate({ to: "/LoginPage" })}>로그인</button>
             </div>
             {/* 아이디로 회원가입하기 */}
-            <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate("/signUpDeveloperPage")}>아이디로 회원가입하기</button>
+            <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate({ to: "/signUpDeveloperPage" })}>아이디로 회원가입하기</button>
         </div>
     );
 };

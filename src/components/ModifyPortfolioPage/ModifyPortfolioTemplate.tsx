@@ -1,4 +1,4 @@
-import { templateInfo } from "../commmon/dummydata/templateInfo.jsx";
+import { templateInfo } from "@/components/commmon/dummydata/templateInfo.jsx";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -7,7 +7,7 @@ import 'swiper/css/autoplay';
 import 'swiper/css/scrollbar';
 import React, { useState } from 'react';
 import { Navigation, Pagination, A11y, Autoplay, Scrollbar } from 'swiper/modules';
-import Logo from "../../assets/icons/Logo.png";
+import Logo from "@/assets/icons/Logo.png";
 
 const ModifyPortfolioTemplate = ({ templates, setProjectTemplate  }) => {
     const [activeTemplateId, setActiveTemplateId] = useState(null); 

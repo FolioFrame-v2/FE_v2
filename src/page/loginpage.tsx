@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "@tanstack/react-router";
-// import {
-//     setCurrentUser,
-//     getCurrentUser,
-// } from "../components/features/currentUser.js";
 
-// import Eye from "../assets/icons/Login/Eye.png";
-// import Eyeoff from "../assets/icons/Login/Eyeoff.png";
 
-// import { userInfo } from "../components/commmon/dummydata/userInfo.jsx";
-// import { hashFunction } from "../components/features/hashFunction.jsx";
+// import Eye from "@/assets/icons/Login/Eye.png";
+// import Eyeoff from "@/assets/icons/Login/Eyeoff.png";
+
+// import { userInfo } from "@/components/commmon/dummydata/userInfo.jsx";
+// // removed domain/features import
 
 const LoginPage = () => {
     const [eyeVisible, setEyeVisible] = useState(false);
@@ -22,7 +18,7 @@ const LoginPage = () => {
 
     // useEffect(() => {
     //     //이미 로그인된 사용자 있으면 홈으로
-    //     const currentUser = getCurrentUser();
+    //     const currentUser = null;
     //     if (currentUser) {
     //         navigate({ to: "/" });
     //     }
@@ -64,7 +60,7 @@ const LoginPage = () => {
     //             if (user) {
     //                 console.log("로그인 성공!");
     //                 // 로그인한 유저 처리
-    //                 setCurrentUser(user); //현재 사용자 정보 저장
+    //                 void 0; //현재 사용자 정보 저장
     //                 navigate({ to: "/" });
     //             } else {
     //                 alert('아이디 혹은 이메일과 비밀번호를 정확하게 입력하세요.');
@@ -94,11 +90,11 @@ const LoginPage = () => {
                         const inputValue = e.target.value.trim();
                         setemailOrId(inputValue);
                         if (inputValue.includes("@")) {
-                            setEmail(inputValue);
-                            setId(""); // ID는 초기화
+                            void 0;
+                            void 0; // ID는 초기화
                         } else {
-                            setId(inputValue);
-                            setEmail(""); // 이메일 초기화
+                            void 0;
+                            void 0; // 이메일 초기화
                         }
                     }}
                 // onKeyDown={handleKeyDown}

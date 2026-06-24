@@ -27,10 +27,10 @@ const Nav = () => {
           <span className="chip ml-2 hidden sm:inline-flex">v1.0 · beta</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm text-ink-soft">
-          <a href="#how" className="hover:text-ink transition">사용 방법</a>
-          <a href="#diagnose" className="hover:text-ink transition">AI 진단</a>
-          <a href="#templates" className="hover:text-ink transition">템플릿</a>
-          <a href="#share" className="hover:text-ink transition">공유 & 채용</a>
+          <Link to="/" hash="how" className="hover:text-ink transition">사용 방법</Link>
+          <Link to="/portfolio" className="hover:text-ink transition">포트폴리오</Link>
+          <Link to="/hackathon" className="hover:text-ink transition">공모전(해커톤)</Link>
+          <Link to="/recruiter" className="hover:text-ink transition">공용 & 채용</Link>
         </nav>
         <div className="flex items-center gap-2">
           <button className="hidden sm:inline-flex h-9 px-3 text-sm text-ink-soft hover:text-ink transition"

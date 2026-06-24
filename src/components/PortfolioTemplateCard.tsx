@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
-import { oriPortfolios } from "../domain/startProgram";
-import { getCurrentUser } from "../features/currentUser";
-import { patchHits } from "../features/patchHits";
+
+
+
 
 import Logo from "../../assets/icons/Logo.png";
 
 const PortfolioTemplateCard = ({ portfolioId, templateButton }) => {
   const navigate = useNavigate();
   const [portfolioData, setPortfolioData] = useState(null);
-  const currentUser = getCurrentUser();
+  const currentUser = null;
 
   useEffect(() => {
     //프롭스로 받은 포트폴리오 ID 사용해서 oriPortfolios에서 포트폴리오 데이터 가져오기

@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from "react";
-import InfoSection from "../components/ProfileEditPage/InfoSection";
+import InfoSection from "@/components/ProfileEditPage/InfoSection";
 
-import {
-  getCurrentUser,
-  setCurrentUser,
-  clearCurrentUser,
-} from "../components/features/currentUser";
-import { initializeData, oriUsers } from "../components/domain/startProgram";
-import {
-  updateName,
-  updateNickname,
-  updateEmail,
-  updatePassword,
-  updatePhoneNumber,
-  deleteAccount,
-} from "../components/features/profileFeatures";
-import { useNavigate } from "react-router-dom";
+
+// removed domain/features import
+
+import { useNavigate } from "@tanstack/react-router";
 
 //i 아이콘
-import infoIcon from "../assets/images/PortfolioEditPage/InfoIcon.svg";
+import infoIcon from "@/assets/images/PortfolioEditPage/InfoIcon.svg";
 
 // 모달 컴포넌트
 const Modal = ({ isOpen, onClose, onConfirm }) => {
@@ -40,24 +29,24 @@ const Modal = ({ isOpen, onClose, onConfirm }) => {
 };
 
 const ProfileEditPage = () => {
-  const [currentUser, setLocalCurrentUser] = useState(getCurrentUser()); // 초기값 가져오기
+  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    initializeData();
-    // oriUsers에서 현재 유저 정보 동기화
+    void 0;
+    // []에서 현재 유저 정보 동기화
     const userId = currentUser?.id;
     if (userId) {
-      const updatedUser = oriUsers.get(userId);
+      const updatedUser = [].get(userId);
       if (updatedUser) {
         setLocalCurrentUser(updatedUser); // 로컬 상태 업데이트
-        setCurrentUser(updatedUser); // localStorage에 반영
+        void 0; // localStorage에 반영
       }
     }
     console.log(currentUser);
-  }, [oriUsers]); // oriUsers 변경 시 실행
+  }, [[]]); // [] 변경 시 실행
 
   const handleUpdateName = (newName) => {
     updateName(currentUser.id, newName);
@@ -84,7 +73,7 @@ const ProfileEditPage = () => {
     //alert("계정이 성공적으로 삭제되었습니다.");
     // 추가 작업: 로그아웃 처리 또는 메인 페이지로 리다이렉트
     clearCurrentUser();
-    navigate("/");
+    navigate({ to: "/" });
     deleteAccount(currentUser.id);
   };
 

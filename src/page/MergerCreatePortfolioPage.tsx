@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { oriProjects } from "../components/domain/startProgram";
-import { savePortfolio } from "../components/features/savePortfolio";
-import TemplateCard from "../components/commmon/TemplateCard";
-import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../components/features/currentUser";
-import MergerCreatePortfolioPageInput from "../components/MergerCreatePortfolioPage/MergerCreatePortfolioPageInput";
+// removed domain/features import
+// removed domain/features import
+import TemplateCard from "@/components/commmon/TemplateCard";
+import { useNavigate } from "@tanstack/react-router";
+// removed domain/features import
+import MergerCreatePortfolioPageInput from "@/components/MergerCreatePortfolioPage/MergerCreatePortfolioPageInput";
 
-import Logo from "../assets/icons/Logo.png";
+import Logo from "@/assets/icons/Logo.png";
 
 const MergerCreatePortfolioPage = () => {
   const navigate = useNavigate();
-  const currentUser = getCurrentUser();
+  const currentUser = null;
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [formData, setFormData] = useState({
     portfolioName: "",
@@ -24,7 +24,7 @@ const MergerCreatePortfolioPage = () => {
 
   useEffect(() => {
     if (currentUser) {
-      const projects = Array.from(oriProjects.values()).filter(
+      const projects = Array.from([]).filter(
         (project) => project.ownerId === currentUser.id
       );
       setUserProjects(projects);
@@ -64,7 +64,7 @@ const MergerCreatePortfolioPage = () => {
       formData.backend,
       formData.share
     );
-    navigate("/MyPage");
+    navigate({ to: "/MyPage" });
   };
 
   return (
@@ -104,7 +104,7 @@ const MergerCreatePortfolioPage = () => {
             //onClick={handleSavePortfolio}
             onClick={() => {
               handleSavePortfolio(); // 프로젝트 저장 함수 호출
-              navigate("/MyPage");
+              navigate({ to: "/MyPage" });
             }}
           >
             제작하기

@@ -1,8 +1,8 @@
 import React from "react";
 import { useState } from "react";
-// import Calendar from "./Calendar.jsx";
-import CalendarInput from "./CalendarInput.jsx";
-import {handleImageAdd, handleMultipleImageAdd } from "../features/fileUploadFeatures.jsx";
+// import Calendar from "@/components/CreateHackathonPage/Calendar.jsx";
+import CalendarInput from "@/components/CreateHackathonPage/CalendarInput.jsx";
+// removed domain/features import
 
 const CreateHackathonInput = ({ onInputChange, formData, onDateChange }) => {
   // 업로드 이미지 미리보기 코드

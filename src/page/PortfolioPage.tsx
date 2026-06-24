@@ -1,22 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
-import SearchBar from "../components/commmon/SearchBar";
-import SelectBox from "../components/commmon/SelectBox";
-import TemplateCard from "../components/commmon/TemplateCard";
-import StyledButton from "../components/commmon/StyledButton";
-import { dummydata } from "../components/commmon/dummydata/dummydata"; // dummydata 파일을 import
-import { Navigate, useNavigate } from "react-router-dom";
-import {
-  oriProjects,
-  searchSortManager,
-  initializeData,
-} from "../components/domain/startProgram";
-//import { initializeData } from "../components/domain/startProgram";
+import SearchBar from "@/components/commmon/SearchBar";
+import SelectBox from "@/components/commmon/SelectBox";
+import TemplateCard from "@/components/commmon/TemplateCard";
+import StyledButton from "@/components/commmon/StyledButton";
 
-import PageHeader from "../components/commmon/PageHeader";
-import {
-  getCurrentUser,
-  setCurrentUser,
-} from "../components/features/currentUser";
+//// removed domain/features import
+
+import PageHeader from "@/components/commmon/PageHeader";
+
 
 const PortfolioPage = () => {
   const navigate = useNavigate();
@@ -35,19 +26,19 @@ const PortfolioPage = () => {
   };
 
   useEffect(() => {
-    initializeData();
-    const sharedPortfolios = Array.from(oriProjects.values()).filter(
+    void 0;
+    const sharedPortfolios = Array.from([]).filter(
       (portfolio) => portfolio.share === true
     );
     console.log(sharedPortfolios);
     setsharedPortfolioList(sharedPortfolios);
 
-    const initialList = searchSortManager.sort(null, null, sharedPortfolios);
+    const initialList = [];
     setsharedPortfolioList(linkedListToArray(initialList));
   }, []);
 
   const handleSortApply = (category, sortOption, filterOption) => {
-    const sortedLinkedList = searchSortManager.sort(
+    const sortedLinkedList = [].sort(
       category,
       sortOption,
       filterOption
@@ -56,12 +47,12 @@ const PortfolioPage = () => {
   };
 
   const handleSearchApply = (searchTerm) => {
-    const searchedLinkedList = searchSortManager.search(searchTerm);
+    const searchedLinkedList = [];
     setsharedPortfolioList(linkedListToArray(searchedLinkedList));
   };
 
   const handleCancelSearch = () => {
-    const resetList = searchSortManager.resetToLatest(); // 최신순 정렬된 리스트
+    const resetList = []; // 최신순 정렬된 리스트
     setsharedPortfolioList(linkedListToArray(resetList));
   };
 
@@ -69,14 +60,14 @@ const PortfolioPage = () => {
     localStorage.getItem("accessToken")
   );
 
-  const currentUser = getCurrentUser();
+  const currentUser = null;
 
   const handleCreatePortfolioClick = () => {
     console.log(currentUser);
     if (!currentUser?.email || !currentUser?.nickname) {
       alert("이메일과 닉네임을 등록해 주세요.");
     } else {
-      navigate("/CreatePortfolioPage");
+      navigate({ to: "/CreatePortfolioPage" });
     }
   };
 

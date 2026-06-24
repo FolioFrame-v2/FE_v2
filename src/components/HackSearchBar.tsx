@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { HackdataList } from "../features/dataList"; // dataList를 import 할 경로 지정
-// import { searchSortManager } from "../domain/startProgram";
+ // dataList를 import 할 경로 지정
+// 
 
 import searchImg from "../../assets/icons/Header/search.png";
 import { ImCancelCircle } from "react-icons/im";

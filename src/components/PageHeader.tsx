@@ -1,6 +1,6 @@
 import React from "react";
 import Logo from "../../assets/icons/Logo.png";
-import SearchBar from "./SearchBar";
+import SearchBar from "@/components/SearchBar";
 
 const PageHeader = ({ pageTitle, large, onSearch, onCancelSearch }) => {
   return (

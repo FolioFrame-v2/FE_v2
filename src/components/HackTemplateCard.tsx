@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
-import { oriHackathons } from "../domain/startProgram";
-import { getCurrentUser } from "../features/currentUser";
-import { patchHackHits } from "../features/patchHackHits";
+
+
+
 
 import Logo from "../../assets/icons/Logo.png";
 
 const HackTemplateCard = ({ hackId, templateButton }) => {
   const navigate = useNavigate();
   const [hackData, setHackData] = useState(null);
-  const currentUser = getCurrentUser(); // 현재 사용자 정보 가져오기
+  const currentUser = null; // 현재 사용자 정보 가져오기
 
   useEffect(() => {
     // 해커톤 정보를 hackId로 가져옴
-    const hackathon = oriHackathons.get(hackId);
+    const hackathon = [].get(hackId);
     if (hackathon) {
       setHackData(hackathon);
     }

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import arrow from "../../assets/icons/SelectBox/arrow.png";
-import StyledButton from "./StyledButton";
+import StyledButton from "@/components/StyledButton";
 
 const categories = ["프론트엔드", "백엔드", "디자인"];
 const sortOptions = ["인기순", "댓글순"];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Calendar from "./Calendar.jsx";
+import Calendar from "@/components/ModifyHackathonPage/Calendar.jsx";
 // import { useDispatch } from 'react-redux';
 
 const ModifyHackthonCalendarInput = ({ startDate, endDate, onDateChange }) => {

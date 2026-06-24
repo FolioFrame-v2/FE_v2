@@ -1,6 +1,6 @@
 import React from "react";
 import Logo from "../../assets/icons/Logo.png";
-import HackSearchBar from "./HackSearchBar";
+import HackSearchBar from "@/components/HackSearchBar";
 
 const PageHeader = ({ pageTitle, large, onSearch, onCancelSearch }) => {
   return (

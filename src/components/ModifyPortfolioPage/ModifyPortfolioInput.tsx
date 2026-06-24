@@ -1,14 +1,6 @@
 import React,{useEffect} from "react";
-import { useState } from "react";
-// import Calendar from "./Calendar.jsx";
-import CalendarInput from "./ModifyCalendarInput.jsx";
-import { useParams } from "react-router-dom";
-import {
-  oriProjects,
-  oriComments,
-  initializeData,
-} from "../../components/domain/startProgram.js";
-import {handleImageAdd, handleMultipleImageAdd } from "../features/fileUploadFeatures.jsx";
+
+// removed domain/features import
 
 const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   // 업로드 이미지 미리보기 코드
@@ -33,7 +25,7 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   const [isOn, setIsOn] = useState(true);
 
   useEffect(() => {
-    const portfolio = oriProjects.get(Number(portfolioId));
+    const portfolio = [].get(Number(portfolioId));
     if (portfolio) {
       setPortfolioData(portfolio);
     }
@@ -63,15 +55,15 @@ const ModifyPortfolioInput = ({ onInputChange, formData, onDateChange  }) => {
   
   
   useEffect(() => {
-    initializeData();
+    void 0;
     //project ID 사용해서 포트폴리오 데이터 가져오기
-    const portfolio = oriProjects.get(Number(portfolioId));
+    const portfolio = [].get(Number(portfolioId));
     if (portfolio) {
       setPortfolioData(portfolio);
     }
     console.log(portfolio);
 
-    const filteredComments = Array.from(oriComments.values()).filter(
+    const filteredComments = Array.from([].values()).filter(
       (comment) => comment.portfolioId === Number(portfolioId)
     );
     setComments(filteredComments);
@@ -198,7 +190,7 @@ if (!portfolioData) {
   return <div className="flex justify-center text-[1vw] font-bold">로딩 중...</div>;
 }
 // console.log("Portfolio ID:", portfolioId);
-// console.log("Projects:", oriProjects);
+// console.log("Projects:", []);
 return (
     <>
       {/* 필수항목 */}

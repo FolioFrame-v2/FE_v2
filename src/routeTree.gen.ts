@@ -9,12 +9,132 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignuprecruiteremailRouteImport } from './routes/signuprecruiteremail'
+import { Route as SignuprecruiterRouteImport } from './routes/signuprecruiter'
+import { Route as SignupdeveloperemailRouteImport } from './routes/signupdeveloperemail'
+import { Route as SignupdeveloperRouteImport } from './routes/signupdeveloper'
+import { Route as RecruiterRouteImport } from './routes/recruiter'
+import { Route as ProfileeditRouteImport } from './routes/profileedit'
+import { Route as Portfoliodetailpage3RouteImport } from './routes/portfoliodetailpage3'
+import { Route as Portfoliodetailpage2RouteImport } from './routes/portfoliodetailpage2'
+import { Route as PortfoliodetailRouteImport } from './routes/portfoliodetail'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as MyprojectsRouteImport } from './routes/myprojects'
+import { Route as MyRouteImport } from './routes/my'
+import { Route as ModifyportfolioRouteImport } from './routes/modifyportfolio'
+import { Route as ModifyhackathonRouteImport } from './routes/modifyhackathon'
+import { Route as MergercreateportfolioRouteImport } from './routes/mergercreateportfolio'
+import { Route as MemberselectionRouteImport } from './routes/memberselection'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HackathondetailRouteImport } from './routes/hackathondetail'
+import { Route as HackathonRouteImport } from './routes/hackathon'
+import { Route as CreateportfolioRouteImport } from './routes/createportfolio'
+import { Route as CreatehackathonRouteImport } from './routes/createhackathon'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SignuprecruiteremailRoute = SignuprecruiteremailRouteImport.update({
+  id: '/signuprecruiteremail',
+  path: '/signuprecruiteremail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignuprecruiterRoute = SignuprecruiterRouteImport.update({
+  id: '/signuprecruiter',
+  path: '/signuprecruiter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupdeveloperemailRoute = SignupdeveloperemailRouteImport.update({
+  id: '/signupdeveloperemail',
+  path: '/signupdeveloperemail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupdeveloperRoute = SignupdeveloperRouteImport.update({
+  id: '/signupdeveloper',
+  path: '/signupdeveloper',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecruiterRoute = RecruiterRouteImport.update({
+  id: '/recruiter',
+  path: '/recruiter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileeditRoute = ProfileeditRouteImport.update({
+  id: '/profileedit',
+  path: '/profileedit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Portfoliodetailpage3Route = Portfoliodetailpage3RouteImport.update({
+  id: '/portfoliodetailpage3',
+  path: '/portfoliodetailpage3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Portfoliodetailpage2Route = Portfoliodetailpage2RouteImport.update({
+  id: '/portfoliodetailpage2',
+  path: '/portfoliodetailpage2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfoliodetailRoute = PortfoliodetailRouteImport.update({
+  id: '/portfoliodetail',
+  path: '/portfoliodetail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyprojectsRoute = MyprojectsRouteImport.update({
+  id: '/myprojects',
+  path: '/myprojects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyRoute = MyRouteImport.update({
+  id: '/my',
+  path: '/my',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModifyportfolioRoute = ModifyportfolioRouteImport.update({
+  id: '/modifyportfolio',
+  path: '/modifyportfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModifyhackathonRoute = ModifyhackathonRouteImport.update({
+  id: '/modifyhackathon',
+  path: '/modifyhackathon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MergercreateportfolioRoute = MergercreateportfolioRouteImport.update({
+  id: '/mergercreateportfolio',
+  path: '/mergercreateportfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemberselectionRoute = MemberselectionRouteImport.update({
+  id: '/memberselection',
+  path: '/memberselection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HackathondetailRoute = HackathondetailRouteImport.update({
+  id: '/hackathondetail',
+  path: '/hackathondetail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HackathonRoute = HackathonRouteImport.update({
+  id: '/hackathon',
+  path: '/hackathon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateportfolioRoute = CreateportfolioRouteImport.update({
+  id: '/createportfolio',
+  path: '/createportfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreatehackathonRoute = CreatehackathonRouteImport.update({
+  id: '/createhackathon',
+  path: '/createhackathon',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +145,324 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/createhackathon': typeof CreatehackathonRoute
+  '/createportfolio': typeof CreateportfolioRoute
+  '/hackathon': typeof HackathonRoute
+  '/hackathondetail': typeof HackathondetailRoute
   '/login': typeof LoginRoute
+  '/memberselection': typeof MemberselectionRoute
+  '/mergercreateportfolio': typeof MergercreateportfolioRoute
+  '/modifyhackathon': typeof ModifyhackathonRoute
+  '/modifyportfolio': typeof ModifyportfolioRoute
+  '/my': typeof MyRoute
+  '/myprojects': typeof MyprojectsRoute
+  '/portfolio': typeof PortfolioRoute
+  '/portfoliodetail': typeof PortfoliodetailRoute
+  '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
+  '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
+  '/profileedit': typeof ProfileeditRoute
+  '/recruiter': typeof RecruiterRoute
+  '/signupdeveloper': typeof SignupdeveloperRoute
+  '/signupdeveloperemail': typeof SignupdeveloperemailRoute
+  '/signuprecruiter': typeof SignuprecruiterRoute
+  '/signuprecruiteremail': typeof SignuprecruiteremailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/createhackathon': typeof CreatehackathonRoute
+  '/createportfolio': typeof CreateportfolioRoute
+  '/hackathon': typeof HackathonRoute
+  '/hackathondetail': typeof HackathondetailRoute
   '/login': typeof LoginRoute
+  '/memberselection': typeof MemberselectionRoute
+  '/mergercreateportfolio': typeof MergercreateportfolioRoute
+  '/modifyhackathon': typeof ModifyhackathonRoute
+  '/modifyportfolio': typeof ModifyportfolioRoute
+  '/my': typeof MyRoute
+  '/myprojects': typeof MyprojectsRoute
+  '/portfolio': typeof PortfolioRoute
+  '/portfoliodetail': typeof PortfoliodetailRoute
+  '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
+  '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
+  '/profileedit': typeof ProfileeditRoute
+  '/recruiter': typeof RecruiterRoute
+  '/signupdeveloper': typeof SignupdeveloperRoute
+  '/signupdeveloperemail': typeof SignupdeveloperemailRoute
+  '/signuprecruiter': typeof SignuprecruiterRoute
+  '/signuprecruiteremail': typeof SignuprecruiteremailRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/createhackathon': typeof CreatehackathonRoute
+  '/createportfolio': typeof CreateportfolioRoute
+  '/hackathon': typeof HackathonRoute
+  '/hackathondetail': typeof HackathondetailRoute
   '/login': typeof LoginRoute
+  '/memberselection': typeof MemberselectionRoute
+  '/mergercreateportfolio': typeof MergercreateportfolioRoute
+  '/modifyhackathon': typeof ModifyhackathonRoute
+  '/modifyportfolio': typeof ModifyportfolioRoute
+  '/my': typeof MyRoute
+  '/myprojects': typeof MyprojectsRoute
+  '/portfolio': typeof PortfolioRoute
+  '/portfoliodetail': typeof PortfoliodetailRoute
+  '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
+  '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
+  '/profileedit': typeof ProfileeditRoute
+  '/recruiter': typeof RecruiterRoute
+  '/signupdeveloper': typeof SignupdeveloperRoute
+  '/signupdeveloperemail': typeof SignupdeveloperemailRoute
+  '/signuprecruiter': typeof SignuprecruiterRoute
+  '/signuprecruiteremail': typeof SignuprecruiteremailRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/createhackathon'
+    | '/createportfolio'
+    | '/hackathon'
+    | '/hackathondetail'
+    | '/login'
+    | '/memberselection'
+    | '/mergercreateportfolio'
+    | '/modifyhackathon'
+    | '/modifyportfolio'
+    | '/my'
+    | '/myprojects'
+    | '/portfolio'
+    | '/portfoliodetail'
+    | '/portfoliodetailpage2'
+    | '/portfoliodetailpage3'
+    | '/profileedit'
+    | '/recruiter'
+    | '/signupdeveloper'
+    | '/signupdeveloperemail'
+    | '/signuprecruiter'
+    | '/signuprecruiteremail'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login'
+  to:
+    | '/'
+    | '/createhackathon'
+    | '/createportfolio'
+    | '/hackathon'
+    | '/hackathondetail'
+    | '/login'
+    | '/memberselection'
+    | '/mergercreateportfolio'
+    | '/modifyhackathon'
+    | '/modifyportfolio'
+    | '/my'
+    | '/myprojects'
+    | '/portfolio'
+    | '/portfoliodetail'
+    | '/portfoliodetailpage2'
+    | '/portfoliodetailpage3'
+    | '/profileedit'
+    | '/recruiter'
+    | '/signupdeveloper'
+    | '/signupdeveloperemail'
+    | '/signuprecruiter'
+    | '/signuprecruiteremail'
+  id:
+    | '__root__'
+    | '/'
+    | '/createhackathon'
+    | '/createportfolio'
+    | '/hackathon'
+    | '/hackathondetail'
+    | '/login'
+    | '/memberselection'
+    | '/mergercreateportfolio'
+    | '/modifyhackathon'
+    | '/modifyportfolio'
+    | '/my'
+    | '/myprojects'
+    | '/portfolio'
+    | '/portfoliodetail'
+    | '/portfoliodetailpage2'
+    | '/portfoliodetailpage3'
+    | '/profileedit'
+    | '/recruiter'
+    | '/signupdeveloper'
+    | '/signupdeveloperemail'
+    | '/signuprecruiter'
+    | '/signuprecruiteremail'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CreatehackathonRoute: typeof CreatehackathonRoute
+  CreateportfolioRoute: typeof CreateportfolioRoute
+  HackathonRoute: typeof HackathonRoute
+  HackathondetailRoute: typeof HackathondetailRoute
   LoginRoute: typeof LoginRoute
+  MemberselectionRoute: typeof MemberselectionRoute
+  MergercreateportfolioRoute: typeof MergercreateportfolioRoute
+  ModifyhackathonRoute: typeof ModifyhackathonRoute
+  ModifyportfolioRoute: typeof ModifyportfolioRoute
+  MyRoute: typeof MyRoute
+  MyprojectsRoute: typeof MyprojectsRoute
+  PortfolioRoute: typeof PortfolioRoute
+  PortfoliodetailRoute: typeof PortfoliodetailRoute
+  Portfoliodetailpage2Route: typeof Portfoliodetailpage2Route
+  Portfoliodetailpage3Route: typeof Portfoliodetailpage3Route
+  ProfileeditRoute: typeof ProfileeditRoute
+  RecruiterRoute: typeof RecruiterRoute
+  SignupdeveloperRoute: typeof SignupdeveloperRoute
+  SignupdeveloperemailRoute: typeof SignupdeveloperemailRoute
+  SignuprecruiterRoute: typeof SignuprecruiterRoute
+  SignuprecruiteremailRoute: typeof SignuprecruiteremailRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signuprecruiteremail': {
+      id: '/signuprecruiteremail'
+      path: '/signuprecruiteremail'
+      fullPath: '/signuprecruiteremail'
+      preLoaderRoute: typeof SignuprecruiteremailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signuprecruiter': {
+      id: '/signuprecruiter'
+      path: '/signuprecruiter'
+      fullPath: '/signuprecruiter'
+      preLoaderRoute: typeof SignuprecruiterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signupdeveloperemail': {
+      id: '/signupdeveloperemail'
+      path: '/signupdeveloperemail'
+      fullPath: '/signupdeveloperemail'
+      preLoaderRoute: typeof SignupdeveloperemailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signupdeveloper': {
+      id: '/signupdeveloper'
+      path: '/signupdeveloper'
+      fullPath: '/signupdeveloper'
+      preLoaderRoute: typeof SignupdeveloperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiter': {
+      id: '/recruiter'
+      path: '/recruiter'
+      fullPath: '/recruiter'
+      preLoaderRoute: typeof RecruiterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profileedit': {
+      id: '/profileedit'
+      path: '/profileedit'
+      fullPath: '/profileedit'
+      preLoaderRoute: typeof ProfileeditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfoliodetailpage3': {
+      id: '/portfoliodetailpage3'
+      path: '/portfoliodetailpage3'
+      fullPath: '/portfoliodetailpage3'
+      preLoaderRoute: typeof Portfoliodetailpage3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfoliodetailpage2': {
+      id: '/portfoliodetailpage2'
+      path: '/portfoliodetailpage2'
+      fullPath: '/portfoliodetailpage2'
+      preLoaderRoute: typeof Portfoliodetailpage2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfoliodetail': {
+      id: '/portfoliodetail'
+      path: '/portfoliodetail'
+      fullPath: '/portfoliodetail'
+      preLoaderRoute: typeof PortfoliodetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/myprojects': {
+      id: '/myprojects'
+      path: '/myprojects'
+      fullPath: '/myprojects'
+      preLoaderRoute: typeof MyprojectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my': {
+      id: '/my'
+      path: '/my'
+      fullPath: '/my'
+      preLoaderRoute: typeof MyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modifyportfolio': {
+      id: '/modifyportfolio'
+      path: '/modifyportfolio'
+      fullPath: '/modifyportfolio'
+      preLoaderRoute: typeof ModifyportfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modifyhackathon': {
+      id: '/modifyhackathon'
+      path: '/modifyhackathon'
+      fullPath: '/modifyhackathon'
+      preLoaderRoute: typeof ModifyhackathonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mergercreateportfolio': {
+      id: '/mergercreateportfolio'
+      path: '/mergercreateportfolio'
+      fullPath: '/mergercreateportfolio'
+      preLoaderRoute: typeof MergercreateportfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/memberselection': {
+      id: '/memberselection'
+      path: '/memberselection'
+      fullPath: '/memberselection'
+      preLoaderRoute: typeof MemberselectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hackathondetail': {
+      id: '/hackathondetail'
+      path: '/hackathondetail'
+      fullPath: '/hackathondetail'
+      preLoaderRoute: typeof HackathondetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hackathon': {
+      id: '/hackathon'
+      path: '/hackathon'
+      fullPath: '/hackathon'
+      preLoaderRoute: typeof HackathonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/createportfolio': {
+      id: '/createportfolio'
+      path: '/createportfolio'
+      fullPath: '/createportfolio'
+      preLoaderRoute: typeof CreateportfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/createhackathon': {
+      id: '/createhackathon'
+      path: '/createhackathon'
+      fullPath: '/createhackathon'
+      preLoaderRoute: typeof CreatehackathonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,7 +477,27 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CreatehackathonRoute: CreatehackathonRoute,
+  CreateportfolioRoute: CreateportfolioRoute,
+  HackathonRoute: HackathonRoute,
+  HackathondetailRoute: HackathondetailRoute,
   LoginRoute: LoginRoute,
+  MemberselectionRoute: MemberselectionRoute,
+  MergercreateportfolioRoute: MergercreateportfolioRoute,
+  ModifyhackathonRoute: ModifyhackathonRoute,
+  ModifyportfolioRoute: ModifyportfolioRoute,
+  MyRoute: MyRoute,
+  MyprojectsRoute: MyprojectsRoute,
+  PortfolioRoute: PortfolioRoute,
+  PortfoliodetailRoute: PortfoliodetailRoute,
+  Portfoliodetailpage2Route: Portfoliodetailpage2Route,
+  Portfoliodetailpage3Route: Portfoliodetailpage3Route,
+  ProfileeditRoute: ProfileeditRoute,
+  RecruiterRoute: RecruiterRoute,
+  SignupdeveloperRoute: SignupdeveloperRoute,
+  SignupdeveloperemailRoute: SignupdeveloperemailRoute,
+  SignuprecruiterRoute: SignuprecruiterRoute,
+  SignuprecruiteremailRoute: SignuprecruiteremailRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

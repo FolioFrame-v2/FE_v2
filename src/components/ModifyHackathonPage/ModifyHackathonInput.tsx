@@ -1,14 +1,6 @@
 import React,{useEffect} from "react";
-import { useState } from "react";
-// import Calendar from "./Calendar.jsx";
-import CalendarInput from "./ModifyCalendarInput.jsx";
-import { useParams } from "react-router-dom";
-import {
-  oriHackathons,
-  oriComments,
-  initializeData,
-} from "../domain/startProgram.js";
-import {handleImageAdd, handleMultipleImageAdd } from "../features/fileUploadFeatures.jsx";
+
+// removed domain/features import
 
 const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
   // 업로드 이미지 미리보기 코드
@@ -32,7 +24,7 @@ const ModifyHackathonInput = ({ onInputChange, formData, onDateChange }) => {
 
   // 해커톤 데이터 로드
   useEffect(() => {
-    const Hackathon = oriHackathons.get(Number(hackId)); // 로컬 또는 서버에서 데이터를 가져옴
+    const Hackathon = [].get(Number(hackId)); // 로컬 또는 서버에서 데이터를 가져옴
     if (Hackathon) {
       setHackathonData(Hackathon);
     }

@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "./ui/nav.tsx";
-import Footer from "./ui/footer.tsx";
+import Header from "@/components/ui/nav.tsx";
+import Footer from "@/components/ui/footer.tsx";
 
 const LayOut = () => {
   return (

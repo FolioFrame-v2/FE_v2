@@ -1,11 +1,11 @@
-import SelectBox from "../commmon/SelectBox";
+import SelectBox from "@/components/commmon/SelectBox";
 import React from "react";
-import RecruiterPageSearchBar from "./RecruiterPageSearchBar";
+import RecruiterPageSearchBar from "@/components/RecruiterPage/RecruiterPageSearchBar";
 
-import StyledButton from "../commmon/StyledButton";
+import StyledButton from "@/components/commmon/StyledButton";
 
 import { Navigate, useNavigate } from "react-router-dom";
-import { oriProjects, searchSortManager } from "../domain/startProgram";
+// removed domain/features import
 
 const RecruiterSection = ({
   title,

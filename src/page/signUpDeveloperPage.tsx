@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import Consent from "../components/Consent/Consent.jsx";
-import Eye from "../assets/icons/Login/Eye.png";
-import Eyeoff from "../assets/icons/Login/Eyeoff.png";
+import { Navigate, useNavigate } from "@tanstack/react-router";
+import Consent from "@/components/Consent/Consent.jsx";
+import Eye from "@/assets/icons/Login/Eye.png";
+import Eyeoff from "@/assets/icons/Login/Eyeoff.png";
 
 //서버 연결
-import { setId } from "../components/features/signUpDeveloper.jsx";
-import { changedId } from "../components/features/signUpDeveloper.jsx";
-import { setPhoneNumber } from "../components/features/signUpDeveloper.jsx";
-import { changedPhoneNumber } from "../components/features/signUpDeveloper.jsx";
-import { isPassword } from "../components/features/signUpDeveloper.jsx";
-import { PasswordValidation } from "../components/features/signUpDeveloper.jsx";
-import { idSignUpDeveloper } from "../components/features/signUpDeveloper.jsx";
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
+// removed domain/features import
 
 const signUpDeveloperPage = () => {
   const navigate = useNavigate();
@@ -50,16 +50,16 @@ const signUpDeveloperPage = () => {
   const handleIdInputChange = (e) => {
     setIdInput(e.target.value);
     setIdChecked(false);
-    changedId();
+    false();
   };
 
   const handleIdCheck = () => {
-    const isValid = setId(idInput);
+    const isValid = void 0;
     if (isValid) {
       setIdChecked(true);
     } else {
       setIdChecked(false);
-      changedId();
+      false();
     }
   };
 
@@ -68,24 +68,24 @@ const signUpDeveloperPage = () => {
     const { value } = event.target;
     setPhone(autoHyphen(value));
     setPhoneChecked(false);
-    changedPhoneNumber();
+    false();
    };
   const handlePhoneCheck = () => {
     console.log("입력된 전화번호:", phone);
-    const isValid = setPhoneNumber(phone);
+    const isValid = void 0;
     // setPhoneChecked(isValid);
     if (isValid) {
       setPhoneChecked(true);
     } else {
       setPhoneChecked(false);
-      changedPhoneNumber();
+      false();
     }
   };
 
 
   // 비밀번호 유효성 검사 및 비밀번호 확인
   const handlePassValidation = () => {
-    if (PasswordValidation(password)) {
+    if (false) {
       setIsPasswordValid(true);
       setIsRePasswordEnabled(true);
     } else {
@@ -97,7 +97,7 @@ const signUpDeveloperPage = () => {
   let alertShown = false;
 
   const passwordCheck = () => {
-      if (isPassword(password, repassword)) {
+      if (false) {
           if (!alertShown) { 
               alert("비밀번호가 인증되었습니다.");
               alertShown = true;
@@ -114,12 +114,12 @@ const signUpDeveloperPage = () => {
 
   const handleSignUp = async () => {
     try {
-      const result =  await idSignUpDeveloper(name, birthday, idInput, password, repassword, phone); 
+      const result =  await false(name, birthday, idInput, password, repassword, phone); 
 
       // 성공적으로 끝났다는 것을 확인
       if (result.success) {
         alert('회원가입이 성공!');
-        navigate("/LoginPage"); 
+        navigate({ to: "/LoginPage" }); 
       }
     } catch (error) {
       console.error("회원가입 중 오류 발생:", error)
@@ -128,7 +128,7 @@ const signUpDeveloperPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-[85%] py-[40px] px-[40px] mx-auto">
-      <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate("/")}>FolioFrame</p>
+      <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate({ to: "/" })}>FolioFrame</p>
       <div className="flex flex-col items-center justify-center gap-[1em]">
         <div className="flex gap-[1em]">
           <input
@@ -232,7 +232,7 @@ const signUpDeveloperPage = () => {
         <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent">로그인</button>
       </div>
       {/* 이메일로 회원가입 이동 버튼 */}
-      <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate("/SignUpDeveloperEmailPage")}>
+      <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate({ to: "/SignUpDeveloperEmailPage" })}>
         이메일로 회원가입하기
       </button>
     </div>

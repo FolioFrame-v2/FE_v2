@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Logo from "../assets/icons/Logo.png";
-import ModifyHackathonInput from "../components/ModifyHackathonPage/ModifyHackathonInput.jsx";
-import { getCurrentUser } from "../components/features/currentUser";
-// import { saveHackathon } from "../components/features/hackathonFeatures";
-import { Navigate, useNavigate } from "react-router-dom";
-import { updateHackathon } from "../components/features/hackathonFeatures";
-import { useParams } from "react-router-dom";
+import Logo from "@/assets/icons/Logo.png";
+import ModifyHackathonInput from "@/components/ModifyHackathonPage/ModifyHackathonInput.jsx";
+// removed domain/features import
+// // removed domain/features import
+import { Navigate, useNavigate } from "@tanstack/react-router";
+// removed domain/features import
+import { useParams } from "@tanstack/react-router";
 
 const ModifyHackathonPage = () => {
   const navigate = useNavigate();
-  const { hackId } = useParams();
+  const { hackId } = useParams({ strict: false });
   useEffect(() => {
     if (hackId) {
       setFormData((prevData) => ({
@@ -38,11 +38,11 @@ const ModifyHackathonPage = () => {
     participant: [],
   });
 
-  const currentUser = getCurrentUser();
+  const currentUser = null;
 
   useEffect(() => {
     if (currentUser) {
-      // setCurrentUser(user);
+      // void 0;
       console.log(currentUser);
     } else {
       console.log("currentUser 없음");
@@ -94,7 +94,7 @@ const ModifyHackathonPage = () => {
   });
   
 
-    navigate("/MyPage");
+    navigate({ to: "/MyPage" });
   };
 
 

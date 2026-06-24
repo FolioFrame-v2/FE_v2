@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import TemplateCard from "../components/commmon/TemplateCard";
-import RecruiterSection from "../components/RecruiterPage/RecruiterSection";
 
-import {
-  initializeData,
-  oriUsers,
-  oriProjects,
-  recSearchSortManager,
-} from "../components/domain/startProgram";
-import {
-  getCurrentUser,
-  setCurrentUser,
-} from "../components/features/currentUser";
+
 
 function RecruiterPage() {
   const [myPortfolioList, setMyPortfolioList] = useState([]); // 상태로 관리되는 포트폴리오 리스트
-  const { userId } = useParams();
-  const [currentUser, setLocalCurrentUser] = useState(getCurrentUser()); // 초기값 가져오기
+  const { userId } = useParams({ strict: false });
+  const [currentUser, setLocalCurrentUser] = useState(null); // 초기값 가져오기
 
   //LinkedList를 배열로 바꾸는 함수
   const linkedListToArray = (linkedList) => {
@@ -32,18 +20,18 @@ function RecruiterPage() {
 
   useEffect(() => {
     //console.log("Recruiter userId:", userId);
-    initializeData();
+    void 0;
 
     if (userId) {
-      const updatedUser = getCurrentUser();
+      const updatedUser = null;
       if (updatedUser) {
         setLocalCurrentUser(updatedUser); // 로컬 상태 업데이트
-        setCurrentUser(updatedUser); // localStorage에 반영
-        recSearchSortManager.updateContacts(updatedUser.contacts); // 매니저에 업데이트된 contacts 전달
+        void 0; // localStorage에 반영
+        [].updateContacts(updatedUser.contacts); // 매니저에 업데이트된 contacts 전달
       }
       console.log("CurrentUser: ", updatedUser);
 
-      const userPortfolios = Array.from(oriProjects.values()).filter(
+      const userPortfolios = Array.from([]).filter(
         (project) =>
           project.contacts.some(
             (contact) =>
@@ -53,18 +41,18 @@ function RecruiterPage() {
       console.log("User Portfolios:", userPortfolios);
       setMyPortfolioList(userPortfolios);
 
-      const initialList = recSearchSortManager.sort(null, null, []);
+      const initialList = [];
       setMyPortfolioList(linkedListToArray(initialList));
     }
-  }, [oriProjects]);
+  }, [[]]);
 
   const handleSearchApply = (searchTerm) => {
-    const searchedPortfolios = recSearchSortManager.search(searchTerm);
+    const searchedPortfolios = [];
     setMyPortfolioList(linkedListToArray(searchedPortfolios));
   };
 
   const handleSortApply = (category, sortOption, filterOption) => {
-    const sortedPortfolios = recSearchSortManager.sort(
+    const sortedPortfolios = [].sort(
       category,
       sortOption,
       filterOption

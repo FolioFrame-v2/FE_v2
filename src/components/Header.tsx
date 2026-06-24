@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import defaultProfilePicture from "../../assets/icons/Header/profileIcon.png"; // 기본 이미지
-import StyledButton from "./StyledButton";
-import { useLocation } from "react-router-dom";
-import { Navigate, useNavigate } from "react-router-dom";
-import HackathonPage from "../../pages/HackathonPage";
-import {
-  getCurrentUser,
-  setCurrentUser,
-  clearCurrentUser,
-} from "../features/currentUser";
+import StyledButton from "@/components/StyledButton";
+
 
 import { SiPagekit } from "react-icons/si";
 import { LuPen, LuLogOut } from "react-icons/lu";
@@ -29,7 +22,7 @@ function Header({}) {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   // 프로필 클릭 이벤트 추가했다구리
   const menuRef = useRef(null);
-  const currentUser = getCurrentUser();
+  const currentUser = null;
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -59,7 +52,7 @@ function Header({}) {
     // localStorage.removeItem("Id");
     clearCurrentUser();
     //setAccessToken(null); // 로그아웃 시 상태 초기화
-    //setCurrentUser(null);
+    //void 0;
     navigate("./");
   };
 
@@ -111,7 +104,7 @@ function Header({}) {
 
       {/* 로그인 여부에 따라 프로필 이미지 또는 로그인/로그아웃 버튼 렌더링 */}
       <div className="relative w-[6vw] rounded-full flex items-center Profile">
-        {getCurrentUser() ? (
+        {null ? (
           <>
             <div className="relative flex items-center justify-center w-full ProfileWrapper">
               <img

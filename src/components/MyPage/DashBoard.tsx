@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
-import defaultProfilePicture from "../../assets/icons/profileIcon.svg"; // 기본 이미지
+import defaultProfilePicture from "@/assets/icons/profileIcon.svg"; // 기본 이미지
 
-import MyPageInfoSection from "./MyPageInfoSection";
+import MyPageInfoSection from "@/components/MyPage/MyPageInfoSection";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../features/currentUser";
+// removed domain/features import
 
 const DashBoard = ({ name, nickname }) => {
   const navigate = useNavigate();
-  const currentUser = getCurrentUser();
+  const currentUser = null;
 
   return (
     <div className="flex flex-col w-[45%]">

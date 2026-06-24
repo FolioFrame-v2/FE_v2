@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { recruiterProjectDataList } from "../features/dataList"; // dataList를 import 할 경로 지정
+// removed domain/features import // dataList를 import 할 경로 지정
 
-import searchImg from "../../assets/icons/Header/search.png";
+import searchImg from "@/assets/icons/Header/search.png";
 import { ImCancelCircle } from "react-icons/im";
 
 // //나중에 삭제

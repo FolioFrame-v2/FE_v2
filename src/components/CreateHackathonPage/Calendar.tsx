@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import PrevMonth from "../../assets/icons/Calendar/arrow_left.png";
-import NextMonth from "../../assets/icons/Calendar/arrow_right.png";
-import { Color } from "./Color.jsx";
+import PrevMonth from "@/assets/icons/Calendar/arrow_left.png";
+import NextMonth from "@/assets/icons/Calendar/arrow_right.png";
+import { Color } from "@/components/CreateHackathonPage/Color.jsx";
 
 const CreateHackCalendar = ({ onStartDateChange, onEndDateChange }) => {
     const [date, setDate] = useState(new Date());
