@@ -22,9 +22,8 @@ const Nav = () => {
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-line">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <LogoMark />
-          <span className="font-display font-semibold tracking-tight text-lg">FolioFrame</span>
-          <span className="chip ml-2 hidden sm:inline-flex">v1.0 · beta</span>
+          {/* <LogoMark /> */}
+          <span className="text-[#0A27A6] tracking-tight text-[18px] font-['OTF_B']">FolioFrame</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm text-ink-soft">
           <Link to="/" hash="how" className="hover:text-ink transition">사용 방법</Link>
@@ -34,12 +33,8 @@ const Nav = () => {
           <Link to="/recruiter" className="hover:text-ink transition">공용 & 채용</Link>
         </nav>
         <div className="flex items-center gap-2">
-          <button className="hidden sm:inline-flex h-9 px-3 text-sm text-ink-soft hover:text-ink transition"
-            onClick={onClickImg}>
+          <button className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition shadow-sm" onClick={onClickImg}>
             로그인
-          </button>
-          <button className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition shadow-sm">
-            무료로 시작
           </button>
         </div>
       </div>
