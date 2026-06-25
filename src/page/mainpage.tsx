@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Footer } from "@/components/ui/footer";
 import { Nav } from "@/components/ui/nav";
+import { useNavigate } from "@tanstack/react-router";
+
 
 export default function MainPage() {
     return (
@@ -13,7 +15,7 @@ export default function MainPage() {
             <DiagnosePreview />
             <TemplateGallery />
             <ShareSection />
-            <Stats />
+            {/* <Stats /> */}
             <Faq />
             <Footer />
         </div>
@@ -23,8 +25,30 @@ export default function MainPage() {
 
 /* ----------------------------- HERO ----------------------------- */
 function Hero() {
+    const navigate = useNavigate();
+    // 내 포트폴리오 만들기 → 클릭 시 포트폴리오 제작 화면으로 이동 
+    const onClick_portfolio = () => {
+        navigate({ to: `/portfolio` });
+    };
+
+    // 템플릿 둘러보기 → 클릭 시 템플릿 화면으로 이동 
+    // const onClick_portfolio = () => {
+    //     navigate({ to: `/portfolio` });
+    // };
+
     return (
         <section className="relative overflow-hidden">
+            {/* 비디오 */}
+            <div className="flex flex-col items-center justify-center relative w-full">
+                <div className="flex flex-col items-center justify-center relative">
+                    <video className="flex flex-col items-center justify-center w-[68.5em] mt-[-3em] h-[25em] object-cover" autoPlay loop muted>
+                        <source src="/videos/Mainvideo.mp4" type="video/mp4" />
+                        비디오를 재생할 수 없습니다. 브라우저가 이 형식을 지원하지 않습니다.
+                    </video>
+                    <p className="absolute top-[-1.5em] left-0 w-full h-full flex flex-col justify-center items-center z-[1] text-white text-[5em] font-extrabold font-['OTF_B']">FolioFrame</p>
+                </div>
+            </div>
+
             <div className="absolute inset-0 grid-paper opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
             <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 grid lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7">
@@ -54,12 +78,14 @@ function Hero() {
                         </span>
                     </h1>
                     <p className="mt-6 text-lg text-ink-soft max-w-xl leading-relaxed">
-                        템플릿으로 빠르게 만들고, AI 진단으로 문장을 다듬고, 한 줄 링크로
+                        템플릿으로 빠르게 만들고, AI 진단으로 문장을 다듬고,
                         기업에 공유하세요. 채용 담당자가 먼저 연락해옵니다.
                     </p>
 
                     <div className="mt-8 flex flex-wrap items-center gap-3">
-                        <button className="h-12 px-6 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition shadow-lg shadow-primary/10">
+                        <button className="h-12 px-6 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition shadow-lg shadow-primary/10"
+                            onClick={onClick_portfolio}
+                        >
                             내 포트폴리오 만들기 →
                         </button>
                         <button className="h-12 px-6 rounded-full border border-line bg-card text-ink font-medium hover:bg-surface transition">
@@ -67,24 +93,6 @@ function Hero() {
                         </button>
                     </div>
 
-                    <div className="mt-10 flex items-center gap-6 text-sm text-ink-soft">
-                        <div className="flex -space-x-2">
-                            {["#FCA5A5", "#FCD34D", "#86EFAC", "#93C5FD"].map((c, i) => (
-                                <div
-                                    key={i}
-                                    className="h-8 w-8 rounded-full border-2 border-background"
-                                    style={{ background: c }}
-                                />
-                            ))}
-                        </div>
-                        <div>
-                            <strong className="text-ink">12,400+ 개발자</strong>가 이미 사용 중
-                        </div>
-                    </div>
-                </div>
-
-                <div className="lg:col-span-5">
-                    <HeroCard />
                 </div>
             </div>
         </section>
@@ -194,12 +202,12 @@ function ProjectRow({
 
 /* --------------------------- LOGO BAR --------------------------- */
 function LogoBar() {
-    const items = ["Toss", "Kakao", "Naver", "Coupang", "Line", "Woowa", "Daangn"];
+    const items = ["김고은", "김세정", "김태연", "코알라", "햄토리", "개굴"];
     return (
         <section className="border-y border-line bg-surface/50">
             <div className="mx-auto max-w-7xl px-6 py-6 flex flex-wrap items-center gap-x-10 gap-y-3 justify-between">
                 <span className="text-xs font-mono text-ink-soft uppercase tracking-widest">
-                    이 회사 개발자들이 사용 중
+                    이 개발자들이 사용 중
                 </span>
                 <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
                     {items.map((n) => (

@@ -13,8 +13,8 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-6 py-12 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-2">
           <LogoMark />
-          <span className="font-display font-semibold">devfolio</span>
-          <span className="text-xs font-mono text-ink-soft ml-2">© 2025</span>
+          <span className="font-display font-semibold">FolioFrame</span>
+          <span className="text-xs font-mono text-ink-soft ml-2">© 2026</span>
         </div>
         <div className="flex flex-wrap gap-6 text-sm text-ink-soft">
           <a href="#" className="hover:text-ink transition">About</a>
