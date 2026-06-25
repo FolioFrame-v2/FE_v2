@@ -10,7 +10,7 @@ export default function MainPage() {
         <div className="min-h-screen text-foreground">
             <Nav />
             <Hero />
-            <LogoBar />
+            {/* <LogoBar /> */}
             <HowItWorks />
             <DiagnosePreview />
             <TemplateGallery />
@@ -37,19 +37,21 @@ function Hero() {
     // };
 
     return (
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden pt-5">
             {/* 비디오 */}
-            <div className="flex flex-col items-center justify-center relative w-full">
+            <div className="flex flex-col items-center justify-center relative w-full ">
                 <div className="flex flex-col items-center justify-center relative">
-                    <video className="flex flex-col items-center justify-center w-[68.5em] mt-[-3em] h-[25em] object-cover" autoPlay loop muted>
+                    <video className="flex flex-col items-center justify-center w-[70.5em] h-[25.5em] object-cover" autoPlay loop muted>
                         <source src="/videos/Mainvideo.mp4" type="video/mp4" />
                         비디오를 재생할 수 없습니다. 브라우저가 이 형식을 지원하지 않습니다.
                     </video>
-                    <p className="absolute top-[-1.5em] left-0 w-full h-full flex flex-col justify-center items-center z-[1] text-white text-[5em] font-extrabold font-['OTF_B']">FolioFrame</p>
+                    <p className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center z-[1] text-white text-[5em] font-extrabold font-['OTF_B']">FolioFrame</p>
                 </div>
             </div>
 
             <div className="absolute inset-0 grid-paper opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
+
+            {/* 텍스트 영역 */}
             <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 grid lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7">
                     <span className="chip">
@@ -490,7 +492,7 @@ function ShareSection() {
                     </p>
                     <div className="mt-6 flex items-center gap-2 p-2 pl-4 bg-surface rounded-full border border-line">
                         <span className="font-mono text-sm text-ink-soft truncate flex-1">
-                            FolioFrame.io/@minji-kim
+                            devfolio.io/@minji-kim
                         </span>
                         <button className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-medium">
                             링크 복사
