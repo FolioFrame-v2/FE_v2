@@ -15,6 +15,7 @@ import { Route as SignupdeveloperemailRouteImport } from './routes/signupdevelop
 import { Route as SignupdeveloperRouteImport } from './routes/signupdeveloper'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileeditRouteImport } from './routes/profileedit'
+import { Route as PortfoliopageeditorRouteImport } from './routes/portfoliopageeditor'
 import { Route as Portfoliodetailpage3RouteImport } from './routes/portfoliodetailpage3'
 import { Route as Portfoliodetailpage2RouteImport } from './routes/portfoliodetailpage2'
 import { Route as PortfoliodetailRouteImport } from './routes/portfoliodetail'
@@ -60,6 +61,11 @@ const RecruiterRoute = RecruiterRouteImport.update({
 const ProfileeditRoute = ProfileeditRouteImport.update({
   id: '/profileedit',
   path: '/profileedit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfoliopageeditorRoute = PortfoliopageeditorRouteImport.update({
+  id: '/portfoliopageeditor',
+  path: '/portfoliopageeditor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Portfoliodetailpage3Route = Portfoliodetailpage3RouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
+  '/portfoliopageeditor': typeof PortfoliopageeditorRoute
   '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
+  '/portfoliopageeditor': typeof PortfoliopageeditorRoute
   '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
+  '/portfoliopageeditor': typeof PortfoliopageeditorRoute
   '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
+    | '/portfoliopageeditor'
     | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
+    | '/portfoliopageeditor'
     | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
+    | '/portfoliopageeditor'
     | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   PortfoliodetailRoute: typeof PortfoliodetailRoute
   Portfoliodetailpage2Route: typeof Portfoliodetailpage2Route
   Portfoliodetailpage3Route: typeof Portfoliodetailpage3Route
+  PortfoliopageeditorRoute: typeof PortfoliopageeditorRoute
   ProfileeditRoute: typeof ProfileeditRoute
   RecruiterRoute: typeof RecruiterRoute
   SignupdeveloperRoute: typeof SignupdeveloperRoute
@@ -358,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/profileedit'
       fullPath: '/profileedit'
       preLoaderRoute: typeof ProfileeditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfoliopageeditor': {
+      id: '/portfoliopageeditor'
+      path: '/portfoliopageeditor'
+      fullPath: '/portfoliopageeditor'
+      preLoaderRoute: typeof PortfoliopageeditorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portfoliodetailpage3': {
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortfoliodetailRoute: PortfoliodetailRoute,
   Portfoliodetailpage2Route: Portfoliodetailpage2Route,
   Portfoliodetailpage3Route: Portfoliodetailpage3Route,
+  PortfoliopageeditorRoute: PortfoliopageeditorRoute,
   ProfileeditRoute: ProfileeditRoute,
   RecruiterRoute: RecruiterRoute,
   SignupdeveloperRoute: SignupdeveloperRoute,

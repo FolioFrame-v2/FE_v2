@@ -29,6 +29,7 @@ const Nav = () => {
         <nav className="hidden md:flex items-center gap-8 text-sm text-ink-soft">
           <Link to="/" hash="how" className="hover:text-ink transition">사용 방법</Link>
           <Link to="/portfolio" className="hover:text-ink transition">포트폴리오</Link>
+          <Link to="/portfoliopageeditor" className="hover:text-ink transition">AI 진단</Link>
           <Link to="/hackathon" className="hover:text-ink transition">공모전(해커톤)</Link>
           <Link to="/recruiter" className="hover:text-ink transition">공용 & 채용</Link>
         </nav>
