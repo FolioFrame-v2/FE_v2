@@ -32,7 +32,7 @@ const Nav = () => {
           <Link to="/browse" className="hover:text-ink transition">포트폴리오</Link>
           <Link to="/portfoliopageeditor" className="hover:text-ink transition">AI 진단</Link>
           <Link to="/contests" className="hover:text-ink transition">공모전(해커톤)</Link>
-          <Link to="/recruiter" className="hover:text-ink transition">공용 & 채용</Link>
+          <Link to="/recruiter" className="hover:text-ink transition">고용 & 채용</Link>
         </nav>
         <div className="flex items-center gap-2">
           {currentUser ? (

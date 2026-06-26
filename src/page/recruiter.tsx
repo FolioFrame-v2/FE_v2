@@ -54,7 +54,7 @@ function RecruiterPage() {
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="chip"><span className="h-1.5 w-1.5 rounded-full bg-mint" />Recruiting</span>
-            <h1 className="mt-3 text-4xl font-display font-semibold tracking-tight">공용 & 채용</h1>
+            <h1 className="mt-3 text-4xl font-display font-semibold tracking-tight">고용 & 채용</h1>
             <p className="mt-2 text-ink-soft text-sm">뛰어난 개발자들을 탐색하고 포트폴리오를 확인해 보세요.</p>
           </div>
           <div className="text-xs font-mono text-ink-soft">{filtered.length} / {CANDIDATES.length} 결과</div>
