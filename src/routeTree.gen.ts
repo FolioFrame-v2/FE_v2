@@ -21,6 +21,7 @@ import { Route as Portfoliodetailpage2RouteImport } from './routes/portfoliodeta
 import { Route as PortfoliodetailRouteImport } from './routes/portfoliodetail'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as MyprojectsRouteImport } from './routes/myprojects'
+import { Route as MypageRouteImport } from './routes/mypage'
 import { Route as MyRouteImport } from './routes/my'
 import { Route as ModifyportfolioRouteImport } from './routes/modifyportfolio'
 import { Route as ModifyhackathonRouteImport } from './routes/modifyhackathon'
@@ -31,6 +32,8 @@ import { Route as HackathondetailRouteImport } from './routes/hackathondetail'
 import { Route as HackathonRouteImport } from './routes/hackathon'
 import { Route as CreateportfolioRouteImport } from './routes/createportfolio'
 import { Route as CreatehackathonRouteImport } from './routes/createhackathon'
+import { Route as ContestsRouteImport } from './routes/contests'
+import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SignuprecruiteremailRoute = SignuprecruiteremailRouteImport.update({
@@ -93,6 +96,11 @@ const MyprojectsRoute = MyprojectsRouteImport.update({
   path: '/myprojects',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MypageRoute = MypageRouteImport.update({
+  id: '/mypage',
+  path: '/mypage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MyRoute = MyRouteImport.update({
   id: '/my',
   path: '/my',
@@ -143,6 +151,16 @@ const CreatehackathonRoute = CreatehackathonRouteImport.update({
   path: '/createhackathon',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContestsRoute = ContestsRouteImport.update({
+  id: '/contests',
+  path: '/contests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrowseRoute = BrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -151,6 +169,8 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
+  '/contests': typeof ContestsRoute
   '/createhackathon': typeof CreatehackathonRoute
   '/createportfolio': typeof CreateportfolioRoute
   '/hackathon': typeof HackathonRoute
@@ -161,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/modifyhackathon': typeof ModifyhackathonRoute
   '/modifyportfolio': typeof ModifyportfolioRoute
   '/my': typeof MyRoute
+  '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
   '/portfolio': typeof PortfolioRoute
   '/portfoliodetail': typeof PortfoliodetailRoute
@@ -176,6 +197,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
+  '/contests': typeof ContestsRoute
   '/createhackathon': typeof CreatehackathonRoute
   '/createportfolio': typeof CreateportfolioRoute
   '/hackathon': typeof HackathonRoute
@@ -186,6 +209,7 @@ export interface FileRoutesByTo {
   '/modifyhackathon': typeof ModifyhackathonRoute
   '/modifyportfolio': typeof ModifyportfolioRoute
   '/my': typeof MyRoute
+  '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
   '/portfolio': typeof PortfolioRoute
   '/portfoliodetail': typeof PortfoliodetailRoute
@@ -202,6 +226,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
+  '/contests': typeof ContestsRoute
   '/createhackathon': typeof CreatehackathonRoute
   '/createportfolio': typeof CreateportfolioRoute
   '/hackathon': typeof HackathonRoute
@@ -212,6 +238,7 @@ export interface FileRoutesById {
   '/modifyhackathon': typeof ModifyhackathonRoute
   '/modifyportfolio': typeof ModifyportfolioRoute
   '/my': typeof MyRoute
+  '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
   '/portfolio': typeof PortfolioRoute
   '/portfoliodetail': typeof PortfoliodetailRoute
@@ -229,6 +256,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/browse'
+    | '/contests'
     | '/createhackathon'
     | '/createportfolio'
     | '/hackathon'
@@ -239,6 +268,7 @@ export interface FileRouteTypes {
     | '/modifyhackathon'
     | '/modifyportfolio'
     | '/my'
+    | '/mypage'
     | '/myprojects'
     | '/portfolio'
     | '/portfoliodetail'
@@ -254,6 +284,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/browse'
+    | '/contests'
     | '/createhackathon'
     | '/createportfolio'
     | '/hackathon'
@@ -264,6 +296,7 @@ export interface FileRouteTypes {
     | '/modifyhackathon'
     | '/modifyportfolio'
     | '/my'
+    | '/mypage'
     | '/myprojects'
     | '/portfolio'
     | '/portfoliodetail'
@@ -279,6 +312,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/browse'
+    | '/contests'
     | '/createhackathon'
     | '/createportfolio'
     | '/hackathon'
@@ -289,6 +324,7 @@ export interface FileRouteTypes {
     | '/modifyhackathon'
     | '/modifyportfolio'
     | '/my'
+    | '/mypage'
     | '/myprojects'
     | '/portfolio'
     | '/portfoliodetail'
@@ -305,6 +341,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BrowseRoute: typeof BrowseRoute
+  ContestsRoute: typeof ContestsRoute
   CreatehackathonRoute: typeof CreatehackathonRoute
   CreateportfolioRoute: typeof CreateportfolioRoute
   HackathonRoute: typeof HackathonRoute
@@ -315,6 +353,7 @@ export interface RootRouteChildren {
   ModifyhackathonRoute: typeof ModifyhackathonRoute
   ModifyportfolioRoute: typeof ModifyportfolioRoute
   MyRoute: typeof MyRoute
+  MypageRoute: typeof MypageRoute
   MyprojectsRoute: typeof MyprojectsRoute
   PortfolioRoute: typeof PortfolioRoute
   PortfoliodetailRoute: typeof PortfoliodetailRoute
@@ -415,6 +454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyprojectsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mypage': {
+      id: '/mypage'
+      path: '/mypage'
+      fullPath: '/mypage'
+      preLoaderRoute: typeof MypageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my': {
       id: '/my'
       path: '/my'
@@ -485,6 +531,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreatehackathonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contests': {
+      id: '/contests'
+      path: '/contests'
+      fullPath: '/contests'
+      preLoaderRoute: typeof ContestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/browse': {
+      id: '/browse'
+      path: '/browse'
+      fullPath: '/browse'
+      preLoaderRoute: typeof BrowseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -497,6 +557,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BrowseRoute: BrowseRoute,
+  ContestsRoute: ContestsRoute,
   CreatehackathonRoute: CreatehackathonRoute,
   CreateportfolioRoute: CreateportfolioRoute,
   HackathonRoute: HackathonRoute,
@@ -507,6 +569,7 @@ const rootRouteChildren: RootRouteChildren = {
   ModifyhackathonRoute: ModifyhackathonRoute,
   ModifyportfolioRoute: ModifyportfolioRoute,
   MyRoute: MyRoute,
+  MypageRoute: MypageRoute,
   MyprojectsRoute: MyprojectsRoute,
   PortfolioRoute: PortfolioRoute,
   PortfoliodetailRoute: PortfoliodetailRoute,

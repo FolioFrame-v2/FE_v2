@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Footer } from "@/components/ui/footer";
 import { Nav } from "@/components/ui/nav";
 import { useNavigate } from "@tanstack/react-router";
+import hackathonImg from "@/assets/images/Mainpage/Hackathon.jpg";
+import jobImg from "@/assets/images/Mainpage/JOB.jpg";
 
 
 export default function MainPage() {
@@ -10,12 +12,10 @@ export default function MainPage() {
         <div className="min-h-screen text-foreground">
             <Nav />
             <Hero />
-            {/* <LogoBar /> */}
             <HowItWorks />
             <DiagnosePreview />
             <TemplateGallery />
             <ShareSection />
-            {/* <Stats /> */}
             <Faq />
             <Footer />
         </div>
@@ -52,16 +52,16 @@ function Hero() {
             <div className="absolute inset-0 grid-paper opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
 
             {/* 텍스트 영역 */}
-            <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 grid lg:grid-cols-12 gap-12 items-center">
+            <div className="relative mx-auto max-w-7xl px-6 pt-30 pb-24 grid lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7">
                     <span className="chip">
                         <span className="h-1.5 w-1.5 rounded-full bg-mint" />
                         새로운 AI 자소서 진단 출시
                     </span>
-                    <h1 className="mt-5 font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.02] tracking-tight">
+                    <h1 className="mt-5 font-display text-5xl sm:text-6xl lg:text-6xl font-semibold leading-[1.1] tracking-tight break-keep">
                         깔끔한 포트폴리오,
                         <br />
-                        <span className="relative inline-block">
+                        <span className="relative inline-block whitespace-nowrap mt-2">
                             한 시간이면 충분합니다.
                             <svg
                                 className="absolute -bottom-2 left-0 w-full"
@@ -94,7 +94,24 @@ function Hero() {
                             템플릿 둘러보기
                         </button>
                     </div>
+                </div>
 
+                {/* 우측 이미지 영역 */}
+                <div className="hidden lg:block lg:col-span-5 relative h-full min-h-[400px]">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md aspect-square">
+                        {/* 뒷 배경 이미지 (JOB.jpg) */}
+                        <img
+                            src={jobImg}
+                            alt="Job Matching"
+                            className="absolute top-0 right-0 w-[80%] rounded-2xl shadow-2xl border border-line/50 object-cover rotate-6 hover:rotate-2 transition-transform duration-500 z-0"
+                        />
+                        {/* 앞 배경 이미지 (Hackathon.jpg) */}
+                        <img
+                            src={hackathonImg}
+                            alt="Hackathon"
+                            className="absolute bottom-4 left-0 w-[85%] rounded-2xl shadow-2xl border border-line/50 object-cover -rotate-6 hover:-rotate-2 transition-transform duration-500 z-10"
+                        />
+                    </div>
                 </div>
             </div>
         </section>
@@ -259,10 +276,6 @@ function HowItWorks() {
                         네 단계면 완성됩니다.
                     </h2>
                 </div>
-                <p className="text-ink-soft max-w-md">
-                    어디서부터 시작해야 할지 막막한 분들을 위해, 빈 화면 없이 흐름을
-                    따라가기만 하면 됩니다.
-                </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {steps.map((s, i) => (
@@ -343,7 +356,7 @@ function DiagnosePreview() {
                     />
 
                     <div className="surface-card p-5 flex items-center justify-between flex-wrap gap-4">
-                        <div className="flex items-center gap-4">
+                        {/* <div className="flex items-center gap-4">
                             <div className="h-12 w-12 rounded-xl bg-mint/40 grid place-items-center font-display text-xl font-semibold">
                                 +18
                             </div>
@@ -353,9 +366,9 @@ function DiagnosePreview() {
                                     2개 필드 적용 · 전체 개선점 7가지
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         <button className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">
-                            선택 적용
+                            AI 진단 받으러 가기
                         </button>
                     </div>
                 </div>
@@ -389,11 +402,11 @@ function DiagnoseRow({
                     <span className="text-xs text-ink-soft">수정안 적용</span>
                     <span
                         onClick={onToggle}
-                        className={`relative h-6 w-11 rounded-full transition ${checked ? "bg-mint" : "bg-surface-2"
+                        className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${checked ? "bg-primary" : "bg-surface-2"
                             }`}
                     >
                         <span
-                            className={`absolute top-0.5 h-5 w-5 rounded-full bg-card border border-line transition-all ${checked ? "left-[22px]" : "left-0.5"
+                            className={`absolute top-0.5 h-5 w-5 rounded-full bg-card border border-line transition-all duration-200 shadow-sm ${checked ? "left-[22px]" : "left-0.5"
                                 }`}
                         />
                     </span>
@@ -406,12 +419,12 @@ function DiagnoseRow({
                     </div>
                     <p className="text-sm text-ink-soft leading-relaxed">{original}</p>
                 </div>
-                <div className={`p-5 ${checked ? "bg-mint/10" : ""}`}>
+                <div className={`p-5 transition-colors duration-300 ${checked ? "bg-mint/60" : ""}`}>
                     <div className="text-[10px] font-mono uppercase tracking-widest text-ink-soft mb-2 flex items-center gap-1.5">
                         AI 수정안
-                        <span className="h-1 w-1 rounded-full bg-mint" />
+                        <span className={`h-1.5 w-1.5 rounded-full transition-colors ${checked ? "bg-primary" : "bg-mint"}`} />
                     </div>
-                    <p className="text-sm text-ink leading-relaxed">{improved}</p>
+                    <p className={`text-sm leading-relaxed transition-colors ${checked ? "text-ink font-medium" : "text-ink-soft"}`}>{improved}</p>
                 </div>
             </div>
         </div>
