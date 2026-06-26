@@ -43,9 +43,7 @@
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 }
 
-/* src/styles.css */
 
-/* --- 이 부분을 추가하세요 --- */
 @font-face {
   font-family: 'OTF B';
   src: url('./fonts/Hakgyoansim Dunggeunmiso OTF B.otf') format('opentype');
@@ -66,66 +64,76 @@
 :root {
   --radius: 0.875rem;
 
-  --background: oklch(0.985 0.005 95);
-  --foreground: oklch(0.18 0.02 260);
+  --background: #F8FAFC;
+  --foreground: #020617;
 
-  --surface: oklch(0.97 0.008 90);
-  --surface-2: oklch(0.93 0.012 90);
-  --ink: oklch(0.18 0.02 260);
-  --ink-soft: oklch(0.42 0.02 260);
-  --line: oklch(0.88 0.01 90);
+  --surface: #FFFFFF;
+  --surface-2: #F1F5F9;
+  --ink: #020617;
+  --ink-soft: #475569;
+  --line: #E2E8F0;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 260);
+  --card: #FFFFFF;
+  --card-foreground: #020617;
+  --popover: #FFFFFF;
+  --popover-foreground: #020617;
 
-  --primary: oklch(0.22 0.03 260);
-  --primary-foreground: oklch(0.985 0.005 95);
+  --primary: #0A27A6;
+  --primary-foreground: #FFFFFF;
 
-  --secondary: oklch(0.93 0.012 90);
-  --secondary-foreground: oklch(0.22 0.03 260);
+  --secondary: #CFDDFB;
+  --secondary-foreground: #0A27A6;
 
-  --muted: oklch(0.94 0.008 90);
-  --muted-foreground: oklch(0.5 0.02 260);
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
 
-  --accent: oklch(0.86 0.16 145);
-  --accent-foreground: oklch(0.18 0.05 150);
+  --accent: #CFDDFB;
+  --accent-foreground: #0A27A6;
 
-  --mint: oklch(0.86 0.16 145);
-  --coral: oklch(0.74 0.17 30);
+  --mint: #CFDDFB;
+  --coral: #0A27A6;
 
-  --destructive: oklch(0.62 0.22 27);
-  --destructive-foreground: oklch(0.985 0.005 95);
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
 
-  --border: oklch(0.88 0.01 90);
-  --input: oklch(0.9 0.01 90);
-  --ring: oklch(0.22 0.03 260);
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #0A27A6;
 }
 
 .dark {
-  --background: oklch(0.16 0.015 260);
-  --foreground: oklch(0.96 0.005 95);
-  --surface: oklch(0.2 0.018 260);
-  --surface-2: oklch(0.24 0.02 260);
-  --ink: oklch(0.96 0.005 95);
-  --ink-soft: oklch(0.72 0.015 260);
-  --line: oklch(0.3 0.02 260);
-  --card: oklch(0.2 0.018 260);
-  --card-foreground: oklch(0.96 0.005 95);
-  --popover: oklch(0.2 0.018 260);
-  --popover-foreground: oklch(0.96 0.005 95);
-  --primary: oklch(0.96 0.005 95);
-  --primary-foreground: oklch(0.18 0.02 260);
-  --secondary: oklch(0.24 0.02 260);
-  --secondary-foreground: oklch(0.96 0.005 95);
-  --muted: oklch(0.24 0.02 260);
-  --muted-foreground: oklch(0.72 0.015 260);
-  --accent: oklch(0.86 0.16 145);
-  --accent-foreground: oklch(0.18 0.05 150);
-  --border: oklch(0.3 0.02 260);
-  --input: oklch(0.3 0.02 260);
-  --ring: oklch(0.86 0.16 145);
+  --background: #020617;
+  --foreground: #F8FAFC;
+  
+  --surface: #0F172A;
+  --surface-2: #1E293B;
+  --ink: #F8FAFC;
+  --ink-soft: #94A3B8;
+  --line: #1E293B;
+  
+  --card: #0F172A;
+  --card-foreground: #F8FAFC;
+  --popover: #0F172A;
+  --popover-foreground: #F8FAFC;
+
+  --primary: #CFDDFB;
+  --primary-foreground: #0A27A6;
+
+  --secondary: #1E293B;
+  --secondary-foreground: #CFDDFB;
+
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+
+  --accent: #1E293B;
+  --accent-foreground: #CFDDFB;
+
+  --mint: #1E3A8A;
+  --coral: #0A27A6;
+
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #CFDDFB;
 }
 
 @layer base {

@@ -59,7 +59,7 @@ function Header({}) {
 
   const handleMenuClick = (option: any) => {
     if (option === "마이페이지") {
-      navigate({ to: `/my` });
+      navigate({ to: `/mypage` });
     } else if (option === "프로필 편집") {
       navigate({ to: `/profileedit` });
     } else if (option === "로그아웃") {
@@ -81,13 +81,13 @@ function Header({}) {
         {/* 네비게이션바에 있는 메뉴들 */}
         <nav className="flex items-center ml-[200px]">
           <a 
-            className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive("/PortfolioPage") ? "text-[#0a27a6]" : "text-[#919194]"}`}
-            onClick={() => navigate({ to: `/portfolio` })}
+            className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive("/browse") ? "text-[#0a27a6]" : "text-[#919194]"}`}
+            onClick={() => navigate({ to: `/browse` })}
           >포트폴리오</a>
           <a 
-            className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive("/HackathonPage") ? "text-[#0a27a6]" : "text-[#919194]"}`}
-            onClick={() => navigate({ to: `/hackathon` })}
-          >해커톤</a>
+            className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive("/contests") ? "text-[#0a27a6]" : "text-[#919194]"}`}
+            onClick={() => navigate({ to: `/contests` })}
+          >공모전/해커톤</a>
           {currentUser?.recruiter && (
             <a 
               className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive(`/RecruiterPage/${currentUser.id}`) ? "text-[#0a27a6]" : "text-[#919194]"}`}
@@ -105,7 +105,7 @@ function Header({}) {
 
       {/* 로그인 여부에 따라 프로필 이미지 또는 로그인/로그아웃 버튼 렌더링 */}
       <div className="relative w-[6vw] rounded-full flex items-center Profile">
-        {null ? (
+        {currentUser ? (
           <>
             <div className="relative flex items-center justify-center w-full ProfileWrapper">
               <img

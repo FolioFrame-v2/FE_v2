@@ -5,7 +5,7 @@ import CreatePortfolioTemplate from "@/components/CreatePortfolioPage/CreatePort
 // removed domain/features import
 // removed domain/features import
 import { Navigate, useNavigate } from "@tanstack/react-router";
-const templateInfo = [ { id: 1, name: "Mock Template" } ];
+const templateInfo = [{ id: 1, name: "Mock Template" }];
 
 
 const CreatePortfolioPage = () => {
@@ -45,12 +45,12 @@ const CreatePortfolioPage = () => {
       [name]: value,
     }));
   };
-// YYYY-MM-DD 형식 -> 서버와 연결할 때 오류가 나옴! 수정함
+  // YYYY-MM-DD 형식 -> 서버와 연결할 때 오류가 나옴! 수정함
   const handleDateChange = (name: any, date: any) => {
-      // 날짜 객체를 복사하고 하루를 더함
+    // 날짜 객체를 복사하고 하루를 더함
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 1); // 날짜 +1
-    const formattedDate = newDate ? newDate.toISOString().split('T')[0] : ""; 
+    const formattedDate = newDate ? newDate.toISOString().split('T')[0] : "";
     setFormData((prevData: any) => ({
       ...prevData,
       [name]: formattedDate,
@@ -67,10 +67,10 @@ const CreatePortfolioPage = () => {
 
   const handleSaveProject = () => {
     console.log("Mock handleSaveProject 호출됨", formData);
-    navigate({ to: `/my` }); 
+    navigate({ to: `/my` });
   };
   //이미지, 비디오 업로드
-  
+
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-[1.5em] mb-[5em]">
@@ -85,10 +85,10 @@ const CreatePortfolioPage = () => {
           onDateChange={handleDateChange}
         />
         <CreatePortfolioTemplate
-          templates={templateInfo} 
-          setProjectTemplate={setProjectTemplate} 
+          templates={templateInfo}
+          setProjectTemplate={setProjectTemplate}
         />
-        <button  
+        <button
           className="text-[#fff] text-[1em] font-[800] rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] mt-[2em] font-['OTF_R'] cursor-pointer flex items-center justify-center relative disabled:bg-[#0a27a6] disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isButtonDisabled}
           onClick={handleSaveProject}
