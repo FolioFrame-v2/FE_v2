@@ -39,81 +39,19 @@ function Hero() {
     return (
         <section className="relative overflow-hidden pt-5">
             {/* 비디오 */}
-            <div className="flex flex-col items-center justify-center relative w-full ">
-                <div className="flex flex-col items-center justify-center relative">
-                    <video className="flex flex-col items-center justify-center w-[70.5em] h-[25.5em] object-cover" autoPlay loop muted>
-                        <source src="/videos/Mainvideo.mp4" type="video/mp4" />
-                        비디오를 재생할 수 없습니다. 브라우저가 이 형식을 지원하지 않습니다.
-                    </video>
-                    <p className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center z-[1] text-white text-[5em] font-extrabold font-['OTF_B']">FolioFrame</p>
-                </div>
+            <div className="relative w-full">
+                <video className="w-full h-[30vh] md:h-[40vh] lg:h-[50vh] object-cover" autoPlay loop muted playsInline>
+                    <source src="/videos/Mainvideo.mp4" type="video/mp4" />
+                    비디오를 재생할 수 없습니다. 브라우저가 이 형식을 지원하지 않습니다.
+                </video>
+                {/* 가독성을 위한 약간의 어두운 오버레이 추가 */}
+                <div className="absolute inset-0 bg-black/20 z-0"></div>
+                <p className="absolute inset-0 flex items-center justify-center z-[1] text-white text-5xl md:text-[5em] font-extrabold font-['OTF_B'] drop-shadow-xl">
+                    FolioFrame
+                </p>
             </div>
 
             <div className="absolute inset-0 grid-paper opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-
-            {/* 텍스트 영역 */}
-            <div className="relative mx-auto max-w-7xl px-6 pt-30 pb-24 grid lg:grid-cols-12 gap-12 items-center">
-                <div className="lg:col-span-7">
-                    <span className="chip">
-                        <span className="h-1.5 w-1.5 rounded-full bg-mint" />
-                        새로운 AI 자소서 진단 출시
-                    </span>
-                    <h1 className="mt-5 font-display text-5xl sm:text-6xl lg:text-6xl font-semibold leading-[1.1] tracking-tight break-keep">
-                        깔끔한 포트폴리오,
-                        <br />
-                        <span className="relative inline-block whitespace-nowrap mt-2">
-                            한 시간이면 충분합니다.
-                            <svg
-                                className="absolute -bottom-2 left-0 w-full"
-                                viewBox="0 0 600 18"
-                                fill="none"
-                                preserveAspectRatio="none"
-                            >
-                                <path
-                                    d="M2 12 Q150 2 300 9 T598 6"
-                                    stroke="var(--color-mint)"
-                                    strokeWidth="5"
-                                    strokeLinecap="round"
-                                    fill="none"
-                                />
-                            </svg>
-                        </span>
-                    </h1>
-                    <p className="mt-6 text-lg text-ink-soft max-w-xl leading-relaxed">
-                        템플릿으로 빠르게 만들고, AI 진단으로 문장을 다듬고,
-                        기업에 공유하세요. 채용 담당자가 먼저 연락해옵니다.
-                    </p>
-
-                    <div className="mt-8 flex flex-wrap items-center gap-3">
-                        <button className="h-12 px-6 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition shadow-lg shadow-primary/10"
-                            onClick={onClick_portfolio}
-                        >
-                            내 포트폴리오 만들기 →
-                        </button>
-                        <button className="h-12 px-6 rounded-full border border-line bg-card text-ink font-medium hover:bg-surface transition">
-                            템플릿 둘러보기
-                        </button>
-                    </div>
-                </div>
-
-                {/* 우측 이미지 영역 */}
-                <div className="hidden lg:block lg:col-span-5 relative h-full min-h-[400px]">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md aspect-square">
-                        {/* 뒷 배경 이미지 (JOB.jpg) */}
-                        <img
-                            src={jobImg}
-                            alt="Job Matching"
-                            className="absolute top-0 right-0 w-[80%] rounded-2xl shadow-2xl border border-line/50 object-cover rotate-6 hover:rotate-2 transition-transform duration-500 z-0"
-                        />
-                        {/* 앞 배경 이미지 (Hackathon.jpg) */}
-                        <img
-                            src={hackathonImg}
-                            alt="Hackathon"
-                            className="absolute bottom-4 left-0 w-[85%] rounded-2xl shadow-2xl border border-line/50 object-cover -rotate-6 hover:-rotate-2 transition-transform duration-500 z-10"
-                        />
-                    </div>
-                </div>
-            </div>
         </section>
     );
 }

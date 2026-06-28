@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Nav as SiteNav } from "@/components/ui/nav";
+import { Nav } from "@/components/ui/nav";
 
 export default MyPage;
 
@@ -22,7 +22,7 @@ function MyPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <SiteNav />
+      <Nav />
       <main className="mx-auto max-w-7xl px-6 py-10 grid lg:grid-cols-12 gap-8">
         {/* Profile column */}
         <aside className="lg:col-span-4 space-y-5">
