@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TemplatesRouteImport } from './routes/templates'
 import { Route as SignuprecruiteremailRouteImport } from './routes/signuprecruiteremail'
 import { Route as SignuprecruiterRouteImport } from './routes/signuprecruiter'
 import { Route as SignupdeveloperemailRouteImport } from './routes/signupdeveloperemail'
@@ -35,7 +36,16 @@ import { Route as CreatehackathonRouteImport } from './routes/createhackathon'
 import { Route as ContestsRouteImport } from './routes/contests'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
+import { Route as TemplatesIdRouteImport } from './routes/templates.$id'
+import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
 
+const TemplatesRoute = TemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignuprecruiteremailRoute = SignuprecruiteremailRouteImport.update({
   id: '/signuprecruiteremail',
   path: '/signuprecruiteremail',
@@ -166,6 +176,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TemplatesIndexRoute = TemplatesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TemplatesRoute,
+} as any)
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortfolioRoute,
+} as any)
+const TemplatesIdRoute = TemplatesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => TemplatesRoute,
+} as any)
+const PortfolioIdRoute = PortfolioIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PortfolioRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -183,7 +213,7 @@ export interface FileRoutesByFullPath {
   '/my': typeof MyRoute
   '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
-  '/portfolio': typeof PortfolioRoute
+  '/portfolio': typeof PortfolioRouteWithChildren
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
@@ -194,6 +224,11 @@ export interface FileRoutesByFullPath {
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
+  '/templates': typeof TemplatesRouteWithChildren
+  '/portfolio/$id': typeof PortfolioIdRoute
+  '/templates/$id': typeof TemplatesIdRoute
+  '/portfolio/': typeof PortfolioIndexRoute
+  '/templates/': typeof TemplatesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -211,7 +246,6 @@ export interface FileRoutesByTo {
   '/my': typeof MyRoute
   '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
-  '/portfolio': typeof PortfolioRoute
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
@@ -222,6 +256,10 @@ export interface FileRoutesByTo {
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
+  '/templates/$id': typeof TemplatesIdRoute
+  '/portfolio': typeof PortfolioIndexRoute
+  '/templates': typeof TemplatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -240,7 +278,7 @@ export interface FileRoutesById {
   '/my': typeof MyRoute
   '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
-  '/portfolio': typeof PortfolioRoute
+  '/portfolio': typeof PortfolioRouteWithChildren
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
@@ -251,6 +289,11 @@ export interface FileRoutesById {
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
+  '/templates': typeof TemplatesRouteWithChildren
+  '/portfolio/$id': typeof PortfolioIdRoute
+  '/templates/$id': typeof TemplatesIdRoute
+  '/portfolio/': typeof PortfolioIndexRoute
+  '/templates/': typeof TemplatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,6 +324,11 @@ export interface FileRouteTypes {
     | '/signupdeveloperemail'
     | '/signuprecruiter'
     | '/signuprecruiteremail'
+    | '/templates'
+    | '/portfolio/$id'
+    | '/templates/$id'
+    | '/portfolio/'
+    | '/templates/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -298,7 +346,6 @@ export interface FileRouteTypes {
     | '/my'
     | '/mypage'
     | '/myprojects'
-    | '/portfolio'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
@@ -309,6 +356,10 @@ export interface FileRouteTypes {
     | '/signupdeveloperemail'
     | '/signuprecruiter'
     | '/signuprecruiteremail'
+    | '/portfolio/$id'
+    | '/templates/$id'
+    | '/portfolio'
+    | '/templates'
   id:
     | '__root__'
     | '/'
@@ -337,6 +388,11 @@ export interface FileRouteTypes {
     | '/signupdeveloperemail'
     | '/signuprecruiter'
     | '/signuprecruiteremail'
+    | '/templates'
+    | '/portfolio/$id'
+    | '/templates/$id'
+    | '/portfolio/'
+    | '/templates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -355,7 +411,7 @@ export interface RootRouteChildren {
   MyRoute: typeof MyRoute
   MypageRoute: typeof MypageRoute
   MyprojectsRoute: typeof MyprojectsRoute
-  PortfolioRoute: typeof PortfolioRoute
+  PortfolioRoute: typeof PortfolioRouteWithChildren
   PortfoliodetailRoute: typeof PortfoliodetailRoute
   Portfoliodetailpage2Route: typeof Portfoliodetailpage2Route
   Portfoliodetailpage3Route: typeof Portfoliodetailpage3Route
@@ -366,10 +422,18 @@ export interface RootRouteChildren {
   SignupdeveloperemailRoute: typeof SignupdeveloperemailRoute
   SignuprecruiterRoute: typeof SignuprecruiterRoute
   SignuprecruiteremailRoute: typeof SignuprecruiteremailRoute
+  TemplatesRoute: typeof TemplatesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/templates': {
+      id: '/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof TemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signuprecruiteremail': {
       id: '/signuprecruiteremail'
       path: '/signuprecruiteremail'
@@ -552,8 +616,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/templates/': {
+      id: '/templates/'
+      path: '/'
+      fullPath: '/templates/'
+      preLoaderRoute: typeof TemplatesIndexRouteImport
+      parentRoute: typeof TemplatesRoute
+    }
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/'
+      fullPath: '/portfolio/'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
+      parentRoute: typeof PortfolioRoute
+    }
+    '/templates/$id': {
+      id: '/templates/$id'
+      path: '/$id'
+      fullPath: '/templates/$id'
+      preLoaderRoute: typeof TemplatesIdRouteImport
+      parentRoute: typeof TemplatesRoute
+    }
+    '/portfolio/$id': {
+      id: '/portfolio/$id'
+      path: '/$id'
+      fullPath: '/portfolio/$id'
+      preLoaderRoute: typeof PortfolioIdRouteImport
+      parentRoute: typeof PortfolioRoute
+    }
   }
 }
+
+interface PortfolioRouteChildren {
+  PortfolioIdRoute: typeof PortfolioIdRoute
+  PortfolioIndexRoute: typeof PortfolioIndexRoute
+}
+
+const PortfolioRouteChildren: PortfolioRouteChildren = {
+  PortfolioIdRoute: PortfolioIdRoute,
+  PortfolioIndexRoute: PortfolioIndexRoute,
+}
+
+const PortfolioRouteWithChildren = PortfolioRoute._addFileChildren(
+  PortfolioRouteChildren,
+)
+
+interface TemplatesRouteChildren {
+  TemplatesIdRoute: typeof TemplatesIdRoute
+  TemplatesIndexRoute: typeof TemplatesIndexRoute
+}
+
+const TemplatesRouteChildren: TemplatesRouteChildren = {
+  TemplatesIdRoute: TemplatesIdRoute,
+  TemplatesIndexRoute: TemplatesIndexRoute,
+}
+
+const TemplatesRouteWithChildren = TemplatesRoute._addFileChildren(
+  TemplatesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -571,7 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyRoute: MyRoute,
   MypageRoute: MypageRoute,
   MyprojectsRoute: MyprojectsRoute,
-  PortfolioRoute: PortfolioRoute,
+  PortfolioRoute: PortfolioRouteWithChildren,
   PortfoliodetailRoute: PortfoliodetailRoute,
   Portfoliodetailpage2Route: Portfoliodetailpage2Route,
   Portfoliodetailpage3Route: Portfoliodetailpage3Route,
@@ -582,6 +702,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupdeveloperemailRoute: SignupdeveloperemailRoute,
   SignuprecruiterRoute: SignuprecruiterRoute,
   SignuprecruiteremailRoute: SignuprecruiteremailRoute,
+  TemplatesRoute: TemplatesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

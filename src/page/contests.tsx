@@ -1,6 +1,6 @@
 
 import { useMemo, useState } from "react";
-import { Nav as SiteNav } from "@/components/ui/nav";
+import { Nav } from "@/components/ui/nav";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 
 export default ContestsPage;
@@ -52,7 +52,7 @@ function ContestsPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <SiteNav />
+      <Nav />
       <main className="mx-auto max-w-7xl px-6 py-10 space-y-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>

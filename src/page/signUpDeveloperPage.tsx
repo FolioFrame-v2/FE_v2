@@ -1,17 +1,8 @@
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import Consent from "@/components/Consent/Consent.js";
-import Eye from "@/assets/icons/Login/Eye.png";
-import Eyeoff from "@/assets/icons/Login/Eyeoff.png";
-
-//서버 연결
-// removed domain/features import
-// removed domain/features import
-// removed domain/features import
-// removed domain/features import
-// removed domain/features import
-// removed domain/features import
-// removed domain/features import
+import { Eye } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
 
 const signUpDeveloperPage = () => {
   const navigate = useNavigate();
@@ -30,6 +21,32 @@ const signUpDeveloperPage = () => {
   const [repassword, setrePassword] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [isRePasswordEnabled, setIsRePasswordEnabled] = useState(false);
+
+  // 약관 동의 상태 관리
+  const [agree, setAgree] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [checkStates, setCheckStates] = useState({
+    privacy: false,
+    portfolio: false,
+    violation: false,
+  });
+
+  const handleCheckBoxClick = (value: any) => {
+    setIsModalOpen(true);
+    setAgree(value);
+  };
+  const closeModal = (value: any) => {
+    setIsModalOpen(false);
+    setAgree(false);
+  };
+  const handleAgree = (value: any) => {
+    setAgree(value);
+    setIsModalOpen(false);
+  };
+  const handleDisagree = () => {
+    setAgree(false);
+    setIsModalOpen(false);
+  };
 
   const toggleEyeVisible = () => {
     setEyeVisible(!eyeVisible);
@@ -83,27 +100,31 @@ const signUpDeveloperPage = () => {
   };
 
   const handleSignUp = async () => {
+    if (!agree) {
+      alert("가입 기본약관에 동의해야 회원가입이 가능합니다.");
+      return;
+    }
     console.log("Mock handleSignUp");
     alert('회원가입이 성공!');
     navigate({ to: `/login` });
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-[85%] py-[40px] px-[40px] mx-auto">
-      <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer" onClick={() => navigate({ to: `/` })}>FolioFrame</p>
+    <div className="flex flex-col items-center justify-center w-[85%] min-h-screen py-[40px] px-[40px] mx-auto">
+      <p className="text-[#0a27a6] text-[3em] font-bold font-['OTF_B'] cursor-pointer pt-5" onClick={() => navigate({ to: `/` })}>FolioFrame</p>
       <div className="flex flex-col items-center justify-center gap-[1em]">
-        <div className="flex gap-[1em]">
+        <div className="flex gap-[1em] w-full">
           <input
-            className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-[40%] indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
+            className="rounded-[2em] border border-[#d0d1d9] h-[3em] flex-1 indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
             placeholder="이름"
             type="text"
             // value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <div className="flex gap-[0.5em]">
-            <p className="text-[#d0d1d9] text-[0.8em] font-medium mt-[1em]">생년월일</p>
+          <div className="flex items-center gap-[0.5em] flex-1 justify-end">
+            <p className="text-[#d0d1d9] text-[0.9em] font-medium">생년월일</p>
             <input
-              className="border border-[#d0d1d9] outline-none h-[2em] p-[0.5em] text-[1em] text-[#d0d1d9] rounded-[4px] mr-[-2em]"
+              className="border border-[#d0d1d9] outline-none h-[2.5em] p-[0.5em] text-[0.9em] text-[#d0d1d9] rounded-[4px]"
               type="date"
               // value={birthday}
               onChange={(e) => setBirthday(e.target.value.split("-"))}
@@ -131,7 +152,7 @@ const signUpDeveloperPage = () => {
         </div>
         <div className="relative w-full">
           <input
-            className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-[90%] indent-[1em] pr-[2.5em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9] [&::-ms-reveal]:hidden"
+            className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] pr-[2.5em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9] [&::-ms-reveal]:hidden"
             type={eyeVisible ? "text" : "password"}
             placeholder="비밀번호 : 영문+특문+숫자로 12~20자"
             value={password}
@@ -139,16 +160,21 @@ const signUpDeveloperPage = () => {
             onBlur={handlePassValidation}
             onKeyDown={(e) => e.key === "Enter" && handlePassValidation()}
           />
-          <img
-            className="absolute right-[1em] top-1/2 -translate-y-1/2 cursor-pointer w-[1.2em] h-[1.2em]"
-            src={eyeVisible ? Eyeoff : Eye}
-            alt="eye"
-            onClick={toggleEyeVisible}
-          />
+          {eyeVisible ? (
+            <Eye
+              className="absolute right-[1em] top-1/2 -translate-y-1/2 cursor-pointer w-[1.2em] h-[1.2em] text-[#d0d1d9] hover:text-[#5e5e60]"
+              onClick={toggleEyeVisible}
+            />
+          ) : (
+            <EyeOff
+              className="absolute right-[1em] top-1/2 -translate-y-1/2 cursor-pointer w-[1.2em] h-[1.2em] text-[#d0d1d9] hover:text-[#5e5e60]"
+              onClick={toggleEyeVisible}
+            />
+          )}
         </div>
         <div className="relative w-full">
           <input
-            className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-[90%] indent-[1em] pr-[2.5em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9] [&::-ms-reveal]:hidden"
+            className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] pr-[2.5em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9] [&::-ms-reveal]:hidden"
             type={eyeVisibleConfirm ? "text" : "password"}
             placeholder="비밀번호 확인"
             value={repassword}
@@ -157,12 +183,17 @@ const signUpDeveloperPage = () => {
             onKeyDown={(e) => e.key === "Enter" && passwordCheck()}
             disabled={!isRePasswordEnabled}
           />
-          <img
-            className="absolute right-[1em] top-1/2 -translate-y-1/2 cursor-pointer w-[1.2em] h-[1.2em]"
-            src={eyeVisibleConfirm ? Eyeoff : Eye}
-            alt="eye"
-            onClick={toggleEyeVisibleConfirm}
-          />
+          {eyeVisibleConfirm ? (
+            <Eye
+              className="absolute right-[1em] top-1/2 -translate-y-1/2 cursor-pointer w-[1.2em] h-[1.2em] text-[#d0d1d9] hover:text-[#5e5e60]"
+              onClick={toggleEyeVisibleConfirm}
+            />
+          ) : (
+            <EyeOff
+              className="absolute right-[1em] top-1/2 -translate-y-1/2 cursor-pointer w-[1.2em] h-[1.2em] text-[#d0d1d9] hover:text-[#5e5e60]"
+              onClick={toggleEyeVisibleConfirm}
+            />
+          )}
         </div>
         <div className="flex flex-col w-full gap-[0.5em]">
           <input
@@ -187,16 +218,39 @@ const signUpDeveloperPage = () => {
             <label htmlFor="Phonecheck">중복확인</label>
           </div>
         </div>
+
+        <div className="flex items-center w-full justify-start">
+          <input
+            className="border border-[#d0d1d9]"
+            onClick={handleCheckBoxClick}
+            type="checkbox"
+            id="Join"
+            checked={agree}
+          />
+          <label htmlFor="Join" className="text-[#666] cursor-pointer">가입 기본약관</label>
+        </div>
       </div>
       <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[15em] my-[2em]" onClick={handleSignUp}>시작하기</button>
-      <div className="flex gap-[1em] mt-[-2em]">
+      <div className="flex gap-[1em] mt-[-1.25em]">
         <p className="text-[#d0d1d9] text-[1em] font-medium">이미 회원이신가요? |</p>
-        <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent">로그인</button>
+        <button className="cursor-pointer text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent" onClick={() => navigate({ to: `/login` })}>로그인</button>
       </div>
-      {/* 이메일로 회원가입 이동 버튼 */}
-      <button className="text-[#d0d1d9] text-[1em] font-medium border-none bg-transparent cursor-pointer" onClick={() => navigate({ to: `/signupdeveloperemail` })}>
-        이메일로 회원가입하기
-      </button>
+
+      {/* 팝업창 */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white p-[2em] rounded-[8px] text-center w-[80%] max-w-[500px]">
+            <Consent
+              checkStates={checkStates}
+              setCheckStates={setCheckStates}
+              agree={agree}
+              onAgree={handleAgree}
+              onDisagree={handleDisagree}
+              type="developer"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

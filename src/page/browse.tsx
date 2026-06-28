@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Nav as SiteNav } from "@/components/ui/nav";
+import { Nav } from "@/components/ui/nav";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 
 export default BrowsePage;
@@ -54,13 +54,13 @@ function BrowsePage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <SiteNav />
+      <Nav />
       <main className="mx-auto max-w-7xl px-6 py-10 space-y-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <span className="chip"><span className="h-1.5 w-1.5 rounded-full bg-mint" />FolioFrame</span>
+            <span className="chip"><span className="h-1.5 w-1.5 rounded-full bg-mint " />Portfolio</span>
             <h1 className="mt-3 text-4xl font-display font-semibold tracking-tight">포트폴리오</h1>
-            <p className="mt-2 text-ink-soft text-sm">다른 개발자들이 만든 포트폴리오를 카드로 둘러보세요.</p>
+            <p className="mt-2 text-ink-soft text-sm">다른 개발자들이 만든 포트폴리오를 둘러보세요.</p>
           </div>
           <div className="flex flex-col items-end gap-3">
             <Link to="/portfoliopageeditor" className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
@@ -73,33 +73,39 @@ function BrowsePage() {
         <FilterBar groups={GROUPS} value={filters} onChange={setFilters} search={search} onSearchChange={setSearch} searchPlaceholder="제목 · 작성자 · 기술 스택 검색" />
 
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => (
-            <article key={p.id} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition">
-              <div className="relative h-36 grid-paper border-b border-line overflow-hidden">
-                <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 30%, color-mix(in oklch, ${p.accent} 35%, transparent), transparent 60%)` }} />
-                <div className="absolute left-4 top-4 chip">{p.field}</div>
-                <div className="absolute right-4 bottom-4 font-mono text-[11px] text-ink-soft">{p.part}</div>
-              </div>
-              <div className="p-5 space-y-3">
-                <h3 className="font-display text-lg font-semibold tracking-tight group-hover:text-primary transition">{p.title}</h3>
-                <div className="flex items-center gap-2 text-xs text-ink-soft">
-                  <div className="h-5 w-5 rounded-full bg-surface-2 grid place-items-center font-mono">{p.author.slice(0, 1)}</div>
-                  <span>{p.author}</span>
-                  <span>·</span>
-                  <span>{p.region}</span>
-                  <span>·</span>
-                  <span>{p.team}</span>
+          {filtered.map((p, i) => {
+            const templateList = ["minimal", "editorial", "terminal", "playful"];
+            const assignedTemplate = templateList[i % 4];
+            return (
+            <Link key={p.id} to="/portfolio/$id" params={{ id: p.id }} search={{ template: assignedTemplate }} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition block">
+              <article>
+                <div className="relative h-36 grid-paper border-b border-line overflow-hidden">
+                  <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 30%, color-mix(in oklch, ${p.accent} 35%, transparent), transparent 60%)` }} />
+                  <div className="absolute left-4 top-4 chip">{p.field}</div>
+                  <div className="absolute right-4 bottom-4 font-mono text-[11px] text-ink-soft">{p.part}</div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.stacks.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
+                <div className="p-5 space-y-3">
+                  <h3 className="font-display text-lg font-semibold tracking-tight group-hover:text-primary transition">{p.title}</h3>
+                  <div className="flex items-center gap-2 text-xs text-ink-soft">
+                    <div className="h-5 w-5 rounded-full bg-surface-2 grid place-items-center font-mono">{p.author.slice(0, 1)}</div>
+                    <span>{p.author}</span>
+                    <span>·</span>
+                    <span>{p.region}</span>
+                    <span>·</span>
+                    <span>{p.team}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {p.stacks.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-line text-xs text-ink-soft font-mono">
+                    <span>♥ {p.likes}</span>
+                    <span>{p.views.toLocaleString()} views</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between pt-2 border-t border-line text-xs text-ink-soft font-mono">
-                  <span>♥ {p.likes}</span>
-                  <span>{p.views.toLocaleString()} views</span>
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            </Link>
+            );
+          })}
           {filtered.length === 0 && (
             <div className="col-span-full surface-card p-12 text-center text-ink-soft">
               조건에 맞는 포트폴리오가 없습니다.
