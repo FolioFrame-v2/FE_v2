@@ -44,6 +44,7 @@ type CustomField = {
 
 const DEFAULT_STACK = ["TypeScript", "React", "Node.js", "PostgreSQL"];
 const SUGGEST_STACK = ["Next.js", "TanStack", "Tailwind", "GraphQL", "Docker", "AWS", "Kotlin", "Go", "Rust", "Python"];
+const ALL_STACKS = ["React", "Vue", "Angular", "Svelte", "Next.js", "Nuxt.js", "TypeScript", "JavaScript", "Python", "Java", "Kotlin", "Go", "Rust", "C++", "C#", "Spring", "Node.js", "Express", "NestJS", "Django", "Flask", "Ruby on Rails", "PHP", "Laravel", "MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch", "AWS", "Google Cloud", "Azure", "Docker", "Kubernetes", "GraphQL", "REST API", "Tailwind", "Sass", "Figma", "Git", "Linux", "WebRTC", "Yjs"];
 
 const BASE_SECTIONS = [
   { id: "meta", label: "포트폴리오 정보" },
@@ -160,6 +161,10 @@ function EditorPage() {
   };
   const removeStack = (value: string) => setStack((s) => s.filter((t) => t !== value));
 
+  const filteredStacks = ALL_STACKS.filter((s) => 
+    s.toLowerCase().includes(stackInput.toLowerCase()) && !stack.includes(s)
+  );
+
   // --- 커스텀 필드 ---
   const addCustomField = () => {
     const label = newLabel.trim();
@@ -196,6 +201,10 @@ function EditorPage() {
     customFields.forEach((f) => {
       if (f.value.trim()) next[`custom:${f.id}`] = improve(f.value, "custom");
     });
+    
+    // AI 진단 총평 추가
+    next["summary"] = "작성하신 포트폴리오는 직무 역량이 잘 드러나지만, 구체적인 성과 지표(%)를 추가하면 더 설득력 있는 포트폴리오가 될 수 있습니다. 기술 스택 섹션에 활용 수준을 함께 명시하는 것을 추천합니다.";
+    
     setSuggestions(next);
     setDiagnosing(false);
   };
@@ -324,18 +333,18 @@ function EditorPage() {
           {/* 포트폴리오 정보 */}
           <Section id="meta" title="포트폴리오 정보" hint="공유될 포트폴리오의 기본 정보입니다.">
             <Field label="포트폴리오 제목" required>
-              <Input value={title} maxLength={80} onChange={(e) => setTitle(e.target.value)} placeholder="예) 백엔드 엔지니어 김지훈의 포트폴리오" />
+              <Input value={title} maxLength={500} onChange={(e) => setTitle(e.target.value)} placeholder="예) 백엔드 엔지니어 김지훈의 포트폴리오" />
             </Field>
-            <Field label="한 줄 소개" required hint={`${oneLiner.length}/120`}>
-              <Input value={oneLiner} maxLength={120} onChange={(e) => setOneLiner(e.target.value)} placeholder="당신을 한 줄로 표현해 주세요" />
+            <Field label="한 줄 소개" required hint={`${oneLiner.length}/500`}>
+              <Input value={oneLiner} maxLength={500} onChange={(e) => setOneLiner(e.target.value)} placeholder="당신을 한 줄로 표현해 주세요" />
               <AiSuggestion
                 suggestion={suggestions["oneLiner"]}
                 onApply={() => applySuggestion("oneLiner")}
                 onDismiss={() => dismissSuggestion("oneLiner")}
               />
             </Field>
-            <Field label="상세 설명" hint={`${detail.length}/600`}>
-              <Textarea value={detail} maxLength={600} onChange={(e) => setDetail(e.target.value)} rows={5} placeholder="어떤 일을 해왔고, 어떤 강점이 있는지 적어주세요." />
+            <Field label="상세 설명" hint={`${detail.length}/500`}>
+              <Textarea value={detail} maxLength={500} onChange={(e) => setDetail(e.target.value)} rows={5} placeholder="어떤 일을 해왔고, 어떤 강점이 있는지 적어주세요." />
               <AiSuggestion
                 suggestion={suggestions["detail"]}
                 onApply={() => applySuggestion("detail")}
@@ -349,9 +358,8 @@ function EditorPage() {
                     key={r}
                     type="button"
                     onClick={() => setJobRole(r)}
-                    className={`chip cursor-pointer transition-colors ${
-                      jobRole === r ? "border-ink bg-ink text-background" : "hover:border-ink/40"
-                    }`}
+                    className={`chip cursor-pointer transition-colors ${jobRole === r ? "border-ink bg-ink text-background" : "hover:border-ink/40"
+                      }`}
                   >
                     {r}
                   </button>
@@ -376,8 +384,8 @@ function EditorPage() {
                 <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://your.site" />
               </Field>
             </div>
-            <Field label="프로필 소개" hint={`${intro.length}/240`}>
-              <Textarea value={intro} maxLength={240} onChange={(e) => setIntro(e.target.value)} rows={3} placeholder="간단한 자기소개" />
+            <Field label="프로필 소개" hint={`${intro.length}/500`}>
+              <Textarea value={intro} maxLength={500} onChange={(e) => setIntro(e.target.value)} rows={3} placeholder="간단한 자기소개" />
               <AiSuggestion
                 suggestion={suggestions["intro"]}
                 onApply={() => applySuggestion("intro")}
@@ -471,16 +479,33 @@ function EditorPage() {
                 </span>
               ))}
             </div>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 relative w-full sm:w-[300px]">
               <Input
                 value={stackInput}
                 onChange={(e) => setStackInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addStack(stackInput); } }}
-                placeholder="예) TypeScript"
+                placeholder="기술 스택 검색 및 추가 (예: TypeScript)"
               />
-              <Button type="button" variant="outline" onClick={() => addStack(stackInput)} className="gap-2">
-                <Plus className="size-4" /> 추가
-              </Button>
+              {stackInput && (
+                <div className="absolute top-full mt-1 w-full max-h-[200px] overflow-y-auto rounded-md border border-line bg-background shadow-lg z-10">
+                  {filteredStacks.length > 0 ? (
+                    filteredStacks.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        className="w-full px-3 py-2 text-left text-sm text-ink hover:bg-surface-2"
+                        onClick={() => addStack(s)}
+                      >
+                        {s}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 py-2 text-sm text-ink-soft">
+                      "{stackInput}" 스택을 새로 추가합니다 (Enter)
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <div className="mt-4">
               <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">추천</p>
@@ -499,10 +524,10 @@ function EditorPage() {
               <VisibilityOption active={visibility === "link"} onClick={() => setVisibility("link")} icon={<Sparkles className="size-4" />} title="링크 공유" desc="링크가 있는 사람만" />
               <VisibilityOption active={visibility === "public"} onClick={() => setVisibility("public")} icon={<Globe className="size-4" />} title="전체 공개" desc="검색·매칭에 노출" />
             </div>
-            <div className="mt-5 space-y-3">
+            {/* <div className="mt-5 space-y-3">
               <Toggle icon={<Users className="size-4" />} title="채용 담당자 매칭 허용" desc="기업 담당자에게 추천 후보로 노출됩니다." checked={allowRecruiter} onChange={setAllowRecruiter} />
               <Toggle icon={<Mail className="size-4" />} title="연락처 비공개" desc="이메일·전화번호를 가립니다. 연락은 플랫폼 메시지로만." checked={hideContact} onChange={setHideContact} />
-            </div>
+            </div> */}
           </Section>
 
           {/* 사용자 추가 필드들 — 각 필드가 별도 섹션으로 렌더링 */}
@@ -539,7 +564,7 @@ function EditorPage() {
           ))}
 
           {/* 필드 추가 카드 */}
-          <section id="add-field" className="surface-card p-6 sm:p-7">
+          {/* <section id="add-field" className="surface-card p-6 sm:p-7">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="font-display text-lg font-semibold text-ink">필드 추가</h2>
@@ -580,7 +605,30 @@ function EditorPage() {
                 <Button variant="ghost" onClick={() => { setAddOpen(false); setNewLabel(""); }}>취소</Button>
               </div>
             )}
-          </section>
+          </section> */}
+
+          {/* AI 진단 총평 */}
+          {(diagnosing || suggestions["summary"]) && (
+            <Section id="ai-summary" title="AI 진단 총평" hint="전체 포트폴리오에 대한 AI의 분석 결과입니다.">
+              {diagnosing ? (
+                <div className="space-y-3 animate-pulse">
+                  <div className="h-4 bg-line/60 rounded w-3/4"></div>
+                  <div className="h-4 bg-line/60 rounded w-full"></div>
+                  <div className="h-4 bg-line/60 rounded w-5/6"></div>
+                </div>
+              ) : (
+                <div className="p-4 rounded-lg bg-[color-mix(in_oklch,var(--color-mint)_12%,transparent)] border border-[color-mix(in_oklch,var(--color-mint)_55%,transparent)] text-ink text-sm leading-relaxed">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-flex size-5 items-center justify-center rounded-full bg-[var(--color-mint)] text-[oklch(0.2_0.05_150)]">
+                      <Wand2 className="size-3" />
+                    </span>
+                    <span className="font-semibold">종합 분석 및 조언</span>
+                  </div>
+                  {suggestions["summary"]}
+                </div>
+              )}
+            </Section>
+          )}
 
           {/* Bottom action */}
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 border-t border-line pt-6 sm:flex-row sm:items-center">
@@ -733,10 +781,10 @@ function ProjectCard({
             <Input value={project.link} onChange={(e) => onChange({ link: e.target.value })} placeholder="https://..." />
           </Field>
           <div className="sm:col-span-2">
-            <Field label="요약 설명" hint={`${project.summary.length}/240`}>
+            <Field label="요약 설명" hint={`${project.summary.length}/500`}>
               <Textarea
                 value={project.summary}
-                maxLength={240}
+                maxLength={500}
                 rows={3}
                 onChange={(e) => onChange({ summary: e.target.value })}
                 placeholder="문제 · 해결 · 성과를 1~3문장으로 적어주세요"
@@ -764,9 +812,8 @@ function VisibilityOption({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-lg border p-4 text-left transition-colors ${
-        active ? "border-ink bg-ink text-background" : "border-line bg-surface/60 hover:border-ink/40"
-      }`}
+      className={`rounded-lg border p-4 text-left transition-colors ${active ? "border-ink bg-ink text-background" : "border-line bg-surface/60 hover:border-ink/40"
+        }`}
     >
       <div className="flex items-center gap-2">
         {icon}

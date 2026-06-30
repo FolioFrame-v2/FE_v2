@@ -106,6 +106,7 @@ const signUpDeveloperPage = () => {
     }
     console.log("Mock handleSignUp");
     alert('회원가입이 성공!');
+    localStorage.setItem('isFirstLogin', 'true');
     navigate({ to: `/login` });
   };
 

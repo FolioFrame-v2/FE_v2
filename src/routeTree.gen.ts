@@ -21,6 +21,8 @@ import { Route as Portfoliodetailpage3RouteImport } from './routes/portfoliodeta
 import { Route as Portfoliodetailpage2RouteImport } from './routes/portfoliodetailpage2'
 import { Route as PortfoliodetailRouteImport } from './routes/portfoliodetail'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyprojectsRouteImport } from './routes/myprojects'
 import { Route as MypageRouteImport } from './routes/mypage'
 import { Route as MyRouteImport } from './routes/my'
@@ -40,6 +42,7 @@ import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as TemplatesIdRouteImport } from './routes/templates.$id'
 import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
+import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 
 const TemplatesRoute = TemplatesRouteImport.update({
   id: '/templates',
@@ -99,6 +102,16 @@ const PortfoliodetailRoute = PortfoliodetailRouteImport.update({
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyprojectsRoute = MyprojectsRouteImport.update({
@@ -196,6 +209,11 @@ const PortfolioIdRoute = PortfolioIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => PortfolioRoute,
 } as any)
+const JobsIdRoute = JobsIdRouteImport.update({
+  id: '/jobs/$id',
+  path: '/jobs/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -213,6 +231,8 @@ export interface FileRoutesByFullPath {
   '/my': typeof MyRoute
   '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
@@ -225,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/templates': typeof TemplatesRouteWithChildren
+  '/jobs/$id': typeof JobsIdRoute
   '/portfolio/$id': typeof PortfolioIdRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -246,6 +267,8 @@ export interface FileRoutesByTo {
   '/my': typeof MyRoute
   '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
@@ -256,6 +279,7 @@ export interface FileRoutesByTo {
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
+  '/jobs/$id': typeof JobsIdRoute
   '/portfolio/$id': typeof PortfolioIdRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio': typeof PortfolioIndexRoute
@@ -278,6 +302,8 @@ export interface FileRoutesById {
   '/my': typeof MyRoute
   '/mypage': typeof MypageRoute
   '/myprojects': typeof MyprojectsRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
@@ -290,6 +316,7 @@ export interface FileRoutesById {
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/templates': typeof TemplatesRouteWithChildren
+  '/jobs/$id': typeof JobsIdRoute
   '/portfolio/$id': typeof PortfolioIdRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -313,6 +340,8 @@ export interface FileRouteTypes {
     | '/my'
     | '/mypage'
     | '/myprojects'
+    | '/notifications'
+    | '/onboarding'
     | '/portfolio'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
@@ -325,6 +354,7 @@ export interface FileRouteTypes {
     | '/signuprecruiter'
     | '/signuprecruiteremail'
     | '/templates'
+    | '/jobs/$id'
     | '/portfolio/$id'
     | '/templates/$id'
     | '/portfolio/'
@@ -346,6 +376,8 @@ export interface FileRouteTypes {
     | '/my'
     | '/mypage'
     | '/myprojects'
+    | '/notifications'
+    | '/onboarding'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
@@ -356,6 +388,7 @@ export interface FileRouteTypes {
     | '/signupdeveloperemail'
     | '/signuprecruiter'
     | '/signuprecruiteremail'
+    | '/jobs/$id'
     | '/portfolio/$id'
     | '/templates/$id'
     | '/portfolio'
@@ -377,6 +410,8 @@ export interface FileRouteTypes {
     | '/my'
     | '/mypage'
     | '/myprojects'
+    | '/notifications'
+    | '/onboarding'
     | '/portfolio'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
@@ -389,6 +424,7 @@ export interface FileRouteTypes {
     | '/signuprecruiter'
     | '/signuprecruiteremail'
     | '/templates'
+    | '/jobs/$id'
     | '/portfolio/$id'
     | '/templates/$id'
     | '/portfolio/'
@@ -411,6 +447,8 @@ export interface RootRouteChildren {
   MyRoute: typeof MyRoute
   MypageRoute: typeof MypageRoute
   MyprojectsRoute: typeof MyprojectsRoute
+  NotificationsRoute: typeof NotificationsRoute
+  OnboardingRoute: typeof OnboardingRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
   PortfoliodetailRoute: typeof PortfoliodetailRoute
   Portfoliodetailpage2Route: typeof Portfoliodetailpage2Route
@@ -423,6 +461,7 @@ export interface RootRouteChildren {
   SignuprecruiterRoute: typeof SignuprecruiterRoute
   SignuprecruiteremailRoute: typeof SignuprecruiteremailRoute
   TemplatesRoute: typeof TemplatesRouteWithChildren
+  JobsIdRoute: typeof JobsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -509,6 +548,20 @@ declare module '@tanstack/react-router' {
       path: '/portfolio'
       fullPath: '/portfolio'
       preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/myprojects': {
@@ -644,6 +697,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioIdRouteImport
       parentRoute: typeof PortfolioRoute
     }
+    '/jobs/$id': {
+      id: '/jobs/$id'
+      path: '/jobs/$id'
+      fullPath: '/jobs/$id'
+      preLoaderRoute: typeof JobsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -691,6 +751,8 @@ const rootRouteChildren: RootRouteChildren = {
   MyRoute: MyRoute,
   MypageRoute: MypageRoute,
   MyprojectsRoute: MyprojectsRoute,
+  NotificationsRoute: NotificationsRoute,
+  OnboardingRoute: OnboardingRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
   PortfoliodetailRoute: PortfoliodetailRoute,
   Portfoliodetailpage2Route: Portfoliodetailpage2Route,
@@ -703,6 +765,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignuprecruiterRoute: SignuprecruiterRoute,
   SignuprecruiteremailRoute: SignuprecruiteremailRoute,
   TemplatesRoute: TemplatesRouteWithChildren,
+  JobsIdRoute: JobsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

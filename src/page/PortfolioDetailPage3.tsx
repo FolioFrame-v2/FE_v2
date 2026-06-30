@@ -48,6 +48,8 @@ const PortfolioDetailPage3 = () => {
     images: [] as any[],
     logo: "",
     hits: 100,
+    certifications: "정보처리기사 (2026.05), SQLD (2025.10)",
+    education: "한국대학교 컴퓨터공학과 학사 졸업 (2022.03 - 2026.02)",
   });
   const [comments, setComments] = useState<any[]>([]); // []로 부터 받아온 필터된 포트폴리오
   const [enlargedImage, setEnlargedImage] = useState(null); //
@@ -189,6 +191,14 @@ const PortfolioDetailPage3 = () => {
           <div className="flex flex-col items-center mb-[2vh] font-[Impact]">
             <div className="text-[2vw] font-bold">사용한 스택</div>
             <div className="rounded-[0.3125em] bg-white p-[1vw] m-[1vw] min-w-[80%]">{portfolioData.usedLanguage || ""}</div>
+          </div>
+          <div className="flex flex-col items-center mb-[2vh] font-[Impact]">
+            <div className="text-[2vw] font-bold">학력</div>
+            <div className="rounded-[0.3125em] bg-white p-[1vw] m-[1vw] min-w-[80%]">{portfolioData.education || "학력 정보 없음"}</div>
+          </div>
+          <div className="flex flex-col items-center mb-[2vh] font-[Impact]">
+            <div className="text-[2vw] font-bold">자격증</div>
+            <div className="rounded-[0.3125em] bg-white p-[1vw] m-[1vw] min-w-[80%]">{portfolioData.certifications || "자격증 정보 없음"}</div>
           </div>
         </div>
 

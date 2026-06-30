@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Nav } from "@/components/ui/nav";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 
 export default RecruiterPage;
 
-type Candidate = {
+type JobPosting = {
   id: string;
-  name: string;
-  part: string;
+  company: string;
+  title: string;
   experience: string;
   region: string;
   status: string;
@@ -16,33 +17,31 @@ type Candidate = {
   accent: string;
 };
 
-const CANDIDATES: Candidate[] = [
-  { id: "dev1", name: "김도현", part: "Frontend", experience: "신입", region: "서울", status: "구직 중", skills: ["React", "TypeScript", "Next.js"], intro: "사용자 경험을 중시하는 프론트엔드 개발자입니다.", accent: "var(--color-mint)" },
-  { id: "dev2", name: "이수민", part: "Backend", experience: "1~3년", region: "판교", status: "이직 준비 중", skills: ["Java", "Spring Boot", "MySQL"], intro: "안정적인 대용량 트래픽 처리에 관심이 많습니다.", accent: "var(--color-coral)" },
-  { id: "dev3", name: "박지오", part: "Mobile", experience: "4~6년", region: "원격", status: "관심 있음", skills: ["Flutter", "Dart", "Firebase"], intro: "크로스 플랫폼 앱 개발에 전문성이 있습니다.", accent: "var(--color-mint)" },
-  { id: "dev4", name: "정유나", part: "Data", experience: "신입", region: "서울", status: "구직 중", skills: ["Python", "TensorFlow", "SQL"], intro: "데이터 기반의 의사결정을 돕는 엔지니어가 되고 싶습니다.", accent: "var(--color-coral)" },
-  { id: "dev5", name: "최현우", part: "DevOps", experience: "7년 이상", region: "강남", status: "이직 준비 중", skills: ["Kubernetes", "AWS", "CI/CD"], intro: "인프라 자동화와 클라우드 아키텍처 설계 전문가입니다.", accent: "var(--color-mint)" },
-  { id: "dev6", name: "한지민", part: "Fullstack", experience: "1~3년", region: "부산", status: "구직 중", skills: ["Node.js", "React", "PostgreSQL"], intro: "프론트엔드부터 백엔드까지 책임지는 풀스택 개발자입니다.", accent: "var(--color-coral)" },
+const JOB_POSTINGS: JobPosting[] = [
+  { id: "job1", company: "Toss", title: "Frontend Developer", experience: "신입/경력", region: "서울 강남구", status: "채용 중", skills: ["React", "TypeScript", "Next.js"], intro: "토스에서 사용자 중심의 프론트엔드를 개발할 분을 모십니다.", accent: "var(--color-mint)" },
+  { id: "job2", company: "Kakao", title: "Backend Engineer", experience: "3년 이상", region: "판교", status: "채용 중", skills: ["Java", "Spring Boot", "MySQL"], intro: "카카오톡 메시징 서버 성능 최적화를 함께할 전문가를 찾습니다.", accent: "var(--color-coral)" },
+  { id: "job3", company: "Naver", title: "iOS Engineer", experience: "5년 이상", region: "분당", status: "마감 임박", skills: ["Swift", "RxSwift", "iOS"], intro: "네이버 앱의 새로운 사용자 경험을 설계하고 구현합니다.", accent: "var(--color-mint)" },
+  { id: "job4", company: "Line", title: "Data Scientist", experience: "경력 무관", region: "원격", status: "채용 중", skills: ["Python", "PyTorch", "SQL"], intro: "글로벌 메신저 라인의 대규모 데이터를 분석하고 모델을 개발합니다.", accent: "var(--color-coral)" },
+  { id: "job5", company: "Daangn", title: "DevOps Engineer", experience: "5년 이상", region: "서울 서초구", status: "채용 중", skills: ["Kubernetes", "AWS", "Terraform"], intro: "당근마켓의 글로벌 인프라를 구축하고 안정적으로 운영합니다.", accent: "var(--color-mint)" },
+  { id: "job6", company: "Woowa Bros", title: "Fullstack Engineer", experience: "1~3년", region: "서울 송파구", status: "채용 중", skills: ["Node.js", "React", "TypeScript"], intro: "배달의민족 서비스의 신규 피처를 개발합니다.", accent: "var(--color-coral)" },
 ];
 
 const GROUPS: FilterGroup[] = [
-  { key: "region", label: "지역", options: ["전체", "서울", "판교", "강남", "부산", "원격"] },
-  { key: "part", label: "파트", options: ["전체", "Frontend", "Backend", "Fullstack", "Mobile", "Data", "DevOps", "Embedded"] },
-  { key: "experience", label: "경력", options: ["전체", "신입", "1~3년", "4~6년", "7년 이상"] },
-  { key: "status", label: "상태", options: ["전체", "구직 중", "이직 준비 중", "관심 있음"] },
+  { key: "region", label: "지역", options: ["전체", "서울 강남구", "서울 서초구", "서울 송파구", "판교", "분당", "원격"] },
+  { key: "experience", label: "경력", options: ["전체", "신입/경력", "경력 무관", "1~3년", "3년 이상", "5년 이상"] },
+  { key: "status", label: "상태", options: ["전체", "채용 중", "마감 임박"] },
 ];
 
 function RecruiterPage() {
-  const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", part: "전체", experience: "전체", status: "전체" });
+  const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", experience: "전체", status: "전체" });
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    return CANDIDATES.filter((c) => {
-      if (filters.region !== "전체" && c.region !== filters.region) return false;
-      if (filters.part !== "전체" && c.part !== filters.part) return false;
-      if (filters.experience !== "전체" && c.experience !== filters.experience) return false;
-      if (filters.status !== "전체" && c.status !== filters.status) return false;
-      if (search && !(c.name + c.intro + c.skills.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
+    return JOB_POSTINGS.filter((job) => {
+      if (filters.region !== "전체" && job.region !== filters.region) return false;
+      if (filters.experience !== "전체" && job.experience !== filters.experience) return false;
+      if (filters.status !== "전체" && job.status !== filters.status) return false;
+      if (search && !(job.company + job.title + job.intro + job.skills.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
   }, [filters, search]);
@@ -53,52 +52,52 @@ function RecruiterPage() {
       <main className="mx-auto max-w-7xl px-6 py-10 space-y-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <span className="chip"><span className="h-1.5 w-1.5 rounded-full bg-mint" />Recruiting</span>
-            <h1 className="mt-3 text-4xl font-display font-semibold tracking-tight">고용 & 채용</h1>
-            <p className="mt-2 text-ink-soft text-sm">뛰어난 개발자들을 탐색하고 포트폴리오를 확인해 보세요.</p>
+            <span className="chip"><span className="h-1.5 w-1.5 rounded-full bg-mint" />Jobs</span>
+            <h1 className="mt-3 text-4xl font-display font-semibold tracking-tight">기업 공고</h1>
+            <p className="mt-2 text-ink-soft text-sm">다양한 기업의 공고를 확인하고 지원해 보세요.</p>
           </div>
-          <div className="text-xs font-mono text-ink-soft">{filtered.length} / {CANDIDATES.length} 결과</div>
+          <div className="text-xs font-mono text-ink-soft">{filtered.length} / {JOB_POSTINGS.length} 공고</div>
         </header>
 
-        <FilterBar groups={GROUPS} value={filters} onChange={setFilters} search={search} onSearchChange={setSearch} searchPlaceholder="이름 · 소개 · 기술 스택 검색" />
+        <FilterBar groups={GROUPS} value={filters} onChange={setFilters} search={search} onSearchChange={setSearch} searchPlaceholder="기업명 · 직무 · 기술 스택 검색" />
 
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((c) => (
-            <article key={c.id} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition">
+          {filtered.map((job) => (
+            <article key={job.id} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition">
               <div className="relative p-5 border-b border-line overflow-hidden">
-                <div className="absolute inset-0 opacity-60" style={{ background: `linear-gradient(135deg, color-mix(in oklch, ${c.accent} 25%, transparent), transparent 70%)` }} />
+                <div className="absolute inset-0 opacity-60" style={{ background: `linear-gradient(135deg, color-mix(in oklch, ${job.accent} 25%, transparent), transparent 70%)` }} />
                 <div className="relative flex items-start justify-between">
                   <div>
-                    <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{c.part} · {c.experience}</div>
-                    <h3 className="mt-1 font-display text-xl font-semibold tracking-tight">{c.name}</h3>
+                    <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{job.company} · {job.experience}</div>
+                    <h3 className="mt-1 font-display text-xl font-semibold tracking-tight">{job.title}</h3>
                   </div>
-                  <div className={"shrink-0 text-center rounded-lg px-2.5 py-1 border " + (c.status === "구직 중" ? "border-mint text-mint bg-mint/10" : "border-line text-ink-soft")}>
-                    <div className="text-[10px] font-medium">{c.status}</div>
+                  <div className={"shrink-0 text-center rounded-lg px-2.5 py-1 border " + (job.status === "채용 중" ? "border-mint text-mint bg-mint/10" : "border-line text-ink-soft")}>
+                    <div className="text-[10px] font-medium">{job.status}</div>
                   </div>
                 </div>
               </div>
               <div className="p-5 space-y-3">
-                <p className="text-sm text-ink-soft leading-relaxed line-clamp-2 h-10">{c.intro}</p>
+                <p className="text-sm text-ink-soft leading-relaxed line-clamp-2 h-10">{job.intro}</p>
 
                 <div className="flex items-center gap-2 text-xs text-ink-soft pt-2">
-                  <span>📍 {c.region}</span>
+                  <span>📍 {job.region}</span>
                 </div>
 
                 <div className="flex flex-wrap gap-1.5 pt-1">
-                  {c.skills.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
+                  {job.skills.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
                 </div>
 
                 <div className="pt-3 border-t border-line mt-3">
-                  <button className="w-full h-9 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">
-                    포트폴리오 열람
-                  </button>
+                  <Link to="/jobs/$id" params={{ id: job.id }} className="w-full h-9 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition grid place-items-center">
+                    공고 보기
+                  </Link>
                 </div>
               </div>
             </article>
           ))}
           {filtered.length === 0 && (
             <div className="col-span-full surface-card p-12 text-center text-ink-soft">
-              조건에 맞는 개발자가 없습니다.
+              조건에 맞는 기업 공고가 없습니다.
             </div>
           )}
         </section>

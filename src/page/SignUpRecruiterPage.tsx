@@ -117,6 +117,10 @@ const SignUpRecruiterPage = () => {
     //회사 인증
     const [Comemail, setComEmail] = useState('');
     const [isCompanyChecked, setCompanyChecked] = useState(false);
+    
+    //사업자등록번호 인증
+    const [businessNumber, setBusinessNumber] = useState('');
+    const [isBusinessChecked, setBusinessChecked] = useState(false);
 
     const handleEmailChange = (event: any) => {
         setComEmail(event.target.value);
@@ -135,7 +139,8 @@ const SignUpRecruiterPage = () => {
         }
 
         console.log("Mock handleSignUp");
-        alert("회원가입이 성공!");
+        alert('회원가입 성공!');
+        localStorage.setItem('isFirstLogin', 'true');
         navigate({ to: `/login` });
     };
 
@@ -259,32 +264,55 @@ const SignUpRecruiterPage = () => {
                 <div className="flex flex-col w-full gap-[0.5em]">
                     <input
                         className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
-                        placeholder="회사인증"
+                        placeholder="회사 이메일 인증"
                         type="Comemail"
                         value={Comemail}
                         onChange={handleEmailChange}
                     />
                 </div>
-                <div className="flex items-center mt-[-0.5em]">
+                <div className="flex flex-col w-full gap-[0.5em]">
                     <input
-                        className="border border-[#d0d1d9]"
-                        type="checkbox"
-                        id="company"
-                        checked={isCompanyChecked}
-                        onChange={() => handleCompanyCheck(Comemail)}
-                        disabled={!Comemail}
+                        className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
+                        placeholder="사업자등록번호 (예: 123-45-67890)"
+                        type="text"
+                        value={businessNumber}
+                        onChange={(e) => setBusinessNumber(e.target.value)}
                     />
-                    <label htmlFor="company">회사인증</label>
-                    <input
-                        // type="checkbox" 
-                        // id="Join" 
-                        className="border border-[#d0d1d9] ml-[2em]"
-                        onClick={handleCheckBoxClick}
-                        type="checkbox"
-                        id="Join"
-                        checked={agree}
-                    />
-                    <label htmlFor="Join">가입 기본약관</label>
+                </div>
+                <div className="flex items-center mt-[-0.5em] gap-[1em]">
+                    <div className="flex items-center">
+                        <input
+                            className="border border-[#d0d1d9] mr-1"
+                            type="checkbox"
+                            id="company"
+                            checked={isCompanyChecked}
+                            onChange={() => handleCompanyCheck(Comemail)}
+                            disabled={!Comemail}
+                        />
+                        <label htmlFor="company">이메일 인증</label>
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            className="border border-[#d0d1d9] mr-1"
+                            type="checkbox"
+                            id="business"
+                            checked={isBusinessChecked}
+                            onChange={() => setBusinessChecked(!isBusinessChecked)}
+                            disabled={!businessNumber}
+                        />
+                        <label htmlFor="business">사업자 인증</label>
+                    </div>
+                    
+                    <div className="flex items-center ml-auto">
+                        <input
+                            className="border border-[#d0d1d9] mr-1"
+                            onClick={handleCheckBoxClick}
+                            type="checkbox"
+                            id="Join"
+                            checked={agree}
+                        />
+                        <label htmlFor="Join">가입 기본약관</label>
+                    </div>
                 </div>
             </div>
 

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import React, { useState, useEffect } from "react";
+import { NotificationBell } from "./notification-bell";
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -23,15 +24,16 @@ const Nav = () => {
           <Link to="/browse" className="hover:text-ink transition active:text-ink">포트폴리오</Link>
           <Link to="/templates" className="hover:text-ink transition active:text-ink">템플릿</Link>
           <Link to="/contests" className="hover:text-ink transition active:text-ink">공모전</Link>
-          <Link to="/recruiter" className="hover:text-ink transition active:text-ink">채용</Link>
+          <Link to="/recruiter" className="hover:text-ink transition active:text-ink">기업 공고</Link>
         </nav>
         <div className="flex items-center gap-2">
+          <NotificationBell signedIn={currentUser} />
           {currentUser ? (
-            <Link to="/mypage" className="h-9 px-4 rounded-full font-['OTF_R'] bg-primary text-white text-sm hover:bg-surface transition shadow-sm grid place-items-center">
+            <Link to="/mypage" className="h-9 px-4 rounded-full font-['OTF_R'] bg-primary text-white text-sm transition shadow-sm grid place-items-center">
               마이페이지
             </Link>
           ) : (
-            <button className="h-9 px-4 font-['OTF_R'] rounded-full bg-primary text-primary-foreground text-sm hover:opacity-90 transition shadow-sm" onClick={onClickImg}>
+            <button className="h-9 px-4 font-['OTF_R'] rounded-full bg-primary text-primary-foreground text-sm transition shadow-sm" onClick={onClickImg}>
               로그인
             </button>
           )}

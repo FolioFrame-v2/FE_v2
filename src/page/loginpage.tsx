@@ -19,7 +19,13 @@ const LoginPage = () => {
 
     const handleLogin = () => {
         console.log("Mock handleLogin", emailOrId, password);
-        navigate({ to: `/` });
+        const isFirstLogin = localStorage.getItem('isFirstLogin');
+        if (isFirstLogin === 'true') {
+            localStorage.removeItem('isFirstLogin');
+            navigate({ to: `/onboarding` });
+        } else {
+            navigate({ to: `/` });
+        }
     };
 
     const handleKeyDown = (e: any) => {

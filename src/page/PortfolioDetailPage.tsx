@@ -40,6 +40,8 @@ const PortfolioDetailPage = () => {
     images: [] as any[],
     logo: "",
     hits: 100,
+    certifications: "정보처리기사 (2026.05), SQLD (2025.10)",
+    education: "한국대학교 컴퓨터공학과 학사 졸업 (2022.03 - 2026.02)",
   });
   const [comments, setComments] = useState<any[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
@@ -167,6 +169,20 @@ const PortfolioDetailPage = () => {
             <label className="font-bolder text-[1.6vw] mb-[8px]">참여 기간</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
               {portfolioData.startDate} - {portfolioData.endDate}
+            </div>
+          </div>
+
+          <div className="flex flex-col mb-[3vh] [grid-area:education]">
+            <label className="font-bolder text-[1.6vw] mb-[8px]">학력</label>
+            <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
+              {portfolioData.education || "학력 정보 없음"}
+            </div>
+          </div>
+
+          <div className="flex flex-col mb-[3vh] [grid-area:certifications]">
+            <label className="font-bolder text-[1.6vw] mb-[8px]">자격증</label>
+            <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
+              {portfolioData.certifications || "자격증 정보 없음"}
             </div>
           </div>
 

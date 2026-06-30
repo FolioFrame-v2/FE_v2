@@ -17,6 +17,7 @@ import Calendar from "@/assets/icons/Calendar.png";
 
 import Link from "@/assets/icons/Link.png";
 import { SiThangs } from "react-icons/si";
+import { Bookmark } from 'lucide-react';
 
 // removed domain/features import
 
@@ -42,6 +43,7 @@ const HackathonDetailPage = () => {
   const [isFull, setIsFull] = useState(false);
   const [isUserParticipant, setIsUserParticipant] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false); // 팝업 상태 추가
+  const [isBookmarked, setIsBookmarked] = useState(false); // 북마크 상태 추가
 
   const navigate = useNavigate();
   const currentUser = { id: "mock-id", email: "mock@example.com" };
@@ -205,8 +207,15 @@ const HackathonDetailPage = () => {
         </div>
 
         {/* 오른쪽 사이드 창 */}
-        <div className="sticky top-0 w-[50vh] h-[50vh] bg-white p-[5px_10px] shadow-[0px_4px_6px_rgba(0,0,0,0.4)] overflow-y-auto rounded-[2em] flex flex-col items-center justify-center">
-          <h1 className="w-[6vw] h-[6vw] mb-[-1em] [&>img]:w-full [&>img]:h-full [&>img]:object-contain">
+        <div className="sticky top-[10vh] w-[50vh] h-[50vh] bg-white p-[5px_10px] shadow-[0px_4px_6px_rgba(0,0,0,0.4)] overflow-y-auto rounded-[2em] flex flex-col items-center justify-center relative">
+          <button
+            onClick={() => setIsBookmarked(!isBookmarked)}
+            className="absolute top-4 right-6 p-2 rounded-full bg-white/80 hover:bg-white text-ink-soft hover:text-primary transition-colors shadow-sm"
+          >
+            <Bookmark className={`size-6 ${isBookmarked ? "fill-[#0a27a6] text-[#0a27a6]" : "text-[#d0d1d9]"}`} />
+          </button>
+          
+          <h1 className="w-[6vw] h-[6vw] mb-[-1em] [&>img]:w-full [&>img]:h-full [&>img]:object-contain mt-[1em]">
             {HackathonData.logo ? (
               <img
                 src={`http://localhost:3000/${HackathonData.logo}`}

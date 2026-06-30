@@ -12,7 +12,7 @@ type Portfolio = {
   region: string;
   part: string;
   field: string;
-  team: string;
+  experience: string;
   stacks: string[];
   views: number;
   likes: number;
@@ -20,33 +20,40 @@ type Portfolio = {
 };
 
 const PORTFOLIOS: Portfolio[] = [
-  { id: "p1", title: "실시간 협업 화이트보드", author: "김도현", region: "서울", part: "Frontend", field: "협업툴", team: "1인", stacks: ["React", "WebRTC", "Yjs"], views: 1240, likes: 86, accent: "var(--color-mint)" },
-  { id: "p2", title: "AI 기반 코드리뷰 봇", author: "이수민", region: "경기", part: "Backend", field: "AI/ML", team: "2~3인", stacks: ["Node", "OpenAI", "Postgres"], views: 982, likes: 71, accent: "var(--color-coral)" },
-  { id: "p3", title: "운동 루틴 추천 앱", author: "박지오", region: "부산", part: "Mobile", field: "헬스케어", team: "4~6인", stacks: ["Flutter", "Firebase"], views: 654, likes: 44, accent: "var(--color-mint)" },
-  { id: "p4", title: "쇼핑몰 추천 엔진", author: "정유나", region: "서울", part: "Data", field: "이커머스", team: "2~3인", stacks: ["Python", "Airflow", "BigQuery"], views: 1532, likes: 121, accent: "var(--color-coral)" },
-  { id: "p5", title: "DevOps 대시보드", author: "최현우", region: "대구", part: "DevOps", field: "인프라", team: "1인", stacks: ["Kubernetes", "Grafana"], views: 408, likes: 33, accent: "var(--color-mint)" },
-  { id: "p6", title: "다국어 학습 SaaS", author: "한지민", region: "원격", part: "Fullstack", field: "에듀테크", team: "7인+", stacks: ["Next", "tRPC", "Stripe"], views: 2210, likes: 198, accent: "var(--color-coral)" },
-  { id: "p7", title: "음악 큐레이션 플랫폼", author: "오세진", region: "인천", part: "Frontend", field: "미디어", team: "2~3인", stacks: ["Vue", "Web Audio"], views: 712, likes: 52, accent: "var(--color-mint)" },
-  { id: "p8", title: "스마트 농장 IoT", author: "장민호", region: "광주", part: "Embedded", field: "IoT", team: "4~6인", stacks: ["C", "MQTT", "AWS"], views: 521, likes: 39, accent: "var(--color-coral)" },
+  { id: "p1", title: "실시간 협업 화이트보드", author: "김도현", region: "서울", part: "Frontend", field: "협업툴", experience: "신입/경력", stacks: ["React", "WebRTC", "Yjs"], views: 1240, likes: 86, accent: "var(--color-mint)" },
+  { id: "p2", title: "AI 기반 코드리뷰 봇", author: "이수민", region: "경기", part: "Backend", field: "AI/ML", experience: "1~3년", stacks: ["Node", "OpenAI", "Postgres"], views: 982, likes: 71, accent: "var(--color-coral)" },
+  { id: "p3", title: "운동 루틴 추천 앱", author: "박지오", region: "부산", part: "Mobile", field: "헬스케어", experience: "3년 이상", stacks: ["Flutter", "Firebase"], views: 654, likes: 44, accent: "var(--color-mint)" },
+  { id: "p4", title: "쇼핑몰 추천 엔진", author: "정유나", region: "서울", part: "Data", field: "이커머스", experience: "1~3년", stacks: ["Python", "Airflow", "BigQuery"], views: 1532, likes: 121, accent: "var(--color-coral)" },
+  { id: "p5", title: "DevOps 대시보드", author: "최현우", region: "대구", part: "DevOps", field: "인프라", experience: "신입/경력", stacks: ["Kubernetes", "Grafana"], views: 408, likes: 33, accent: "var(--color-mint)" },
+  { id: "p6", title: "다국어 학습 SaaS", author: "한지민", region: "원격", part: "Fullstack", field: "에듀테크", experience: "5년 이상", stacks: ["Next", "tRPC", "Stripe"], views: 2210, likes: 198, accent: "var(--color-coral)" },
+  { id: "p7", title: "음악 큐레이션 플랫폼", author: "오세진", region: "인천", part: "Frontend", field: "미디어", experience: "1~3년", stacks: ["Vue", "Web Audio"], views: 712, likes: 52, accent: "var(--color-mint)" },
+  { id: "p8", title: "스마트 농장 IoT", author: "장민호", region: "광주", part: "Embedded", field: "IoT", experience: "3년 이상", stacks: ["C", "MQTT", "AWS"], views: 521, likes: 39, accent: "var(--color-coral)" },
 ];
 
 const GROUPS: FilterGroup[] = [
-  { key: "region", label: "지역", options: ["전체", "서울", "경기", "인천", "부산", "대구", "광주", "원격"] },
+  { key: "region", label: "지역", options: ["전체", "서울", "경기", "인천", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주", "원격"] },
   { key: "part", label: "파트", options: ["전체", "Frontend", "Backend", "Fullstack", "Mobile", "Data", "DevOps", "Embedded"] },
   { key: "field", label: "분야", options: ["전체", "AI/ML", "이커머스", "협업툴", "헬스케어", "에듀테크", "미디어", "IoT", "인프라"] },
-  { key: "team", label: "인원수", options: ["전체", "1인", "2~3인", "4~6인", "7인+"] },
+  { key: "experience", label: "경력", options: ["전체", "신입/경력", "경력 무관", "1~3년", "3년 이상", "5년 이상"] },
 ];
 
 function BrowsePage() {
-  const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", part: "전체", field: "전체", team: "전체" });
+  const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", part: "전체", field: "전체", experience: "전체" });
   const [search, setSearch] = useState("");
+  const [proposalTarget, setProposalTarget] = useState<any>(null);
+
+  const handleProposalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(`${proposalTarget?.author}님에게 매칭 제안이 전송되었습니다.`);
+    setProposalTarget(null);
+  };
 
   const filtered = useMemo(() => {
     return PORTFOLIOS.filter((p) => {
       if (filters.region !== "전체" && p.region !== filters.region) return false;
       if (filters.part !== "전체" && p.part !== filters.part) return false;
       if (filters.field !== "전체" && p.field !== filters.field) return false;
-      if (filters.team !== "전체" && p.team !== filters.team) return false;
+      if (filters.experience !== "전체" && p.experience !== filters.experience) return false;
       if (search && !(p.title + p.author + p.stacks.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
@@ -92,14 +99,26 @@ function BrowsePage() {
                     <span>·</span>
                     <span>{p.region}</span>
                     <span>·</span>
-                    <span>{p.team}</span>
+                    <span>{p.experience}</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {p.stacks.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-line text-xs text-ink-soft font-mono">
-                    <span>♥ {p.likes}</span>
-                    <span>{p.views.toLocaleString()} views</span>
+                    <div className="flex items-center gap-3">
+                      <span>♥ {p.likes}</span>
+                      <span>{p.views.toLocaleString()} views</span>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setProposalTarget(p);
+                      }}
+                      className="h-7 px-3 rounded bg-surface-2 text-primary font-medium hover:bg-primary hover:text-white transition-colors"
+                    >
+                      매칭 제안
+                    </button>
                   </div>
                 </div>
               </article>
@@ -112,6 +131,51 @@ function BrowsePage() {
             </div>
           )}
         </section>
+
+        {proposalTarget && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+            <div className="bg-surface w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+              <div className="p-6 border-b border-line/60 flex items-center justify-between">
+                <h2 className="text-xl font-display font-semibold tracking-tight">매칭 제안하기</h2>
+                <button 
+                  onClick={() => setProposalTarget(null)} 
+                  className="text-ink-soft hover:text-ink transition flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-2"
+                >
+                  ✕
+                </button>
+              </div>
+              <form onSubmit={handleProposalSubmit} className="p-6 space-y-4">
+                <div>
+                  <p className="text-sm font-medium mb-1">대상 인재</p>
+                  <p className="text-sm text-ink-soft">{proposalTarget.author} ({proposalTarget.part})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">제안 메시지</label>
+                  <textarea 
+                    className="w-full h-32 p-3 border border-line rounded-lg bg-surface-2 focus:bg-white transition-colors outline-none focus:border-primary resize-none text-sm"
+                    placeholder="인재에게 전달할 매칭 제안 메시지를 작성해주세요..."
+                    required
+                  ></textarea>
+                </div>
+                <div className="pt-2 flex justify-end gap-2">
+                  <button 
+                    type="button"
+                    onClick={() => setProposalTarget(null)}
+                    className="h-10 px-5 rounded-lg border border-line text-sm font-medium hover:bg-surface-2 transition"
+                  >
+                    취소
+                  </button>
+                  <button 
+                    type="submit"
+                    className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition shadow-sm"
+                  >
+                    보내기
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
