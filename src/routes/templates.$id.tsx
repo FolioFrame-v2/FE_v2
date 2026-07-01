@@ -5,7 +5,7 @@ import { SAMPLE_PORTFOLIO, TEMPLATES, type TemplateMeta } from "@/lib/portfolio-
 
 export const Route = createFileRoute("/templates/$id")({
   head: ({ params }) => ({
-    meta: [{ title: `${params.id} 템플릿 — devfolio` }],
+    meta: [{ title: `${params.id} 템플릿 — FolioFrame` }],
   }),
   component: TemplateDetailPage,
 });

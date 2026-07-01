@@ -44,6 +44,8 @@ const PortfolioDetailPage2 = () => {
     images: [] as any[],
     logo: "",
     hits: 100,
+    certifications: "정보처리기사 (2026.05), SQLD (2025.10)",
+    education: "한국대학교 컴퓨터공학과 학사 졸업 (2022.03 - 2026.02)",
   });
   const [comments, setComments] = useState<any[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
@@ -140,6 +142,18 @@ const PortfolioDetailPage2 = () => {
               <p className="absolute top-0 text-[1em] font-bold text-white ml-[3.6em] mt-[1.8em] font-['OTF_R']">사용한 언어</p>
               <img className="w-[10em] h-auto mr-[1em] mt-[0.2em]" src={Notepad3} alt="Notepad3" />
               <p className="relative text-[1em] m-0 mt-[2.5em] font-['OTF_R'] after:content-[''] after:block after:w-[10em] after:h-[0.08em] after:bg-[#000] after:absolute after:left-0">{portfolioData.usedLanguage}</p>
+            </div>
+            {/* 학력 */}
+            <div className="flex flex-row relative">
+              <p className="absolute top-0 text-[1em] font-bold text-white ml-[3.6em] mt-[1.8em] font-['OTF_R']">학력</p>
+              <img className="w-[10em] h-auto mr-[1em] mt-[0.2em]" src={Notepad3} alt="Notepad3" />
+              <p className="relative text-[1em] m-0 mt-[2.5em] font-['OTF_R'] after:content-[''] after:block after:w-[10em] after:h-[0.08em] after:bg-[#000] after:absolute after:left-0">{portfolioData.education}</p>
+            </div>
+            {/* 자격증 */}
+            <div className="flex flex-row relative">
+              <p className="absolute top-0 text-[1em] font-bold text-white ml-[3.6em] mt-[1.8em] font-['OTF_R']">자격증</p>
+              <img className="w-[10em] h-auto mr-[1em] mt-[0.2em]" src={Notepad3} alt="Notepad3" />
+              <p className="relative text-[1em] m-0 mt-[2.5em] font-['OTF_R'] after:content-[''] after:block after:w-[10em] after:h-[0.08em] after:bg-[#000] after:absolute after:left-0">{portfolioData.certifications}</p>
             </div>
             {/* 프로젝트 링크 */}
             <div className="flex flex-row relative">

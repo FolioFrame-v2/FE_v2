@@ -174,11 +174,11 @@ const WritingBox = ({ addComment }: any) => {
           onChange={handleMarkdownChange}
           onKeyDown={handleKeyDown}
           placeholder="댓글의 내용을 입력해주세요."
-          maxLength="100"
+          maxLength="500"
         />
         <div className="w-full mt-[1em] flex flex-col">
-          <div className={`text-[0.8125em] ml-auto font-bold ${lengthCount >= 100 ? "text-[red]" : "text-[#A2A3B2]"}`}>
-            {lengthCount}/100 자
+          <div className={`text-[0.8125em] ml-auto font-bold ${lengthCount >= 500 ? "text-[red]" : "text-[#A2A3B2]"}`}>
+            {lengthCount}/500 자
           </div>
           <hr className="my-[1em] mx-0 border-none w-full h-[1.5px] bg-[rgba(162,163,178,0.4)]" />
         </div>

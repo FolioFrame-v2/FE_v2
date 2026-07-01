@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import PageComponent from "@/page/ProfileEditPage";
+import { createFileRoute } from '@tanstack/react-router'
+import ProfileEditPage from '@/page/ProfileEditPage'
 
-export const Route = createFileRoute("/profileedit")({
-  component: PageComponent,
-});
+export const Route = createFileRoute('/profileedit')({
+  component: ProfileEditPage,
+})

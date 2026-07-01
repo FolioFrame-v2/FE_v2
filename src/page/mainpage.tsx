@@ -202,7 +202,7 @@ function HowItWorks() {
         {
             n: "04",
             title: "공유 & 매칭",
-            body: "한 줄 링크로 공개. 채용 담당자가 필터 검색으로 당신을 발견합니다.",
+            body: "한 줄 링크로 공개. 기업 담당자가 필터 검색으로 당신을 발견합니다.",
         },
     ];
     return (
@@ -443,7 +443,7 @@ function ShareSection() {
                     </p>
                     <div className="mt-6 flex items-center gap-2 p-2 pl-4 bg-surface rounded-full border border-line">
                         <span className="font-mono text-sm text-ink-soft truncate flex-1">
-                            devfolio.io/@minji-kim
+                            FolioFrame.io/@minji-kim
                         </span>
                         <button className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-medium">
                             링크 복사

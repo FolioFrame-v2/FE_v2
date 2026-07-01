@@ -80,7 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "FolioFrame — 개발자 포트폴리오 제작 플랫폼" },
       { name: "description", content: "템플릿으로 시작하고, AI 진단으로 다듬고, 한 줄 링크로 공유하는 개발자 포트폴리오." },
       { property: "og:title", content: "Devfolio — 개발자 포트폴리오 제작 플랫폼" },
-      { property: "og:description", content: "템플릿 · AI 진단 · 공유 · 채용 매칭을 한 곳에서." },
+      { property: "og:description", content: "템플릿 · AI 진단 · 공유 · 기업 공고 매칭을 한 곳에서." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

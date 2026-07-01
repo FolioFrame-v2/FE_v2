@@ -12,7 +12,7 @@ export const Route = createFileRoute("/portfolio/$id")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "완성된 포트폴리오 — devfolio" },
+      { title: "완성된 포트폴리오 — FolioFrame" },
       { name: "description", content: "선택한 템플릿이 적용된 포트폴리오를 확인하세요." },
     ],
   }),
@@ -34,7 +34,7 @@ function PortfolioPage() {
         <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3 text-sm">
             <span className="chip"><span className="h-1.5 w-1.5 rounded-full bg-mint" />Published</span>
-            <span className="font-mono text-xs text-ink-soft">devfolio.app/p/{id}</span>
+            <span className="font-mono text-xs text-ink-soft">FolioFrame.app/p/{id}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft hidden md:inline">템플릿</span>
@@ -52,7 +52,7 @@ function PortfolioPage() {
             <Link to="/templates" className="h-9 px-3 rounded-full border border-line text-xs inline-flex items-center hover:bg-surface">템플릿 변경</Link>
             <Link to="/portfoliopageeditor" className="h-9 px-3 rounded-full border border-line text-xs inline-flex items-center hover:bg-surface">내용 수정</Link>
             <button
-              onClick={() => navigator.clipboard?.writeText(`https://devfolio.app/p/${id}`)}
+              onClick={() => navigator.clipboard?.writeText(`https://FolioFrame.app/p/${id}`)}
               className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-medium"
             >
               공유 링크 복사

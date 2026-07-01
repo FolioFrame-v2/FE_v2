@@ -92,7 +92,7 @@ function Header({}) {
             <a 
               className={`font-['OTF_B'] font-[700] text-[1.2em] leading-[36px] no-underline ml-[30px] cursor-pointer hover:text-[#0a27a6] ${isActive(`/RecruiterPage/${currentUser.id}`) ? "text-[#0a27a6]" : "text-[#919194]"}`}
               onClick={() => navigate({ to: `/recruiter/${currentUser.id}` })}
-            >채용
+            >기업 공고
             </a>
           )}
         </nav>
