@@ -92,6 +92,7 @@ function EditorPage() {
   const [email, setEmail] = useState("jihoon@example.com");
   const [github, setGithub] = useState("https://github.com/jihoon");
   const [website, setWebsite] = useState("https://jihoon.dev");
+  const [certifications, setCertifications] = useState("정보처리기사 (2023.08)\nSQLD (2022.05)");
   const [intro, setIntro] = useState(
     "안녕하세요. 안정적인 서비스를 만드는 데 관심이 많은 백엔드 엔지니어 김지훈입니다.",
   );
@@ -384,6 +385,9 @@ function EditorPage() {
                 <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://your.site" />
               </Field>
             </div>
+            <Field label="자격증" hint="보유하신 자격증을 입력해주세요.">
+              <Textarea value={certifications} onChange={(e) => setCertifications(e.target.value)} rows={2} placeholder="예) 정보처리기사 (2023.08)" />
+            </Field>
             <Field label="프로필 소개" hint={`${intro.length}/500`}>
               <Textarea value={intro} maxLength={500} onChange={(e) => setIntro(e.target.value)} rows={3} placeholder="간단한 자기소개" />
               <AiSuggestion

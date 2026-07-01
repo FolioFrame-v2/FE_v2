@@ -15,15 +15,18 @@ type JobPosting = {
   skills: string[];
   intro: string;
   accent: string;
+  views: number;
+  likes: number;
+  createdAt: string;
 };
 
 const JOB_POSTINGS: JobPosting[] = [
-  { id: "job1", company: "Toss", title: "Frontend Developer", experience: "신입/경력", region: "서울 강남구", status: "채용 중", skills: ["React", "TypeScript", "Next.js"], intro: "토스에서 사용자 중심의 프론트엔드를 개발할 분을 모십니다.", accent: "var(--color-mint)" },
-  { id: "job2", company: "Kakao", title: "Backend Engineer", experience: "3년 이상", region: "판교", status: "채용 중", skills: ["Java", "Spring Boot", "MySQL"], intro: "카카오톡 메시징 서버 성능 최적화를 함께할 전문가를 찾습니다.", accent: "var(--color-coral)" },
-  { id: "job3", company: "Naver", title: "iOS Engineer", experience: "5년 이상", region: "분당", status: "마감 임박", skills: ["Swift", "RxSwift", "iOS"], intro: "네이버 앱의 새로운 사용자 경험을 설계하고 구현합니다.", accent: "var(--color-mint)" },
-  { id: "job4", company: "Line", title: "Data Scientist", experience: "경력 무관", region: "원격", status: "채용 중", skills: ["Python", "PyTorch", "SQL"], intro: "글로벌 메신저 라인의 대규모 데이터를 분석하고 모델을 개발합니다.", accent: "var(--color-coral)" },
-  { id: "job5", company: "Daangn", title: "DevOps Engineer", experience: "5년 이상", region: "서울 서초구", status: "채용 중", skills: ["Kubernetes", "AWS", "Terraform"], intro: "당근마켓의 글로벌 인프라를 구축하고 안정적으로 운영합니다.", accent: "var(--color-mint)" },
-  { id: "job6", company: "Woowa Bros", title: "Fullstack Engineer", experience: "1~3년", region: "서울 송파구", status: "채용 중", skills: ["Node.js", "React", "TypeScript"], intro: "배달의민족 서비스의 신규 피처를 개발합니다.", accent: "var(--color-coral)" },
+  { id: "job1", company: "Toss", title: "Frontend Developer", experience: "신입/경력", region: "서울 강남구", status: "채용 중", skills: ["React", "TypeScript", "Next.js"], intro: "토스에서 사용자 중심의 프론트엔드를 개발할 분을 모십니다.", accent: "var(--color-mint)", views: 1540, likes: 320, createdAt: "2026-06-25" },
+  { id: "job2", company: "Kakao", title: "Backend Engineer", experience: "3년 이상", region: "판교", status: "채용 중", skills: ["Java", "Spring Boot", "MySQL"], intro: "카카오톡 메시징 서버 성능 최적화를 함께할 전문가를 찾습니다.", accent: "var(--color-coral)", views: 890, likes: 150, createdAt: "2026-06-20" },
+  { id: "job3", company: "Naver", title: "iOS Engineer", experience: "5년 이상", region: "분당", status: "마감 임박", skills: ["Swift", "RxSwift", "iOS"], intro: "네이버 앱의 새로운 사용자 경험을 설계하고 구현합니다.", accent: "var(--color-mint)", views: 2100, likes: 450, createdAt: "2026-06-28" },
+  { id: "job4", company: "Line", title: "Data Scientist", experience: "경력 무관", region: "원격", status: "채용 중", skills: ["Python", "PyTorch", "SQL"], intro: "글로벌 메신저 라인의 대규모 데이터를 분석하고 모델을 개발합니다.", accent: "var(--color-coral)", views: 1200, likes: 280, createdAt: "2026-06-22" },
+  { id: "job5", company: "Daangn", title: "DevOps Engineer", experience: "5년 이상", region: "서울 서초구", status: "채용 중", skills: ["Kubernetes", "AWS", "Terraform"], intro: "당근마켓의 글로벌 인프라를 구축하고 안정적으로 운영합니다.", accent: "var(--color-mint)", views: 650, likes: 90, createdAt: "2026-06-18" },
+  { id: "job6", company: "Woowa Bros", title: "Fullstack Engineer", experience: "1~3년", region: "서울 송파구", status: "채용 중", skills: ["Node.js", "React", "TypeScript"], intro: "배달의민족 서비스의 신규 피처를 개발합니다.", accent: "var(--color-coral)", views: 420, likes: 50, createdAt: "2026-06-15" },
 ];
 
 const GROUPS: FilterGroup[] = [
@@ -35,16 +38,27 @@ const GROUPS: FilterGroup[] = [
 function RecruiterPage() {
   const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", experience: "전체", status: "전체" });
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("최신순");
 
   const filtered = useMemo(() => {
-    return JOB_POSTINGS.filter((job) => {
+    let result = JOB_POSTINGS.filter((job) => {
       if (filters.region !== "전체" && job.region !== filters.region) return false;
       if (filters.experience !== "전체" && job.experience !== filters.experience) return false;
       if (filters.status !== "전체" && job.status !== filters.status) return false;
       if (search && !(job.company + job.title + job.intro + job.skills.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
-  }, [filters, search]);
+
+    if (sort === "조회수순") {
+      result.sort((a, b) => b.views - a.views);
+    } else if (sort === "인기순") {
+      result.sort((a, b) => b.likes - a.likes);
+    } else {
+      // 최신순
+      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    return result;
+  }, [filters, search, sort]);
 
   return (
     <div className="min-h-screen text-foreground">
@@ -59,7 +73,17 @@ function RecruiterPage() {
           <div className="text-xs font-mono text-ink-soft">{filtered.length} / {JOB_POSTINGS.length} 공고</div>
         </header>
 
-        <FilterBar groups={GROUPS} value={filters} onChange={setFilters} search={search} onSearchChange={setSearch} searchPlaceholder="기업명 · 직무 · 기술 스택 검색" />
+        <FilterBar 
+          groups={GROUPS} 
+          value={filters} 
+          onChange={setFilters} 
+          search={search} 
+          onSearchChange={setSearch} 
+          searchPlaceholder="기업명 · 직무 · 기술 스택 검색" 
+          sortOptions={["최신순", "인기순", "조회수순"]}
+          sort={sort}
+          onSortChange={setSort}
+        />
 
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((job) => (

@@ -190,7 +190,7 @@ function JobDetailPage() {
           </div>
 
           <div className="flex md:flex-col gap-2 md:w-56">
-            <button className="flex-1 h-11 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
+            <button className="h-11 px-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
               지원하기
             </button>
             <button

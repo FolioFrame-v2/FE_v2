@@ -29,7 +29,7 @@ const Modal = ({ isOpen, onClose, onConfirm }: any) => {
 };
 
 const ProfileEditPage = () => {
-  const [currentUser, setLocalCurrentUser] = useState({ id: "mock-id", name: "MockUser", nickname: "MockNick", email: "mock@example.com", phoneNumber: "010-0000-0000" }); 
+  const [currentUser, setLocalCurrentUser] = useState({ id: "mock-id", name: "MockUser", nickname: "MockNick", email: "mock@example.com", phoneNumber: "010-0000-0000", certifications: "정보처리기사" });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -52,6 +52,10 @@ const ProfileEditPage = () => {
 
   const handleUpdatePhone = (newPhone: any) => {
     console.log("Mock handleUpdatePhone", newPhone);
+  };
+
+  const handleUpdateCertifications = (newCert: any) => {
+    console.log("Mock handleUpdateCertifications", newCert);
   };
 
   const handleDeleteAccount = () => {
@@ -104,6 +108,12 @@ const ProfileEditPage = () => {
             value={currentUser.phoneNumber}
             button={"설정"}
             onSave={handleUpdatePhone}
+          />
+          <InfoSection
+            label={"자격증"}
+            value={currentUser.certifications || "등록된 자격증이 없습니다."}
+            button={"설정"}
+            onSave={handleUpdateCertifications}
           />
         </div>
       </div>

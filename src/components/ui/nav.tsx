@@ -9,8 +9,8 @@ const Nav = () => {
     navigate({ to: `/login` });
   };
 
-  // const currentUser = true;
-  const currentUser = false;
+  const currentUser = true;
+  // const currentUser = false;
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-line">

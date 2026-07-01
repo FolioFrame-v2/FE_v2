@@ -63,6 +63,7 @@ function MyPage() {
             <InfoRow label="직군" value="Frontend Engineer" />
             <InfoRow label="지역" value="서울 · 강남구" />
             <InfoRow label="경력" value="2년차" />
+            <InfoRow label="자격증" value="정보처리기사" />
             <InfoRow label="이메일" value="dohyun@devfolio.io" />
             <InfoRow label="GitHub" value="github.com/dohyun" />
             <InfoRow label="웹사이트" value="dohyun.dev" />
@@ -121,13 +122,13 @@ function MyPage() {
                     <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">메모</button>
                     {c.stage === "지원완료" ? (
                       <>
-                        <button 
+                        <button
                           onClick={() => setPreviewCompany(c)}
                           className="h-8 px-3 rounded-md bg-surface-2 text-ink border border-line text-xs hover:bg-line/30 transition"
                         >
                           제출 포폴 보기
                         </button>
-                        <button 
+                        <button
                           onClick={() => setCancelTarget(c)}
                           className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition"
                         >
@@ -136,13 +137,13 @@ function MyPage() {
                       </>
                     ) : c.stage === "제안받음" ? (
                       <>
-                        <button 
+                        <button
                           onClick={() => setCancelTarget(c)}
                           className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition"
                         >
                           거절
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleAcceptProposal(c.id)}
                           className="h-8 px-3 rounded-md bg-mint text-ink text-xs hover:opacity-90 transition font-medium"
                         >
@@ -173,16 +174,18 @@ function MyPage() {
               {cancelTarget.stage === "지원완료" ? "지원을 취소하시겠습니까?" : "제안을 거절하시겠습니까?"}
             </h2>
             <p className="text-ink-soft text-sm mb-6">
-              이 작업은 되돌릴 수 없습니다. {cancelTarget.name}의 {cancelTarget.stage === "지원완료" ? "지원이 취소" : "제안이 거절"}됩니다.
+              이 작업은 되돌릴 수 없습니다.
+              <br />
+              {cancelTarget.name}의 {cancelTarget.stage === "지원완료" ? "지원이 취소" : "제안이 거절"}됩니다.
             </p>
             <div className="flex gap-3 justify-center">
-              <button 
+              <button
                 onClick={() => setCancelTarget(null)}
                 className="h-10 px-6 rounded-lg border border-line text-sm font-medium hover:bg-surface-2 transition"
               >
                 닫기
               </button>
-              <button 
+              <button
                 onClick={handleCancelConfirm}
                 className="h-10 px-6 rounded-lg bg-coral text-white text-sm font-medium hover:opacity-90 transition shadow-sm"
               >
@@ -197,8 +200,8 @@ function MyPage() {
       {previewCompany && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="bg-surface w-full max-w-2xl max-h-[85vh] rounded-2xl shadow-xl overflow-hidden flex flex-col relative animate-in fade-in zoom-in-95 duration-200">
-            <button 
-              onClick={() => setPreviewCompany(null)} 
+            <button
+              onClick={() => setPreviewCompany(null)}
               className="absolute top-5 right-5 text-ink-soft hover:text-ink transition flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-2"
             >
               ✕
@@ -216,28 +219,28 @@ function MyPage() {
             </div>
             <div className="p-8 bg-surface-2 overflow-y-auto min-h-[400px]">
               <div className="bg-white border border-line rounded-xl shadow-sm p-10 aspect-[1/1.4] mx-auto w-full max-w-md transform transition hover:scale-[1.01] duration-300">
-                 <h1 className="text-3xl font-display font-bold mb-6 text-ink">{previewCompany.submittedPortfolio}</h1>
-                 <p className="text-ink-soft text-sm leading-relaxed mb-8">
-                   안녕하세요! 저는 사용자 경험을 최우선으로 생각하는 프론트엔드 개발자 김도현입니다.
-                   {previewCompany.name}의 {previewCompany.part} 직무에 지원하기 위해 작성한 포트폴리오입니다.
-                 </p>
-                 <div className="space-y-4">
-                   <div className="h-3 bg-line/40 rounded-full w-full"></div>
-                   <div className="h-3 bg-line/40 rounded-full w-5/6"></div>
-                   <div className="h-3 bg-line/40 rounded-full w-4/6"></div>
-                   <div className="h-3 bg-line/40 rounded-full w-full mt-8"></div>
-                   <div className="h-3 bg-line/40 rounded-full w-3/4"></div>
-                   <div className="h-3 bg-line/40 rounded-full w-full"></div>
-                 </div>
-                 <div className="mt-12 p-6 border border-line/60 rounded-lg bg-surface/50">
-                    <div className="text-xs font-mono text-ink-soft uppercase mb-2">Projects</div>
-                    <div className="h-16 bg-line/30 rounded-md"></div>
-                 </div>
+                <h1 className="text-3xl font-display font-bold mb-6 text-ink">{previewCompany.submittedPortfolio}</h1>
+                <p className="text-ink-soft text-sm leading-relaxed mb-8">
+                  안녕하세요! 저는 사용자 경험을 최우선으로 생각하는 프론트엔드 개발자 김도현입니다.
+                  {previewCompany.name}의 {previewCompany.part} 직무에 지원하기 위해 작성한 포트폴리오입니다.
+                </p>
+                <div className="space-y-4">
+                  <div className="h-3 bg-line/40 rounded-full w-full"></div>
+                  <div className="h-3 bg-line/40 rounded-full w-5/6"></div>
+                  <div className="h-3 bg-line/40 rounded-full w-4/6"></div>
+                  <div className="h-3 bg-line/40 rounded-full w-full mt-8"></div>
+                  <div className="h-3 bg-line/40 rounded-full w-3/4"></div>
+                  <div className="h-3 bg-line/40 rounded-full w-full"></div>
+                </div>
+                <div className="mt-12 p-6 border border-line/60 rounded-lg bg-surface/50">
+                  <div className="text-xs font-mono text-ink-soft uppercase mb-2">Projects</div>
+                  <div className="h-16 bg-line/30 rounded-md"></div>
+                </div>
               </div>
             </div>
             <div className="p-5 border-t border-line/60 flex justify-end bg-surface">
-              <button 
-                onClick={() => setPreviewCompany(null)} 
+              <button
+                onClick={() => setPreviewCompany(null)}
                 className="h-10 px-6 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition shadow-sm"
               >
                 닫기
@@ -284,6 +287,6 @@ function StatusChip({ status }: { status: string }) {
     status === "공개" || status === "서류 제출" ? "bg-mint/20 text-ink border-mint/40" :
       status === "비공개" || status === "수락완료" ? "bg-surface-2 text-ink-soft border-line" :
         status === "제안받음" ? "bg-primary/10 text-primary border-primary/20" :
-        "bg-coral/15 text-ink border-coral/40";
+          "bg-coral/15 text-ink border-coral/40";
   return <span className={"chip border " + tone}>{status}</span>;
 }

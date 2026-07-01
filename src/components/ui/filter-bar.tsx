@@ -15,6 +15,9 @@ export function FilterBar({
   search,
   onSearchChange,
   searchPlaceholder = "검색...",
+  sortOptions,
+  sort,
+  onSortChange,
 }: {
   groups: FilterGroup[];
   value: FilterState;
@@ -22,6 +25,9 @@ export function FilterBar({
   search: string;
   onSearchChange: (v: string) => void;
   searchPlaceholder?: string;
+  sortOptions?: string[];
+  sort?: string;
+  onSortChange?: (v: string) => void;
 }) {
   const activeCount = useMemo(
     () => Object.values(value).filter((v) => v && v !== "전체").length,
@@ -42,6 +48,17 @@ export function FilterBar({
             className="w-full h-10 pl-9 pr-3 rounded-lg border border-line bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
           />
         </div>
+        {sortOptions && onSortChange && sort && (
+          <select
+            value={sort}
+            onChange={(e) => onSortChange(e.target.value)}
+            className="h-10 px-3 rounded-lg border border-line bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 cursor-pointer text-ink"
+          >
+            {sortOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        )}
         {activeCount > 0 && (
           <button
             onClick={() => onChange(Object.fromEntries(groups.map((g) => [g.key, "전체"])))}

@@ -16,18 +16,19 @@ type Portfolio = {
   stacks: string[];
   views: number;
   likes: number;
+  createdAt: string;
   accent: string;
 };
 
 const PORTFOLIOS: Portfolio[] = [
-  { id: "p1", title: "실시간 협업 화이트보드", author: "김도현", region: "서울", part: "Frontend", field: "협업툴", experience: "신입/경력", stacks: ["React", "WebRTC", "Yjs"], views: 1240, likes: 86, accent: "var(--color-mint)" },
-  { id: "p2", title: "AI 기반 코드리뷰 봇", author: "이수민", region: "경기", part: "Backend", field: "AI/ML", experience: "1~3년", stacks: ["Node", "OpenAI", "Postgres"], views: 982, likes: 71, accent: "var(--color-coral)" },
-  { id: "p3", title: "운동 루틴 추천 앱", author: "박지오", region: "부산", part: "Mobile", field: "헬스케어", experience: "3년 이상", stacks: ["Flutter", "Firebase"], views: 654, likes: 44, accent: "var(--color-mint)" },
-  { id: "p4", title: "쇼핑몰 추천 엔진", author: "정유나", region: "서울", part: "Data", field: "이커머스", experience: "1~3년", stacks: ["Python", "Airflow", "BigQuery"], views: 1532, likes: 121, accent: "var(--color-coral)" },
-  { id: "p5", title: "DevOps 대시보드", author: "최현우", region: "대구", part: "DevOps", field: "인프라", experience: "신입/경력", stacks: ["Kubernetes", "Grafana"], views: 408, likes: 33, accent: "var(--color-mint)" },
-  { id: "p6", title: "다국어 학습 SaaS", author: "한지민", region: "원격", part: "Fullstack", field: "에듀테크", experience: "5년 이상", stacks: ["Next", "tRPC", "Stripe"], views: 2210, likes: 198, accent: "var(--color-coral)" },
-  { id: "p7", title: "음악 큐레이션 플랫폼", author: "오세진", region: "인천", part: "Frontend", field: "미디어", experience: "1~3년", stacks: ["Vue", "Web Audio"], views: 712, likes: 52, accent: "var(--color-mint)" },
-  { id: "p8", title: "스마트 농장 IoT", author: "장민호", region: "광주", part: "Embedded", field: "IoT", experience: "3년 이상", stacks: ["C", "MQTT", "AWS"], views: 521, likes: 39, accent: "var(--color-coral)" },
+  { id: "p1", title: "실시간 협업 화이트보드", author: "김도현", region: "서울", part: "Frontend", field: "협업툴", experience: "신입/경력", stacks: ["React", "WebRTC", "Yjs"], views: 1240, likes: 86, createdAt: "2026-06-25", accent: "var(--color-mint)" },
+  { id: "p2", title: "AI 기반 코드리뷰 봇", author: "이수민", region: "경기", part: "Backend", field: "AI/ML", experience: "1~3년", stacks: ["Node", "OpenAI", "Postgres"], views: 982, likes: 71, createdAt: "2026-06-22", accent: "var(--color-coral)" },
+  { id: "p3", title: "운동 루틴 추천 앱", author: "박지오", region: "부산", part: "Mobile", field: "헬스케어", experience: "3년 이상", stacks: ["Flutter", "Firebase"], views: 654, likes: 44, createdAt: "2026-06-20", accent: "var(--color-mint)" },
+  { id: "p4", title: "쇼핑몰 추천 엔진", author: "정유나", region: "서울", part: "Data", field: "이커머스", experience: "1~3년", stacks: ["Python", "Airflow", "BigQuery"], views: 1532, likes: 121, createdAt: "2026-06-28", accent: "var(--color-coral)" },
+  { id: "p5", title: "DevOps 대시보드", author: "최현우", region: "대구", part: "DevOps", field: "인프라", experience: "신입/경력", stacks: ["Kubernetes", "Grafana"], views: 408, likes: 33, createdAt: "2026-06-18", accent: "var(--color-mint)" },
+  { id: "p6", title: "다국어 학습 SaaS", author: "한지민", region: "원격", part: "Fullstack", field: "에듀테크", experience: "5년 이상", stacks: ["Next", "tRPC", "Stripe"], views: 2210, likes: 198, createdAt: "2026-06-30", accent: "var(--color-coral)" },
+  { id: "p7", title: "음악 큐레이션 플랫폼", author: "오세진", region: "인천", part: "Frontend", field: "미디어", experience: "1~3년", stacks: ["Vue", "Web Audio"], views: 712, likes: 52, createdAt: "2026-06-15", accent: "var(--color-mint)" },
+  { id: "p8", title: "스마트 농장 IoT", author: "장민호", region: "광주", part: "Embedded", field: "IoT", experience: "3년 이상", stacks: ["C", "MQTT", "AWS"], views: 521, likes: 39, createdAt: "2026-06-24", accent: "var(--color-coral)" },
 ];
 
 const GROUPS: FilterGroup[] = [
@@ -40,6 +41,7 @@ const GROUPS: FilterGroup[] = [
 function BrowsePage() {
   const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", part: "전체", field: "전체", experience: "전체" });
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("최신순");
   const [proposalTarget, setProposalTarget] = useState<any>(null);
 
   const handleProposalSubmit = (e: React.FormEvent) => {
@@ -49,7 +51,7 @@ function BrowsePage() {
   };
 
   const filtered = useMemo(() => {
-    return PORTFOLIOS.filter((p) => {
+    let result = PORTFOLIOS.filter((p) => {
       if (filters.region !== "전체" && p.region !== filters.region) return false;
       if (filters.part !== "전체" && p.part !== filters.part) return false;
       if (filters.field !== "전체" && p.field !== filters.field) return false;
@@ -57,7 +59,17 @@ function BrowsePage() {
       if (search && !(p.title + p.author + p.stacks.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
-  }, [filters, search]);
+
+    if (sort === "조회수순") {
+      result.sort((a, b) => b.views - a.views);
+    } else if (sort === "인기순") {
+      result.sort((a, b) => b.likes - a.likes);
+    } else {
+      // 최신순
+      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    return result;
+  }, [filters, search, sort]);
 
   return (
     <div className="min-h-screen text-foreground">
@@ -77,7 +89,17 @@ function BrowsePage() {
           </div>
         </header>
 
-        <FilterBar groups={GROUPS} value={filters} onChange={setFilters} search={search} onSearchChange={setSearch} searchPlaceholder="제목 · 작성자 · 기술 스택 검색" />
+        <FilterBar 
+          groups={GROUPS} 
+          value={filters} 
+          onChange={setFilters} 
+          search={search} 
+          onSearchChange={setSearch} 
+          searchPlaceholder="제목 · 작성자 · 기술 스택 검색" 
+          sortOptions={["최신순", "인기순", "조회수순"]}
+          sort={sort}
+          onSortChange={setSort}
+        />
 
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p, i) => {
