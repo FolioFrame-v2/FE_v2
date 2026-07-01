@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 
 export type FilterGroup = {
   key: string;
@@ -49,15 +49,7 @@ export function FilterBar({
           />
         </div>
         {sortOptions && onSortChange && sort && (
-          <select
-            value={sort}
-            onChange={(e) => onSortChange(e.target.value)}
-            className="h-10 px-3 rounded-lg border border-line bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-ring/30 cursor-pointer text-ink"
-          >
-            {sortOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
+          <CustomSortSelect value={sort} options={sortOptions} onChange={onSortChange} />
         )}
         {activeCount > 0 && (
           <button
@@ -94,6 +86,47 @@ export function FilterBar({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function CustomSortSelect({ value, options, onChange }: { value: string, options: string[], onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const clickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", clickOutside);
+    return () => document.removeEventListener("mousedown", clickOutside);
+  }, []);
+
+  return (
+    <div className="relative shrink-0" ref={ref}>
+      <button 
+        onClick={() => setOpen(!open)}
+        className="h-10 px-3 rounded-lg border border-line bg-surface text-sm flex items-center gap-2 hover:border-ink/40 focus:outline-none focus:border-ink/50 transition-colors text-ink min-w-[90px] justify-between"
+      >
+        <span>{value}</span>
+        <svg className="w-4 h-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      {open && (
+        <div className="absolute top-full mt-1.5 right-0 w-32 bg-surface border border-line rounded-lg shadow-lg z-50 py-1 overflow-hidden animate-in fade-in slide-in-from-top-1">
+          {options.map(opt => (
+            <button
+              key={opt}
+              onClick={() => { onChange(opt); setOpen(false); }}
+              className={`w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between ${value === opt ? "bg-primary/5 text-primary font-medium" : "text-ink hover:bg-surface-2"}`}
+            >
+              {opt}
+              {value === opt && (
+                <svg className="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

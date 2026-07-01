@@ -21,7 +21,7 @@ export const Route = createFileRoute("/jobs/$id")({
   component: JobDetailPage,
   head: () => ({
     meta: [
-      { title: "기업 공고 상세 — devfolio" },
+      { title: "기업 공고 상세 — FolioFrame" },
       { name: "description", content: "기업 공고 상세 정보를 확인하세요." },
     ],
   }),

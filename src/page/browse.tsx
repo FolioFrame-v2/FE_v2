@@ -43,6 +43,8 @@ function BrowsePage() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("최신순");
   const [proposalTarget, setProposalTarget] = useState<any>(null);
+  const currentUser = false; // 로그인 상태 (Nav와 다르게 테스트용으로 임시 false 처리. true로 변경하면 전체 열람 가능)
+  const isGuest = !currentUser;
 
   const handleProposalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +62,7 @@ function BrowsePage() {
       return true;
     });
 
-    if (sort === "조회수순") {
+    if (sort === "조회순") {
       result.sort((a, b) => b.views - a.views);
     } else if (sort === "인기순") {
       result.sort((a, b) => b.likes - a.likes);
@@ -85,71 +87,99 @@ function BrowsePage() {
             <Link to="/portfoliopageeditor" className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
               새 포트폴리오
             </Link>
-            <div className="text-xs font-mono text-ink-soft">{filtered.length} / {PORTFOLIOS.length} 결과</div>
+            <div className="text-xs font-mono text-ink-soft">
+              {isGuest ? Math.min(filtered.length, 3) : filtered.length} / {PORTFOLIOS.length} 결과
+            </div>
           </div>
         </header>
 
-        <FilterBar 
-          groups={GROUPS} 
-          value={filters} 
-          onChange={setFilters} 
-          search={search} 
-          onSearchChange={setSearch} 
-          searchPlaceholder="제목 · 작성자 · 기술 스택 검색" 
-          sortOptions={["최신순", "인기순", "조회수순"]}
+        <FilterBar
+          groups={GROUPS}
+          value={filters}
+          onChange={setFilters}
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="제목 · 작성자 · 기술 스택 검색"
+          sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
         />
 
-        <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p, i) => {
-            const templateList = ["minimal", "editorial", "terminal", "playful"];
-            const assignedTemplate = templateList[i % 4];
-            return (
-            <Link key={p.id} to="/portfolio/$id" params={{ id: p.id }} search={{ template: assignedTemplate }} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition block">
-              <article>
-                <div className="relative h-36 grid-paper border-b border-line overflow-hidden">
-                  <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 30%, color-mix(in oklch, ${p.accent} 35%, transparent), transparent 60%)` }} />
-                  <div className="absolute left-4 top-4 chip">{p.field}</div>
-                  <div className="absolute right-4 bottom-4 font-mono text-[11px] text-ink-soft">{p.part}</div>
+        <section className="relative">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((p, i) => {
+              const templateList = ["minimal", "editorial", "terminal", "playful"];
+              const assignedTemplate = templateList[i % 4];
+              const isBlurred = isGuest && i >= 3;
+
+              return (
+                <div key={p.id} className={isBlurred ? "opacity-30 blur-[6px] pointer-events-none select-none transition-all duration-500" : ""}>
+                  <Link to="/portfolio/$id" params={{ id: p.id }} search={{ template: assignedTemplate }} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition block">
+                    <article>
+                      <div className="relative h-36 grid-paper border-b border-line overflow-hidden">
+                        <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 30%, color-mix(in oklch, ${p.accent} 35%, transparent), transparent 60%)` }} />
+                        <div className="absolute left-4 top-4 chip">{p.field}</div>
+                        <div className="absolute right-4 bottom-4 font-mono text-[11px] text-ink-soft">{p.part}</div>
+                      </div>
+                      <div className="p-5 space-y-3">
+                        <h3 className="font-display text-lg font-semibold tracking-tight group-hover:text-primary transition">{p.title}</h3>
+                        <div className="flex items-center gap-2 text-xs text-ink-soft">
+                          <div className="h-5 w-5 rounded-full bg-surface-2 grid place-items-center font-mono">{p.author.slice(0, 1)}</div>
+                          <span>{p.author}</span>
+                          <span>·</span>
+                          <span>{p.region}</span>
+                          <span>·</span>
+                          <span>{p.experience}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {p.stacks.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
+                        </div>
+                        <div className="flex items-center justify-between pt-2 border-t border-line text-xs text-ink-soft font-mono">
+                          <div className="flex items-center gap-3">
+                            <span>♥ {p.likes}</span>
+                            <span>{p.views.toLocaleString()} views</span>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setProposalTarget(p);
+                            }}
+                            className="h-7 px-3 rounded bg-surface-2 text-primary font-medium hover:bg-primary hover:text-white transition-colors"
+                          >
+                            매칭 제안
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
                 </div>
-                <div className="p-5 space-y-3">
-                  <h3 className="font-display text-lg font-semibold tracking-tight group-hover:text-primary transition">{p.title}</h3>
-                  <div className="flex items-center gap-2 text-xs text-ink-soft">
-                    <div className="h-5 w-5 rounded-full bg-surface-2 grid place-items-center font-mono">{p.author.slice(0, 1)}</div>
-                    <span>{p.author}</span>
-                    <span>·</span>
-                    <span>{p.region}</span>
-                    <span>·</span>
-                    <span>{p.experience}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {p.stacks.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-line text-xs text-ink-soft font-mono">
-                    <div className="flex items-center gap-3">
-                      <span>♥ {p.likes}</span>
-                      <span>{p.views.toLocaleString()} views</span>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setProposalTarget(p);
-                      }}
-                      className="h-7 px-3 rounded bg-surface-2 text-primary font-medium hover:bg-primary hover:text-white transition-colors"
-                    >
-                      매칭 제안
-                    </button>
-                  </div>
+              );
+            })}
+            {filtered.length === 0 && (
+              <div className="col-span-full surface-card p-12 text-center text-ink-soft">
+                조건에 맞는 포트폴리오가 없습니다.
+              </div>
+            )}
+          </div>
+
+          {isGuest && filtered.length > 3 && (
+            <div className="absolute left-0 right-0 top-[280px] bottom-0 z-10 flex flex-col justify-start">
+              <div className="sticky top-1/2 -translate-y-1/2 bg-surface/80 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl border border-line max-w-md mx-auto w-full text-center mt-32">
+                <div className="w-16 h-16 mx-auto bg-surface border border-line shadow-sm rounded-2xl flex items-center justify-center text-3xl mb-5">🔒</div>
+                <h2 className="text-2xl font-display font-semibold tracking-tight text-ink mb-3 break-keep">더 많은 포트폴리오를 확인하시겠어요?</h2>
+                <p className="text-ink-soft text-sm leading-relaxed mb-8 break-keep">
+                  FolioFrame에 가입하고 뛰어난 인재들의<br/>모든 포트폴리오를 제한 없이 열람하세요.
+                </p>
+                <div className="space-y-3">
+                  <Link to="/onboarding" className="h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center hover:opacity-90 transition shadow-sm">
+                    3초만에 회원가입
+                  </Link>
+                  <Link to="/login" className="h-12 w-full rounded-xl border border-line bg-surface text-ink font-medium flex items-center justify-center hover:bg-surface-2 transition">
+                    기존 계정으로 로그인
+                  </Link>
                 </div>
-              </article>
-            </Link>
-            );
-          })}
-          {filtered.length === 0 && (
-            <div className="col-span-full surface-card p-12 text-center text-ink-soft">
-              조건에 맞는 포트폴리오가 없습니다.
+              </div>
             </div>
           )}
         </section>
@@ -159,8 +189,8 @@ function BrowsePage() {
             <div className="bg-surface w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
               <div className="p-6 border-b border-line/60 flex items-center justify-between">
                 <h2 className="text-xl font-display font-semibold tracking-tight">매칭 제안하기</h2>
-                <button 
-                  onClick={() => setProposalTarget(null)} 
+                <button
+                  onClick={() => setProposalTarget(null)}
                   className="text-ink-soft hover:text-ink transition flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-2"
                 >
                   ✕
@@ -173,21 +203,21 @@ function BrowsePage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">제안 메시지</label>
-                  <textarea 
+                  <textarea
                     className="w-full h-32 p-3 border border-line rounded-lg bg-surface-2 focus:bg-white transition-colors outline-none focus:border-primary resize-none text-sm"
                     placeholder="인재에게 전달할 매칭 제안 메시지를 작성해주세요..."
                     required
                   ></textarea>
                 </div>
                 <div className="pt-2 flex justify-end gap-2">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setProposalTarget(null)}
                     className="h-10 px-5 rounded-lg border border-line text-sm font-medium hover:bg-surface-2 transition"
                   >
                     취소
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition shadow-sm"
                   >

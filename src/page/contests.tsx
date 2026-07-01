@@ -56,7 +56,7 @@ function ContestsPage() {
       return true;
     });
 
-    if (sort === "조회수순") {
+    if (sort === "조회순") {
       result.sort((a, b) => b.views - a.views);
     } else if (sort === "인기순") {
       result.sort((a, b) => b.likes - a.likes);
@@ -80,14 +80,14 @@ function ContestsPage() {
           <div className="text-xs font-mono text-ink-soft">{filtered.length} / {CONTESTS.length} 결과</div>
         </header>
 
-        <FilterBar 
-          groups={GROUPS} 
-          value={filters} 
-          onChange={setFilters} 
-          search={search} 
-          onSearchChange={setSearch} 
-          searchPlaceholder="공모전명 · 주최사 검색" 
-          sortOptions={["최신순", "인기순", "조회수순"]}
+        <FilterBar
+          groups={GROUPS}
+          value={filters}
+          onChange={setFilters}
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="공모전명 · 주최사 검색"
+          sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
         />

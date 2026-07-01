@@ -63,7 +63,6 @@ function MyPage() {
             <InfoRow label="직군" value="Frontend Engineer" />
             <InfoRow label="지역" value="서울 · 강남구" />
             <InfoRow label="경력" value="2년차" />
-            <InfoRow label="자격증" value="정보처리기사" />
             <InfoRow label="이메일" value="dohyun@devfolio.io" />
             <InfoRow label="GitHub" value="github.com/dohyun" />
             <InfoRow label="웹사이트" value="dohyun.dev" />
@@ -79,7 +78,7 @@ function MyPage() {
 
           {tab === "portfolios" && (
             <div className="grid gap-4 sm:grid-cols-2">
-              {MY_PORTFOLIOS.map((p) => (
+              {[...MY_PORTFOLIOS].sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()).map((p) => (
                 <article key={p.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
                   <div className="flex items-start justify-between">
                     <h3 className="font-display text-lg font-semibold tracking-tight">{p.title}</h3>

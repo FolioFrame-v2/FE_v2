@@ -6,7 +6,7 @@ import { TEMPLATES } from "@/lib/portfolio-data";
 export const Route = createFileRoute("/templates/")({
   head: () => ({
     meta: [
-      { title: "템플릿 선택 — devfolio" },
+      { title: "템플릿 선택 — FolioFrame" },
       { name: "description", content: "포트폴리오에 적용할 템플릿을 선택하세요." },
     ],
   }),

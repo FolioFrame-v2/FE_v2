@@ -5,8 +5,8 @@ import { Nav } from "@/components/ui/nav";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "프로필 작성 — devfolio" },
-      { name: "description", content: "회원가입 후 기본 프로필을 입력하고 devfolio를 시작하세요." },
+      { title: "프로필 작성 — FolioFrame" },
+      { name: "description", content: "회원가입 후 기본 프로필을 입력하고 FolioFrame를 시작하세요." },
     ],
   }),
   component: OnboardingPage,
@@ -35,6 +35,7 @@ type Form = {
   region: string;
   bio: string;
   agree: boolean;
+  certifications: string[];
 };
 
 const INIT: Form = {
@@ -50,16 +51,32 @@ const INIT: Form = {
   region: "",
   bio: "",
   agree: false,
+  certifications: [],
 };
 
 function OnboardingPage() {
   const navigate = useNavigate();
   const [f, setF] = useState<Form>(INIT);
   const [submitted, setSubmitted] = useState(false);
+  const [certInput, setCertInput] = useState("");
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
   const togglePart = (p: string) =>
     set("parts", f.parts.includes(p) ? f.parts.filter((x) => x !== p) : [...f.parts, p]);
+
+  const addCert = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && certInput.trim()) {
+      e.preventDefault();
+      if (!f.certifications.includes(certInput.trim())) {
+        set("certifications", [...f.certifications, certInput.trim()]);
+      }
+      setCertInput("");
+    }
+  };
+
+  const removeCert = (c: string) => {
+    set("certifications", f.certifications.filter((x) => x !== c));
+  };
 
   const completion = useMemo(() => {
     const checks = [f.name, f.email, f.age, f.gender, f.github, f.field, f.parts.length > 0, f.career, f.region];
@@ -82,7 +99,7 @@ function OnboardingPage() {
         <header className="flex items-end justify-between gap-4 mb-8">
           <div>
             <div className="chip border border-line bg-surface-2 text-ink-soft mb-3">STEP 2 / 2 · 프로필 작성</div>
-            <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight">devfolio에 오신 걸 환영해요</h1>
+            <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight">FolioFrame에 오신 걸 환영해요</h1>
             <p className="mt-2 text-ink-soft text-sm">기본 정보를 입력하면 맞춤 템플릿과 채용 추천이 정확해져요.</p>
           </div>
           <div className="hidden md:block text-right">
@@ -161,6 +178,35 @@ function OnboardingPage() {
                 </div>
               </Field>
             </Grid>
+          </Section>
+
+          {/* 자격증 */}
+          <Section title="자격증" desc="보유하신 자격증을 추가해 주세요.">
+            <Field label="자격증">
+              <div className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {f.certifications.map((c) => (
+                    <span key={c} className="chip bg-surface border-line text-ink-soft pr-1 flex items-center gap-1">
+                      {c}
+                      <button
+                        type="button"
+                        onClick={() => removeCert(c)}
+                        className="h-5 w-5 rounded-full hover:bg-line flex items-center justify-center transition-colors text-ink-soft/70 hover:text-ink"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <input 
+                  value={certInput} 
+                  onChange={(e) => setCertInput(e.target.value)} 
+                  onKeyDown={addCert}
+                  placeholder="자격증 입력 후 Enter" 
+                  className={inp} 
+                />
+              </div>
+            </Field>
           </Section>
 
           {/* 소개 */}

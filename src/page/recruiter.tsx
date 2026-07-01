@@ -49,7 +49,7 @@ function RecruiterPage() {
       return true;
     });
 
-    if (sort === "조회수순") {
+    if (sort === "조회순") {
       result.sort((a, b) => b.views - a.views);
     } else if (sort === "인기순") {
       result.sort((a, b) => b.likes - a.likes);
@@ -73,14 +73,14 @@ function RecruiterPage() {
           <div className="text-xs font-mono text-ink-soft">{filtered.length} / {JOB_POSTINGS.length} 공고</div>
         </header>
 
-        <FilterBar 
-          groups={GROUPS} 
-          value={filters} 
-          onChange={setFilters} 
-          search={search} 
-          onSearchChange={setSearch} 
-          searchPlaceholder="기업명 · 직무 · 기술 스택 검색" 
-          sortOptions={["최신순", "인기순", "조회수순"]}
+        <FilterBar
+          groups={GROUPS}
+          value={filters}
+          onChange={setFilters}
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="기업명 · 직무 · 기술 스택 검색"
+          sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
         />
