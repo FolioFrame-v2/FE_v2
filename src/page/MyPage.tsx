@@ -53,7 +53,7 @@ function MyPage() {
               <Stat label="관심" value="4" />
               <Stat label="조회" value="1.5k" />
             </div>
-            <Link to="/profileedit" className="mt-5 flex items-center justify-center h-9 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">
+            <Link to="/profile/edit" className="mt-5 flex items-center justify-center h-9 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">
               기본 정보 수정
             </Link>
           </div>

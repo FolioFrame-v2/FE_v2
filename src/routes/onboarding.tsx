@@ -5,8 +5,8 @@ import { Nav } from "@/components/ui/nav";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "프로필 작성 — devfolio" },
-      { name: "description", content: "회원가입 후 기본 프로필을 입력하고 devfolio를 시작하세요." },
+      { title: "프로필 작성 — FolioFrame" },
+      { name: "description", content: "회원가입 후 기본 프로필을 입력하고 FolioFrame를 시작하세요." },
     ],
   }),
   component: OnboardingPage,
@@ -82,7 +82,7 @@ function OnboardingPage() {
         <header className="flex items-end justify-between gap-4 mb-8">
           <div>
             <div className="chip border border-line bg-surface-2 text-ink-soft mb-3">STEP 2 / 2 · 프로필 작성</div>
-            <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight">devfolio에 오신 걸 환영해요</h1>
+            <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight">FolioFrame에 오신 걸 환영해요</h1>
             <p className="mt-2 text-ink-soft text-sm">기본 정보를 입력하면 맞춤 템플릿과 채용 추천이 정확해져요.</p>
           </div>
           <div className="hidden md:block text-right">

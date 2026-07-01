@@ -117,7 +117,7 @@ const SignUpRecruiterPage = () => {
     //회사 인증
     const [Comemail, setComEmail] = useState('');
     const [isCompanyChecked, setCompanyChecked] = useState(false);
-    
+
     //사업자등록번호 인증
     const [businessNumber, setBusinessNumber] = useState('');
     const [isBusinessChecked, setBusinessChecked] = useState(false);
@@ -264,15 +264,6 @@ const SignUpRecruiterPage = () => {
                 <div className="flex flex-col w-full gap-[0.5em]">
                     <input
                         className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
-                        placeholder="회사 이메일 인증"
-                        type="Comemail"
-                        value={Comemail}
-                        onChange={handleEmailChange}
-                    />
-                </div>
-                <div className="flex flex-col w-full gap-[0.5em]">
-                    <input
-                        className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
                         placeholder="사업자등록번호 (예: 123-45-67890)"
                         type="text"
                         value={businessNumber}
@@ -302,7 +293,7 @@ const SignUpRecruiterPage = () => {
                         />
                         <label htmlFor="business">사업자 인증</label>
                     </div>
-                    
+
                     <div className="flex items-center ml-auto">
                         <input
                             className="border border-[#d0d1d9] mr-1"

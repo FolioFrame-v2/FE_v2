@@ -15,7 +15,6 @@ import { Route as SignuprecruiterRouteImport } from './routes/signuprecruiter'
 import { Route as SignupdeveloperemailRouteImport } from './routes/signupdeveloperemail'
 import { Route as SignupdeveloperRouteImport } from './routes/signupdeveloper'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
-import { Route as ProfileeditRouteImport } from './routes/profileedit'
 import { Route as PortfoliopageeditorRouteImport } from './routes/portfoliopageeditor'
 import { Route as Portfoliodetailpage3RouteImport } from './routes/portfoliodetailpage3'
 import { Route as Portfoliodetailpage2RouteImport } from './routes/portfoliodetailpage2'
@@ -41,6 +40,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as TemplatesIdRouteImport } from './routes/templates.$id'
+import { Route as ProfileEditRouteImport } from './routes/profile.edit'
 import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 
@@ -72,11 +72,6 @@ const SignupdeveloperRoute = SignupdeveloperRouteImport.update({
 const RecruiterRoute = RecruiterRouteImport.update({
   id: '/recruiter',
   path: '/recruiter',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileeditRoute = ProfileeditRouteImport.update({
-  id: '/profileedit',
-  path: '/profileedit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortfoliopageeditorRoute = PortfoliopageeditorRouteImport.update({
@@ -204,6 +199,11 @@ const TemplatesIdRoute = TemplatesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => TemplatesRoute,
 } as any)
+const ProfileEditRoute = ProfileEditRouteImport.update({
+  id: '/profile/edit',
+  path: '/profile/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioIdRoute = PortfolioIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -238,7 +238,6 @@ export interface FileRoutesByFullPath {
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
   '/portfoliopageeditor': typeof PortfoliopageeditorRoute
-  '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
@@ -247,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
   '/portfolio/$id': typeof PortfolioIdRoute
+  '/profile/edit': typeof ProfileEditRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
   '/templates/': typeof TemplatesIndexRoute
@@ -273,7 +273,6 @@ export interface FileRoutesByTo {
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
   '/portfoliopageeditor': typeof PortfoliopageeditorRoute
-  '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
@@ -281,6 +280,7 @@ export interface FileRoutesByTo {
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/jobs/$id': typeof JobsIdRoute
   '/portfolio/$id': typeof PortfolioIdRoute
+  '/profile/edit': typeof ProfileEditRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio': typeof PortfolioIndexRoute
   '/templates': typeof TemplatesIndexRoute
@@ -309,7 +309,6 @@ export interface FileRoutesById {
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
   '/portfoliopageeditor': typeof PortfoliopageeditorRoute
-  '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
   '/signupdeveloperemail': typeof SignupdeveloperemailRoute
@@ -318,6 +317,7 @@ export interface FileRoutesById {
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
   '/portfolio/$id': typeof PortfolioIdRoute
+  '/profile/edit': typeof ProfileEditRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
   '/templates/': typeof TemplatesIndexRoute
@@ -347,7 +347,6 @@ export interface FileRouteTypes {
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
     | '/portfoliopageeditor'
-    | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
     | '/signupdeveloperemail'
@@ -356,6 +355,7 @@ export interface FileRouteTypes {
     | '/templates'
     | '/jobs/$id'
     | '/portfolio/$id'
+    | '/profile/edit'
     | '/templates/$id'
     | '/portfolio/'
     | '/templates/'
@@ -382,7 +382,6 @@ export interface FileRouteTypes {
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
     | '/portfoliopageeditor'
-    | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
     | '/signupdeveloperemail'
@@ -390,6 +389,7 @@ export interface FileRouteTypes {
     | '/signuprecruiteremail'
     | '/jobs/$id'
     | '/portfolio/$id'
+    | '/profile/edit'
     | '/templates/$id'
     | '/portfolio'
     | '/templates'
@@ -417,7 +417,6 @@ export interface FileRouteTypes {
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
     | '/portfoliopageeditor'
-    | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
     | '/signupdeveloperemail'
@@ -426,6 +425,7 @@ export interface FileRouteTypes {
     | '/templates'
     | '/jobs/$id'
     | '/portfolio/$id'
+    | '/profile/edit'
     | '/templates/$id'
     | '/portfolio/'
     | '/templates/'
@@ -454,7 +454,6 @@ export interface RootRouteChildren {
   Portfoliodetailpage2Route: typeof Portfoliodetailpage2Route
   Portfoliodetailpage3Route: typeof Portfoliodetailpage3Route
   PortfoliopageeditorRoute: typeof PortfoliopageeditorRoute
-  ProfileeditRoute: typeof ProfileeditRoute
   RecruiterRoute: typeof RecruiterRoute
   SignupdeveloperRoute: typeof SignupdeveloperRoute
   SignupdeveloperemailRoute: typeof SignupdeveloperemailRoute
@@ -462,6 +461,7 @@ export interface RootRouteChildren {
   SignuprecruiteremailRoute: typeof SignuprecruiteremailRoute
   TemplatesRoute: typeof TemplatesRouteWithChildren
   JobsIdRoute: typeof JobsIdRoute
+  ProfileEditRoute: typeof ProfileEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -506,13 +506,6 @@ declare module '@tanstack/react-router' {
       path: '/recruiter'
       fullPath: '/recruiter'
       preLoaderRoute: typeof RecruiterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profileedit': {
-      id: '/profileedit'
-      path: '/profileedit'
-      fullPath: '/profileedit'
-      preLoaderRoute: typeof ProfileeditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portfoliopageeditor': {
@@ -690,6 +683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TemplatesIdRouteImport
       parentRoute: typeof TemplatesRoute
     }
+    '/profile/edit': {
+      id: '/profile/edit'
+      path: '/profile/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof ProfileEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio/$id': {
       id: '/portfolio/$id'
       path: '/$id'
@@ -758,7 +758,6 @@ const rootRouteChildren: RootRouteChildren = {
   Portfoliodetailpage2Route: Portfoliodetailpage2Route,
   Portfoliodetailpage3Route: Portfoliodetailpage3Route,
   PortfoliopageeditorRoute: PortfoliopageeditorRoute,
-  ProfileeditRoute: ProfileeditRoute,
   RecruiterRoute: RecruiterRoute,
   SignupdeveloperRoute: SignupdeveloperRoute,
   SignupdeveloperemailRoute: SignupdeveloperemailRoute,
@@ -766,6 +765,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignuprecruiteremailRoute: SignuprecruiteremailRoute,
   TemplatesRoute: TemplatesRouteWithChildren,
   JobsIdRoute: JobsIdRoute,
+  ProfileEditRoute: ProfileEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
