@@ -28,6 +28,7 @@ import { Route as MypageRouteImport } from './routes/mypage'
 import { Route as MyRouteImport } from './routes/my'
 import { Route as ModifyportfolioRouteImport } from './routes/modifyportfolio'
 import { Route as ModifyhackathonRouteImport } from './routes/modifyhackathon'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as MergercreateportfolioRouteImport } from './routes/mergercreateportfolio'
 import { Route as MemberselectionRouteImport } from './routes/memberselection'
 import { Route as LoginRouteImport } from './routes/login'
@@ -42,6 +43,8 @@ import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as TemplatesIdRouteImport } from './routes/templates.$id'
 import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
+import { Route as MessagesNewRouteImport } from './routes/messages.new'
+import { Route as MessagesIdRouteImport } from './routes/messages.$id'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 
 const TemplatesRoute = TemplatesRouteImport.update({
@@ -139,6 +142,11 @@ const ModifyhackathonRoute = ModifyhackathonRouteImport.update({
   path: '/modifyhackathon',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MergercreateportfolioRoute = MergercreateportfolioRouteImport.update({
   id: '/mergercreateportfolio',
   path: '/mergercreateportfolio',
@@ -209,6 +217,16 @@ const PortfolioIdRoute = PortfolioIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => PortfolioRoute,
 } as any)
+const MessagesNewRoute = MessagesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => MessagesRoute,
+} as any)
+const MessagesIdRoute = MessagesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => MessagesRoute,
+} as any)
 const JobsIdRoute = JobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
@@ -226,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/memberselection': typeof MemberselectionRoute
   '/mergercreateportfolio': typeof MergercreateportfolioRoute
+  '/messages': typeof MessagesRouteWithChildren
   '/modifyhackathon': typeof ModifyhackathonRoute
   '/modifyportfolio': typeof ModifyportfolioRoute
   '/my': typeof MyRoute
@@ -246,6 +265,8 @@ export interface FileRoutesByFullPath {
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
+  '/messages/$id': typeof MessagesIdRoute
+  '/messages/new': typeof MessagesNewRoute
   '/portfolio/$id': typeof PortfolioIdRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -262,6 +283,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/memberselection': typeof MemberselectionRoute
   '/mergercreateportfolio': typeof MergercreateportfolioRoute
+  '/messages': typeof MessagesRouteWithChildren
   '/modifyhackathon': typeof ModifyhackathonRoute
   '/modifyportfolio': typeof ModifyportfolioRoute
   '/my': typeof MyRoute
@@ -280,6 +302,8 @@ export interface FileRoutesByTo {
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/jobs/$id': typeof JobsIdRoute
+  '/messages/$id': typeof MessagesIdRoute
+  '/messages/new': typeof MessagesNewRoute
   '/portfolio/$id': typeof PortfolioIdRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio': typeof PortfolioIndexRoute
@@ -297,6 +321,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/memberselection': typeof MemberselectionRoute
   '/mergercreateportfolio': typeof MergercreateportfolioRoute
+  '/messages': typeof MessagesRouteWithChildren
   '/modifyhackathon': typeof ModifyhackathonRoute
   '/modifyportfolio': typeof ModifyportfolioRoute
   '/my': typeof MyRoute
@@ -317,6 +342,8 @@ export interface FileRoutesById {
   '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
+  '/messages/$id': typeof MessagesIdRoute
+  '/messages/new': typeof MessagesNewRoute
   '/portfolio/$id': typeof PortfolioIdRoute
   '/templates/$id': typeof TemplatesIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -335,6 +362,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/memberselection'
     | '/mergercreateportfolio'
+    | '/messages'
     | '/modifyhackathon'
     | '/modifyportfolio'
     | '/my'
@@ -355,6 +383,8 @@ export interface FileRouteTypes {
     | '/signuprecruiteremail'
     | '/templates'
     | '/jobs/$id'
+    | '/messages/$id'
+    | '/messages/new'
     | '/portfolio/$id'
     | '/templates/$id'
     | '/portfolio/'
@@ -371,6 +401,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/memberselection'
     | '/mergercreateportfolio'
+    | '/messages'
     | '/modifyhackathon'
     | '/modifyportfolio'
     | '/my'
@@ -389,6 +420,8 @@ export interface FileRouteTypes {
     | '/signuprecruiter'
     | '/signuprecruiteremail'
     | '/jobs/$id'
+    | '/messages/$id'
+    | '/messages/new'
     | '/portfolio/$id'
     | '/templates/$id'
     | '/portfolio'
@@ -405,6 +438,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/memberselection'
     | '/mergercreateportfolio'
+    | '/messages'
     | '/modifyhackathon'
     | '/modifyportfolio'
     | '/my'
@@ -425,6 +459,8 @@ export interface FileRouteTypes {
     | '/signuprecruiteremail'
     | '/templates'
     | '/jobs/$id'
+    | '/messages/$id'
+    | '/messages/new'
     | '/portfolio/$id'
     | '/templates/$id'
     | '/portfolio/'
@@ -442,6 +478,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MemberselectionRoute: typeof MemberselectionRoute
   MergercreateportfolioRoute: typeof MergercreateportfolioRoute
+  MessagesRoute: typeof MessagesRouteWithChildren
   ModifyhackathonRoute: typeof ModifyhackathonRoute
   ModifyportfolioRoute: typeof ModifyportfolioRoute
   MyRoute: typeof MyRoute
@@ -599,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModifyhackathonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mergercreateportfolio': {
       id: '/mergercreateportfolio'
       path: '/mergercreateportfolio'
@@ -697,6 +741,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioIdRouteImport
       parentRoute: typeof PortfolioRoute
     }
+    '/messages/new': {
+      id: '/messages/new'
+      path: '/new'
+      fullPath: '/messages/new'
+      preLoaderRoute: typeof MessagesNewRouteImport
+      parentRoute: typeof MessagesRoute
+    }
+    '/messages/$id': {
+      id: '/messages/$id'
+      path: '/$id'
+      fullPath: '/messages/$id'
+      preLoaderRoute: typeof MessagesIdRouteImport
+      parentRoute: typeof MessagesRoute
+    }
     '/jobs/$id': {
       id: '/jobs/$id'
       path: '/jobs/$id'
@@ -706,6 +764,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface MessagesRouteChildren {
+  MessagesIdRoute: typeof MessagesIdRoute
+  MessagesNewRoute: typeof MessagesNewRoute
+}
+
+const MessagesRouteChildren: MessagesRouteChildren = {
+  MessagesIdRoute: MessagesIdRoute,
+  MessagesNewRoute: MessagesNewRoute,
+}
+
+const MessagesRouteWithChildren = MessagesRoute._addFileChildren(
+  MessagesRouteChildren,
+)
 
 interface PortfolioRouteChildren {
   PortfolioIdRoute: typeof PortfolioIdRoute
@@ -746,6 +818,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MemberselectionRoute: MemberselectionRoute,
   MergercreateportfolioRoute: MergercreateportfolioRoute,
+  MessagesRoute: MessagesRouteWithChildren,
   ModifyhackathonRoute: ModifyhackathonRoute,
   ModifyportfolioRoute: ModifyportfolioRoute,
   MyRoute: MyRoute,

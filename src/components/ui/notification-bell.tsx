@@ -90,11 +90,11 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
         </ul>
         <div className="px-4 py-2.5 border-t border-line">
           <Link
-            to="/notifications"
+            to="/messages"
             onClick={() => setOpen(false)}
             className="block text-center text-xs text-ink hover:text-primary transition"
           >
-            전체 알림 보기 →
+            전체 메시지 보기 →
           </Link>
         </div>
       </PopoverContent>
