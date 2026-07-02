@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Nav } from "@/components/ui/nav";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 import { useGetActivities, useGetBookmarkedActivities, useIncrementViewCount } from "@/api/generated/activity/activity";
@@ -19,19 +19,26 @@ function ContestsPage() {
   const [sort, setSort] = useState("최신순");
   const [showBookmarked, setShowBookmarked] = useState(false);
 
+  const [page, setPage] = useState(1);
+
   const categoryParam = filters.type === "공모전" ? "CONTEST" : filters.type === "해커톤" ? "HACKATHON" : undefined;
   const sortParam = sort === "조회순" ? "MOST_VIEWED" : sort === "인기순" ? "POPULAR" : "LATEST";
+
+  // 검색 조건이나 탭이 변경되면 페이지를 1로 초기화
+  useEffect(() => {
+    setPage(1);
+  }, [categoryParam, sortParam, showBookmarked]);
 
   const { data: activitiesData } = useGetActivities({
     category: categoryParam,
     sort: sortParam,
-    page: 1,
-    size: 50,
+    page: page,
+    size: 9,
   }, { query: { enabled: !showBookmarked } });
 
   const { data: bookmarkedData } = useGetBookmarkedActivities({
-    page: 1,
-    size: 50,
+    page: page,
+    size: 9,
   }, { query: { enabled: showBookmarked } });
 
   const activities: ActivityResDTO[] = showBookmarked
@@ -48,6 +55,10 @@ function ContestsPage() {
     });
     return result;
   }, [activities, filters, search]);
+
+  const totalPages = showBookmarked
+    ? bookmarkedData?.data.result?.totalPages || 1
+    : activitiesData?.data.result?.totalPages || 1;
 
   const { mutateAsync: incrementView } = useIncrementViewCount();
 
@@ -155,6 +166,37 @@ function ContestsPage() {
             </div>
           )}
         </section>
+
+        {/* 페이지네이션 */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 pt-6">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 rounded-lg border border-line bg-surface text-ink text-sm hover:bg-surface-2 disabled:opacity-50 disabled:pointer-events-none transition"
+            >
+              이전
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={`w-8 h-8 rounded-lg text-sm font-medium transition ${page === i + 1 ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-surface-2 text-ink-soft'}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1.5 rounded-lg border border-line bg-surface text-ink text-sm hover:bg-surface-2 disabled:opacity-50 disabled:pointer-events-none transition"
+            >
+              다음
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
