@@ -7,7 +7,7 @@ export default MyPage;
 const MY_PORTFOLIOS = [
   { id: "mp1", title: "실시간 협업 화이트보드", status: "공개", updated: "2026-06-20", views: 1240 },
   { id: "mp2", title: "사이드 프로젝트 모음", status: "비공개", updated: "2026-06-12", views: 0 },
-  { id: "mp3", title: "졸업작품: AI 일정 추천", status: "링크 공유", updated: "2026-05-30", views: 312 },
+  { id: "mp3", title: "졸업작품: AI 일정 추천", status: "비공개", updated: "2026-05-30", views: 312 },
 ];
 
 const INITIAL_SAVED_COMPANIES = [
@@ -118,7 +118,7 @@ function MyPage() {
                     {c.stage && <StatusChip status={c.stage} />}
                   </div>
                   <div className="mt-4 flex items-center justify-end gap-2 pt-4 border-t border-line">
-                    <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">메모</button>
+                    {/* <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">메모</button> */}
                     {c.stage === "지원완료" ? (
                       <>
                         <button
