@@ -115,13 +115,26 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import { Nav } from "@/components/ui/nav";
+import { Footer } from "@/components/ui/footer";
+import { useRouterState } from "@tanstack/react-router";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useRouterState({ select: (s) => s.location });
+  
+  const NO_LAYOUT_PATHS = ["/login", "/signup", "/onboarding", "/portfoliopageeditor", "/createportfolio", "/modifyportfolio"];
+  const isNoLayout = NO_LAYOUT_PATHS.some(path => location.pathname.startsWith(path));
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="flex min-h-screen flex-col bg-background">
+        {!isNoLayout && <Nav />}
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        {!isNoLayout && <Footer />}
+      </div>
     </QueryClientProvider>
   );
 }

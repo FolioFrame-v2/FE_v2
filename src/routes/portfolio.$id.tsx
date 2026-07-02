@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
-import { Nav } from "@/components/ui/nav";
 import { PortfolioTemplate } from "@/components/portfolio-templates";
 import { SAMPLE_PORTFOLIO, TEMPLATES } from "@/lib/portfolio-data";
+import { Heart, Bookmark } from "lucide-react";
+import { useState } from "react";
 
 const searchSchema = z.object({
   template: z.string().optional().default("minimal"),
+  role: z.string().optional(),
 });
 
 export const Route = createFileRoute("/portfolio/$id")({
@@ -20,15 +22,20 @@ export const Route = createFileRoute("/portfolio/$id")({
 });
 
 function PortfolioPage() {
-  const { template } = Route.useSearch();
+  const { template, role } = Route.useSearch();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const activeTemplate = TEMPLATES.find((t) => t.id === template) ?? TEMPLATES[0];
 
+  const isOwner = role === 'owner' || !role; 
+  const isRecruiter = role === 'recruiter';
+  
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [proposed, setProposed] = useState(false);
+
   return (
     <div className="min-h-screen">
-      <Nav />
-
       {/* Owner toolbar */}
       <div className="border-b border-line bg-background/80 backdrop-blur sticky top-16 z-30">
         <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between gap-4 flex-wrap">
@@ -37,26 +44,68 @@ function PortfolioPage() {
             <span className="font-mono text-xs text-ink-soft">FolioFrame.app/p/{id}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-ink-soft hidden md:inline">템플릿</span>
-            <div className="flex items-center gap-1 p-1 rounded-full border border-line bg-card">
-              {TEMPLATES.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => navigate({ to: "/portfolio/$id", params: { id }, search: { template: t.id } })}
-                  className={`px-3 h-7 rounded-full text-xs font-medium transition ${activeTemplate.id === t.id ? "bg-primary text-primary-foreground" : "text-ink-soft hover:text-ink"}`}
-                >
-                  {t.name.split(" ")[0]}
-                </button>
-              ))}
+            {!isOwner && !isRecruiter && (
+              <>
+                <span className="text-xs text-ink-soft hidden md:inline">템플릿 미리보기 모드</span>
+                <div className="flex items-center gap-1 p-1 rounded-full border border-line bg-card mr-2">
+                  {TEMPLATES.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => navigate({ to: "/portfolio/$id", params: { id }, search: { template: t.id, role } })}
+                      className={`px-3 h-7 rounded-full text-xs font-medium transition ${activeTemplate.id === t.id ? "bg-primary text-primary-foreground" : "text-ink-soft hover:text-ink"}`}
+                    >
+                      {t.name.split(" ")[0]}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <div className="flex items-center gap-1 mr-2 border-r border-line pr-4">
+              <button 
+                disabled={isOwner}
+                onClick={() => setLiked(!liked)}
+                className={`p-1.5 rounded-full transition-colors flex items-center gap-1 text-xs ${liked ? 'text-coral' : 'text-ink-soft'} ${isOwner ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-2'}`}
+                title={isOwner ? "자신의 포트폴리오에는 좋아요를 누를 수 없습니다" : "좋아요"}
+              >
+                <Heart className="size-4" fill={liked ? "currentColor" : "none"} />
+                <span className="font-mono">{12 + (liked ? 1 : 0)}</span>
+              </button>
+              <button 
+                disabled={isOwner}
+                onClick={() => setBookmarked(!bookmarked)}
+                className={`p-1.5 rounded-full transition-colors flex items-center gap-1 text-xs ${bookmarked ? 'text-coral' : 'text-ink-soft'} ${isOwner ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-2'}`}
+                title={isOwner ? "자신의 포트폴리오에는 북마크를 누를 수 없습니다" : "북마크"}
+              >
+                <Bookmark className="size-4" fill={bookmarked ? "currentColor" : "none"} />
+              </button>
             </div>
-            <Link to="/templates" className="h-9 px-3 rounded-full border border-line text-xs inline-flex items-center hover:bg-surface">템플릿 변경</Link>
-            <Link to="/portfoliopageeditor" className="h-9 px-3 rounded-full border border-line text-xs inline-flex items-center hover:bg-surface">내용 수정</Link>
-            <button
-              onClick={() => navigator.clipboard?.writeText(`https://FolioFrame.app/p/${id}`)}
-              className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-medium"
-            >
-              공유 링크 복사
-            </button>
+
+            {isOwner && (
+              <>
+                <Link to="/portfoliopageeditor" search={{ templateId: activeTemplate.id, portfolioId: id }} className="h-9 px-4 rounded-full border border-line text-xs font-medium inline-flex items-center hover:bg-surface">내용 수정</Link>
+                <button
+                  onClick={() => navigator.clipboard?.writeText(`http://localhost:8080/portfolio/${id}`)}
+                  className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-medium"
+                >
+                  공유 링크 복사
+                </button>
+              </>
+            )}
+            
+            {isRecruiter && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-ink-soft hidden md:inline">이 인재가 마음에 든다면?</span>
+                <button
+                  onClick={() => setProposed(!proposed)}
+                  className={`h-9 px-4 rounded-full text-xs font-medium transition ${
+                    proposed ? "bg-surface border border-line text-ink" : "bg-primary text-primary-foreground"
+                  }`}
+                >
+                  {proposed ? "제안회수" : "제안하기"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

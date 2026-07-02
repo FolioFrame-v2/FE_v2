@@ -77,6 +77,7 @@ export type TemplateMeta = {
   accent: string;
   vibe: "minimal" | "editorial" | "terminal" | "playful";
   bestFor: string[];
+  defaultFields: { label: string; type: "text" | "textarea" }[];
 };
 
 export const TEMPLATES: TemplateMeta[] = [
@@ -89,6 +90,9 @@ export const TEMPLATES: TemplateMeta[] = [
     accent: "var(--color-ink)",
     vibe: "minimal",
     bestFor: ["주니어", "프론트엔드", "디자이너 협업"],
+    defaultFields: [
+      { label: "핵심 역량 및 성과", type: "textarea" },
+    ],
   },
   {
     id: "editorial",
@@ -99,6 +103,10 @@ export const TEMPLATES: TemplateMeta[] = [
     accent: "var(--color-coral)",
     vibe: "editorial",
     bestFor: ["풀스택", "프로덕트", "기획 경험"],
+    defaultFields: [
+      { label: "해결하는 문제", type: "textarea" },
+      { label: "마주친 도전과 배운 점", type: "textarea" },
+    ],
   },
   {
     id: "terminal",
@@ -109,6 +117,10 @@ export const TEMPLATES: TemplateMeta[] = [
     accent: "var(--color-mint)",
     vibe: "terminal",
     bestFor: ["백엔드", "DevOps", "인프라"],
+    defaultFields: [
+      { label: "이슈 및 트러블 슈팅 내역", type: "textarea" },
+      { label: "시스템 아키텍처 및 성능 개선", type: "textarea" },
+    ],
   },
   {
     id: "playful",
@@ -119,5 +131,9 @@ export const TEMPLATES: TemplateMeta[] = [
     accent: "var(--color-mint)",
     vibe: "playful",
     bestFor: ["주니어", "모바일", "크리에이티브"],
+    defaultFields: [
+      { label: "프로젝트를 통해 얻은 영감", type: "textarea" },
+      { label: "팀원 피드백", type: "textarea" },
+    ],
   },
 ];
