@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Nav } from "@/components/ui/nav";
+
 
 export default MyPage;
 
@@ -37,7 +37,7 @@ function MyPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <Nav />
+
       <main className="mx-auto max-w-7xl px-6 py-10 grid lg:grid-cols-12 gap-8">
         {/* Profile */}
         <aside className="lg:col-span-4 space-y-5">
@@ -67,6 +67,16 @@ function MyPage() {
             <InfoRow label="GitHub" value="github.com/dohyun" />
             <InfoRow label="웹사이트" value="dohyun.dev" />
           </div>
+
+          <div className="surface-card p-6 space-y-3">
+            <h3 className="font-display font-semibold tracking-tight">관심 기술 스택</h3>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {["React", "TypeScript", "JavaScript"].map(stack => (
+                <span key={stack} className="chip bg-surface border-line text-ink text-xs">{stack}</span>
+              ))}
+            </div>
+            <p className="text-xs text-ink-soft mt-2">관련 기업 공고 알림 수신 중</p>
+          </div>
         </aside>
 
         {/* Content column */}
@@ -89,12 +99,17 @@ function MyPage() {
                     <span className="text-xs text-ink-soft">{p.views.toLocaleString()} views</span>
                     <div className="flex gap-2">
                       <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">공유</button>
-                      <Link to="/portfoliopageeditor" className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
+                      {p.status === "비공개" && (
+                        <>
+                          <Link to="/portfoliopageeditor" search={{}} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
+                          <button className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </article>
               ))}
-              <Link to="/portfoliopageeditor" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
+              <Link to="/portfoliopageeditor" search={{}} className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
                 <div className="text-center">
                   <div className="text-3xl font-display">＋</div>
                   <div className="mt-1 text-sm">새 포트폴리오</div>

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Footer } from "@/components/ui/footer";
-import { Nav } from "@/components/ui/nav";
+
 import { useNavigate } from "@tanstack/react-router";
 import hackathonImg from "@/assets/images/Mainpage/Hackathon.jpg";
 import jobImg from "@/assets/images/Mainpage/JOB.jpg";
@@ -10,14 +10,13 @@ import jobImg from "@/assets/images/Mainpage/JOB.jpg";
 export default function MainPage() {
     return (
         <div className="min-h-screen text-foreground">
-            <Nav />
+
             <Hero />
             <HowItWorks />
             <DiagnosePreview />
             <TemplateGallery />
             <ShareSection />
             <Faq />
-            <Footer />
         </div>
     );
 }

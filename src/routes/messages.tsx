@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { Nav } from "@/components/ui/nav";
+
 import { THREADS, formatTime, type MessageThread } from "@/lib/messages";
 import { Building2, User, Search, Inbox, PenSquare } from "lucide-react";
 
@@ -42,7 +42,7 @@ function MessagesPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <Nav />
+
       <main className="mx-auto max-w-5xl px-6 py-10 flex gap-8 flex-col md:flex-row">
         {/* Sidebar */}
         <aside className="w-full md:w-56 shrink-0 space-y-6">

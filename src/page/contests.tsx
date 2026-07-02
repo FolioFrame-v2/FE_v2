@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { Nav } from "@/components/ui/nav";
+
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 import { useGetActivities, useGetBookmarkedActivities, useIncrementViewCount } from "@/api/generated/activity/activity";
 import type { ActivityResDTO } from "@/api/generated/models";
@@ -13,7 +13,11 @@ const GROUPS: FilterGroup[] = [
   { key: "team", label: "인원수", options: ["전체", "1인", "2~3인", "4~6인", "7인+"] },
 ];
 
+import { useQueryClient } from "@tanstack/react-query";
+import { useBookmark1, useCancelBookmark1 } from "@/api/generated/activity-bookmark/activity-bookmark";
+
 function ContestsPage() {
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState<Record<string, string>>({ type: "전체", region: "전체", field: "전체", team: "전체" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("최신순");
@@ -61,6 +65,8 @@ function ContestsPage() {
     : activitiesData?.data.result?.totalPages || 1;
 
   const { mutateAsync: incrementView } = useIncrementViewCount();
+  const { mutateAsync: addBookmark } = useBookmark1();
+  const { mutateAsync: removeBookmark } = useCancelBookmark1();
 
   const handleViewDetails = async (c: ActivityResDTO) => {
     if (c.activityId) {
@@ -75,6 +81,39 @@ function ContestsPage() {
     }
   };
 
+  const toggleBookmark = async (c: ActivityResDTO, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!c.activityId) return;
+
+    // Optimistic UI Update
+    queryClient.setQueriesData({ queryKey: ['/api/v1/activities'] }, (old: any) => {
+      if (!old?.data?.result?.content) return old;
+      return {
+        ...old,
+        data: {
+          ...old.data,
+          result: {
+            ...old.data.result,
+            content: old.data.result.content.map((act: any) => 
+              act.activityId === c.activityId ? { ...act, bookmarked: !c.bookmarked } : act
+            )
+          }
+        }
+      };
+    });
+
+    try {
+      if (c.bookmarked) {
+        await removeBookmark({ activityId: c.activityId });
+      } else {
+        await addBookmark({ activityId: c.activityId });
+      }
+      queryClient.invalidateQueries({ queryKey: ['/api/v1/activities'] });
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+    }
+  };
+
   const getDDay = (endDate?: string) => {
     if (!endDate) return 0;
     const end = new Date(endDate);
@@ -85,7 +124,7 @@ function ContestsPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <Nav />
+
       <main className="mx-auto max-w-7xl px-6 py-10 space-y-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -125,14 +164,26 @@ function ContestsPage() {
               <article key={c.activityId} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition">
                 <div className="relative p-5 border-b border-line overflow-hidden">
                   <div className="absolute inset-0 opacity-60" style={{ background: `linear-gradient(135deg, color-mix(in oklch, ${accent} 25%, transparent), transparent 70%)` }} />
-                  <div className="relative flex items-start justify-between">
-                    <div>
+                  <div className="relative flex items-start justify-between gap-2">
+                    <div className="flex-1">
                       <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{c.organizer}</div>
                       <h3 className="mt-1 font-display text-lg font-semibold tracking-tight line-clamp-2">{c.title}</h3>
                     </div>
-                    <div className={"shrink-0 text-center rounded-lg px-2.5 py-1.5 border " + (dDay <= 14 ? "border-coral text-coral" : "border-line text-ink-soft")}>
-                      <div className="text-[10px] font-mono">D-DAY</div>
-                      <div className="font-display font-bold text-lg leading-none">{dDay >= 0 ? dDay : "End"}</div>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <button 
+                        onClick={(e) => toggleBookmark(c, e)}
+                        className={`p-1.5 rounded-full transition-colors ${c.bookmarked ? 'text-coral bg-coral/10' : 'text-ink-soft hover:bg-surface-2 hover:text-ink'}`}
+                      >
+                        {c.bookmarked ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+                        )}
+                      </button>
+                      <div className={"text-center rounded-lg px-2.5 py-1.5 border " + (dDay <= 14 ? "border-coral text-coral" : "border-line text-ink-soft")}>
+                        <div className="text-[10px] font-mono">D-DAY</div>
+                        <div className="font-display font-bold text-lg leading-none">{dDay >= 0 ? dDay : "End"}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
