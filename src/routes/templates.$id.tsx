@@ -80,7 +80,7 @@ function TemplateDetailPage() {
   const others = TEMPLATES.filter((t) => t.id !== meta.id);
 
   const apply = () =>
-    navigate({ to: "/portfoliopageeditor", search: { templateId: id } });
+    navigate({ to: "/portfoliopageeditor", search: { templateId: id, portfolioId: undefined } });
 
   return (
     <div className="min-h-screen">

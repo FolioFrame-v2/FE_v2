@@ -27,7 +27,7 @@ function TemplatesPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => navigate({ to: "/portfoliopageeditor", search: { templateId: selected } })}
+              onClick={() => navigate({ to: "/portfoliopageeditor", search: { templateId: selected, portfolioId: undefined } })}
               className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium inline-flex items-center hover:opacity-90"
             >
               이 템플릿으로 적용하기 →
