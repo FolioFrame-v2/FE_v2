@@ -17,10 +17,13 @@ export type PortfolioData = {
   github: string;
   website: string;
   intro: string;
-  career: string;
+  educations: { schoolName: string; major: string; degree: string; admissionDate: string; graduationDate: string; status: string; }[];
+  experiences: { companyName: string; position: string; description: string; startDate: string; endDate: string; }[];
   stacks: string[];
   roles: string[];
   projects: PortfolioProject[];
+  certifications?: { name: string; organization: string; issueDate: string; }[];
+  customFields?: { label: string; value: string }[];
 };
 
 export const SAMPLE_PORTFOLIO: PortfolioData = {
@@ -33,10 +36,14 @@ export const SAMPLE_PORTFOLIO: PortfolioData = {
   email: "dohyun.kim@devfolio.app",
   github: "github.com/dohyun",
   website: "dohyun.dev",
-  intro:
-    "스타트업 두 곳을 거치며 0→1 제품을 함께 만들었어요. 디자인 시스템 구축, 성능 최적화, 실시간 동기화 영역의 문제를 즐깁니다.",
-  career:
-    "Acme Corp · Frontend Engineer (2023–현재)\n사내 협업툴의 핵심 화면을 리드하며 LCP를 4.2s → 1.6s로 개선.\n\nBeta Studio · Junior Developer (2022–2023)\n디자인 시스템 v1을 셋업하고 컴포넌트 60+개를 직접 구축.",
+  intro: "스타트업 두 곳을 거치며 0→1 제품을 함께 만들었어요. 디자인 시스템 구축, 성능 최적화, 실시간 동기화 영역의 문제를 즐깁니다.",
+  educations: [
+    { schoolName: "한국대학교", major: "컴퓨터공학과", degree: "학사", admissionDate: "2016-03-02", graduationDate: "2022-02-28", status: "졸업" }
+  ],
+  experiences: [
+    { companyName: "Acme Corp", position: "Frontend Engineer", description: "사내 협업툴의 핵심 화면을 리드하며 LCP를 4.2s → 1.6s로 개선.", startDate: "2023-01-01", endDate: "" },
+    { companyName: "Beta Studio", position: "Junior Developer", description: "디자인 시스템 v1을 셋업하고 컴포넌트 60+개를 직접 구축.", startDate: "2022-01-01", endDate: "2023-01-01" }
+  ],
   stacks: ["React", "TypeScript", "Next.js", "TanStack Query", "WebRTC", "Tailwind"],
   roles: ["Frontend", "Fullstack"],
   projects: [
@@ -67,6 +74,14 @@ export const SAMPLE_PORTFOLIO: PortfolioData = {
       stacks: ["React", "Storybook", "Chromatic"],
     },
   ],
+  certifications: [
+    { name: "정보처리기사", organization: "한국산업인력공단", issueDate: "2021-06-01" },
+    { name: "AWS Certified Solutions Architect", organization: "Amazon Web Services", issueDate: "2023-04-15" }
+  ],
+  customFields: [
+    { label: "해결하는 문제", value: "일관성 없는 UI와 파편화된 컴포넌트로 인한 개발 생산성 저하를 해결하고자 했습니다." },
+    { label: "마주친 도전과 배운 점", value: "레거시 코드를 점진적으로 마이그레이션하는 과정에서 하위 호환성을 유지하는 전략을 배웠습니다." }
+  ]
 };
 
 export type TemplateMeta = {

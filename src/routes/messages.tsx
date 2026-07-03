@@ -67,94 +67,105 @@ function MessagesPage() {
           </nav>
         </aside>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h1 className="font-display text-2xl font-bold tracking-tight">
-              받은함
-            </h1>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ink-soft" />
-              <input
-                type="text"
-                placeholder="메시지 검색..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full h-9 pl-9 pr-4 rounded-full border border-line bg-surface text-sm outline-none focus:border-ink transition"
-              />
-            </div>
-          </header>
+        {/* Content (Split View) */}
+        <div className="flex-1 min-w-0 flex gap-6 h-[calc(100vh-8rem)]">
+          
+          {/* List Column */}
+          <div className={`flex flex-col h-full ${isDrawerOpen ? "hidden lg:flex w-[380px] shrink-0" : "w-full"}`}>
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
+              <div className="relative w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-ink-soft" />
+                <input
+                  type="text"
+                  placeholder="이름, 제목, 내용 검색"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full h-12 pl-11 pr-4 rounded-2xl border border-line bg-surface text-sm outline-none focus:border-ink transition shadow-sm"
+                />
+              </div>
+            </header>
 
-          <div className="surface-card overflow-hidden">
-            <ul className="divide-y divide-line">
-              {filtered.length === 0 && (
-                <li className="p-12 text-center text-sm text-ink-soft">
-                  해당하는 메시지가 없습니다.
-                </li>
-              )}
-              {filtered.map((t) => (
-                <li
-                  key={t.id}
-                  className={"transition hover:bg-surface-2 " + (t.unread ? "bg-surface-2/30" : "")}
-                >
-                  <Link to={`/messages/${t.id}`} className="flex items-center gap-4 p-4">
-                    <div className="shrink-0 flex items-center gap-3">
-                      <div
-                        className="h-10 w-10 rounded-xl grid place-items-center font-display font-bold text-sm"
-                        style={{ background: `color-mix(in oklch, ${t.counterpart.color} 30%, var(--color-surface))` }}
-                      >
-                        {t.counterpart.logo}
-                      </div>
-                    </div>
-                    
-                    <div className="flex-1 min-w-0 flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className={"font-medium truncate " + (t.unread ? "text-ink font-semibold" : "text-ink")}>
-                          {t.counterpart.name}
-                        </span>
-                        <span className={"chip shrink-0 text-[10px] " + (t.counterpart.role === "company" ? "bg-mint/15 border-mint/30" : "bg-coral/15 border-coral/30")}>
-                          {t.counterpart.role === "company" ? <Building2 className="size-2.5" /> : <User className="size-2.5" />}
-                          {t.counterpart.role === "company" ? "기업" : "인재"}
-                        </span>
-                        {t.unread > 0 && (
-                          <span className="chip shrink-0 text-[10px] bg-coral/20 border-coral/40 text-ink">
-                            {t.unread} 안 읽음
+            <div className="surface-card rounded-2xl border border-line overflow-hidden flex-1 overflow-y-auto">
+              <ul className="divide-y divide-line">
+                {filtered.length === 0 && (
+                  <li className="p-12 text-center text-sm text-ink-soft">
+                    해당하는 메시지가 없습니다.
+                  </li>
+                )}
+                {filtered.map((t) => (
+                  <li
+                    key={t.id}
+                    className={`transition hover:bg-surface-2 ${t.unread ? "bg-surface-2/30" : ""} ${location.pathname.includes(t.id) ? "bg-surface-2" : ""}`}
+                  >
+                    <Link to={`/messages/${t.id}`} className="flex flex-col p-4 gap-2">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="shrink-0 flex items-center gap-3">
+                          <div
+                            className="h-9 w-9 rounded-full grid place-items-center font-display font-bold text-sm"
+                            style={{ background: `color-mix(in oklch, ${t.counterpart.color} 30%, var(--color-surface))` }}
+                          >
+                            {t.counterpart.logo}
+                          </div>
+                          <span className={"font-medium text-sm truncate " + (t.unread ? "text-ink font-semibold" : "text-ink")}>
+                            {t.counterpart.name}
                           </span>
-                        )}
+                        </div>
+                        <span className="text-[11px] text-ink-soft whitespace-nowrap mt-1">
+                          {formatTime(t.updatedAt)}
+                        </span>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-sm text-ink-soft truncate">
-                        <span className={t.unread ? "font-medium text-ink/90" : ""}>{t.subject}</span>
-                        <span className="opacity-50 mx-1">-</span>
-                        <span className="truncate">{t.preview}</span>
+                      <div className="flex flex-col gap-1.5 pl-12">
+                        <span className={"text-sm truncate " + (t.unread ? "font-medium text-ink/90" : "text-ink-soft")}>
+                          {t.subject}
+                        </span>
+                        <span className="text-xs text-ink-soft truncate opacity-80">
+                          {t.preview}
+                        </span>
+                        
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className={"chip shrink-0 text-[10px] " + (t.counterpart.role === "company" ? "bg-mint/15 border-mint/30" : "bg-coral/15 border-coral/30")}>
+                            {t.counterpart.role === "company" ? <Building2 className="size-2.5" /> : <User className="size-2.5" />}
+                            {t.counterpart.role === "company" ? "기업" : "인재"}
+                          </span>
+                          <span className="chip shrink-0 text-[10px] border-line">
+                            {t.counterpart.tag || "채용 제안"}
+                          </span>
+                          {t.unread > 0 && (
+                            <span className="ml-auto flex items-center justify-center h-4 min-w-[16px] px-1 rounded-full bg-coral text-[9px] font-bold text-white">
+                              {t.unread}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="shrink-0 flex flex-col items-end gap-2">
-                      <span className="text-xs font-mono text-ink-soft">
-                        {formatTime(t.updatedAt)}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
+
+          {/* Detail Column (Desktop Split View) */}
+          {isDrawerOpen && (
+            <div className="hidden lg:flex flex-1 min-w-0 surface-card rounded-2xl border border-line overflow-hidden shadow-sm">
+              <Outlet />
+            </div>
+          )}
         </div>
       </main>
 
-      {/* Drawer Overlay */}
+      {/* Mobile Drawer Overlay */}
       {isDrawerOpen && (
         <Link 
           to="/messages" 
-          className="fixed inset-0 bg-ink/10 backdrop-blur-[2px] z-40 transition-opacity" 
+          className="fixed inset-0 bg-ink/10 backdrop-blur-[2px] z-40 transition-opacity lg:hidden" 
           aria-label="Close drawer" 
         />
       )}
       
-      {/* Sliding Drawer */}
+      {/* Mobile Sliding Drawer */}
       <div 
-        className={`fixed top-0 right-0 h-full w-full sm:w-[55vw] min-w-[320px] max-w-[800px] bg-background border-l border-line shadow-2xl transition-transform duration-300 z-50 overflow-hidden ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-[85vw] max-w-[480px] bg-background border-l border-line shadow-2xl transition-transform duration-300 z-50 overflow-hidden lg:hidden ${
           isDrawerOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

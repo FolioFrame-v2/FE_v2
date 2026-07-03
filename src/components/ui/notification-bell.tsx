@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Star, Archive, Trash2 } from "lucide-react";
 import { INITIAL_NOTIFICATIONS, toneFor, type Notification } from "@/lib/notifications";
 
 export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
@@ -12,6 +13,23 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
   const markAllRead = () => setItems((xs) => xs.map((n) => ({ ...n, read: true })));
   const markRead = (id: string) =>
     setItems((xs) => xs.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  const toggleStar = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setItems((xs) => xs.map((n) => (n.id === id ? { ...n, starred: !n.starred } : n)));
+  };
+  const archive = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setItems((xs) => xs.map((n) => (n.id === id ? { ...n, archived: true } : n)));
+  };
+  const remove = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm("이 알림을 삭제하시겠습니까?")) {
+      setItems((xs) => xs.filter((n) => n.id !== id));
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,7 +69,7 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
           {items.length === 0 && (
             <li className="px-4 py-10 text-center text-sm text-ink-soft">알림이 없어요</li>
           )}
-          {items.map((n) => {
+          {items.filter(n => !n.archived).map((n) => {
             const tone = toneFor(n.type);
             const body = (
               <div className="flex gap-3 px-4 py-3 hover:bg-surface-2/60 transition">
@@ -63,6 +81,17 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
                   </div>
                   <p className="mt-0.5 text-xs text-ink-soft line-clamp-2">{n.message}</p>
                   <p className="mt-1 text-[10px] font-mono text-ink-soft uppercase">{n.time}</p>
+                </div>
+                <div className="shrink-0 flex flex-col items-center gap-1">
+                  <button onClick={(e) => toggleStar(n.id, e)} className={"h-6 w-6 rounded-md grid place-items-center hover:bg-surface transition " + (n.starred ? "text-coral" : "text-ink-soft hover:text-ink")}>
+                    <Star className={"size-3 " + (n.starred ? "fill-current" : "")} />
+                  </button>
+                  <button onClick={(e) => archive(n.id, e)} className="h-6 w-6 rounded-md grid place-items-center hover:bg-surface text-ink-soft hover:text-ink transition">
+                    <Archive className="size-3" />
+                  </button>
+                  <button onClick={(e) => remove(n.id, e)} className="h-6 w-6 rounded-md grid place-items-center hover:bg-surface text-ink-soft hover:text-coral transition">
+                    <Trash2 className="size-3" />
+                  </button>
                 </div>
               </div>
             );

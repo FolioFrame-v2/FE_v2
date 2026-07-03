@@ -99,12 +99,8 @@ function MyPage() {
                     <span className="text-xs text-ink-soft">{p.views.toLocaleString()} views</span>
                     <div className="flex gap-2">
                       <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">공유</button>
-                      {p.status === "비공개" && (
-                        <>
-                          <Link to="/portfoliopageeditor" search={{}} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
-                          <button className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
-                        </>
-                      )}
+                      <Link to="/portfoliopageeditor" search={{}} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
+                      <button className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
                     </div>
                   </div>
                 </article>

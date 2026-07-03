@@ -2,6 +2,68 @@ import type { PortfolioData } from "@/lib/portfolio-data";
 
 type Props = { data: PortfolioData };
 
+function ResumeSection({ data, className = "" }: { data: PortfolioData; className?: string }) {
+  return (
+    <div className={`space-y-8 ${className}`}>
+      {data.certifications && data.certifications.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4">자격증</h3>
+          <div className="space-y-4">
+            {data.certifications.map((c, i) => (
+              <div key={i} className="flex flex-col sm:flex-row gap-2 sm:gap-6">
+                <div className="sm:w-32 shrink-0 font-mono text-ink-soft text-sm mt-0.5">
+                  {c.issueDate.slice(0, 7)}
+                </div>
+                <div>
+                  <div className="font-medium">{c.name}</div>
+                  <div className="text-ink-soft text-sm">{c.organization}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {data.educations.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4">학력</h3>
+          <div className="space-y-4">
+            {data.educations.map((e, i) => (
+              <div key={i} className="flex flex-col sm:flex-row gap-2 sm:gap-6">
+                <div className="sm:w-32 shrink-0 font-mono text-ink-soft text-sm mt-0.5">
+                  {e.admissionDate.slice(0, 7)} ~ {e.graduationDate.slice(0, 7)}
+                </div>
+                <div>
+                  <div className="font-medium">{e.schoolName}</div>
+                  <div className="text-ink-soft text-sm">{e.major} · {e.degree} ({e.status})</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {data.experiences.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4">경력</h3>
+          <div className="space-y-6">
+            {data.experiences.map((e, i) => (
+              <div key={i} className="flex flex-col sm:flex-row gap-2 sm:gap-6">
+                <div className="sm:w-32 shrink-0 font-mono text-ink-soft text-sm mt-0.5">
+                  {e.startDate.slice(0, 7)} ~ {e.endDate ? e.endDate.slice(0, 7) : "현재"}
+                </div>
+                <div>
+                  <div className="font-medium text-base">{e.companyName}</div>
+                  <div className="text-ink-soft text-sm font-medium mb-2">{e.position}</div>
+                  <div className="text-ink-soft text-sm leading-relaxed whitespace-pre-line">{e.description}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PortfolioTemplate({ id, data }: { id: string; data: PortfolioData }) {
   switch (id) {
     case "editorial":
@@ -44,8 +106,8 @@ function MinimalTemplate({ data }: Props) {
           </div>
         </Section>
 
-        <Section title="경력">
-          <pre className="text-ink-soft leading-relaxed whitespace-pre-wrap font-sans text-sm">{data.career}</pre>
+        <Section title="학력 및 경력">
+          <ResumeSection data={data} />
         </Section>
 
         <Section title="프로젝트">
@@ -65,6 +127,12 @@ function MinimalTemplate({ data }: Props) {
             ))}
           </div>
         </Section>
+
+        {data.customFields && data.customFields.map((f) => (
+          <Section key={f.label} title={f.label}>
+            <p className="text-ink-soft leading-relaxed whitespace-pre-line">{f.value}</p>
+          </Section>
+        ))}
       </div>
     </div>
   );
@@ -145,9 +213,18 @@ function EditorialTemplate({ data }: Props) {
       <section className="border-t border-line">
         <div className="mx-auto max-w-6xl px-8 py-16">
           <h2 className="text-3xl font-display font-semibold mb-8">Career</h2>
-          <pre className="text-ink-soft leading-relaxed whitespace-pre-wrap font-sans text-base max-w-3xl">{data.career}</pre>
+          <ResumeSection data={data} className="max-w-4xl" />
         </div>
       </section>
+
+      {data.customFields && data.customFields.map((f) => (
+        <section key={f.label} className="border-t border-line">
+          <div className="mx-auto max-w-6xl px-8 py-16">
+            <h2 className="text-3xl font-display font-semibold mb-8">{f.label}</h2>
+            <p className="text-xl text-ink-soft leading-relaxed whitespace-pre-line max-w-4xl">{f.value}</p>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
@@ -191,8 +268,28 @@ function TerminalTemplate({ data }: Props) {
           </div>
         </Block>
 
-        <Block prompt="cat career.log">
-          <pre className="whitespace-pre-wrap text-sm opacity-85 leading-relaxed">{data.career}</pre>
+        <Block prompt="cat resume.log">
+          <div className="space-y-6 text-sm opacity-85 leading-relaxed">
+            {data.certifications && data.certifications.length > 0 && data.certifications.map((c, i) => (
+              <div key={i}>
+                <div className="text-[oklch(0.86_0.16_145)]">[CERT] {c.name}</div>
+                <div className="opacity-70">{c.organization} ({c.issueDate.slice(0, 7)})</div>
+              </div>
+            ))}
+            {data.educations.map((e, i) => (
+              <div key={i}>
+                <div className="text-[oklch(0.86_0.16_145)]">[EDU] {e.schoolName}</div>
+                <div className="opacity-70">{e.major} · {e.degree} ({e.admissionDate.slice(0, 7)} ~ {e.graduationDate.slice(0, 7)})</div>
+              </div>
+            ))}
+            {data.experiences.map((e, i) => (
+              <div key={i}>
+                <div className="text-[oklch(0.86_0.16_145)]">[EXP] {e.companyName}</div>
+                <div className="opacity-70">{e.position} ({e.startDate.slice(0, 7)} ~ {e.endDate ? e.endDate.slice(0, 7) : "현재"})</div>
+                <div className="mt-1 opacity-80 whitespace-pre-line">{e.description}</div>
+              </div>
+            ))}
+          </div>
         </Block>
 
         <Block prompt="ls -lh projects/">
@@ -212,6 +309,12 @@ function TerminalTemplate({ data }: Props) {
             ))}
           </div>
         </Block>
+
+        {data.customFields && data.customFields.map((f) => (
+          <Block key={f.label} prompt={`cat "${f.label}.txt"`}>
+            <p className="text-sm opacity-85 leading-relaxed whitespace-pre-line">{f.value}</p>
+          </Block>
+        ))}
       </div>
     </div>
   );
@@ -291,9 +394,15 @@ function PlayfulTemplate({ data }: Props) {
         </section>
 
         <section className="surface-card p-6">
-          <div className="text-xs font-mono uppercase tracking-widest text-ink-soft mb-3">Career</div>
-          <pre className="whitespace-pre-wrap font-sans text-ink-soft leading-relaxed">{data.career}</pre>
+          <ResumeSection data={data} />
         </section>
+
+        {data.customFields && data.customFields.map((f) => (
+          <section key={f.label} className="surface-card p-6">
+            <div className="text-xs font-mono uppercase tracking-widest text-ink-soft mb-3">{f.label}</div>
+            <p className="whitespace-pre-line leading-relaxed text-ink-soft">{f.value}</p>
+          </section>
+        ))}
       </div>
     </div>
   );

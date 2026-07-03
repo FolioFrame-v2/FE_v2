@@ -17,6 +17,18 @@ import {
   Users,
   Wand2,
   X,
+  Share2,
+  ChevronDown,
+  Unlock,
+  CheckCircle2,
+  Copy,
+  AlertCircle,
+  Menu,
+  User,
+  Briefcase,
+  FileText,
+  Layout,
+  Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,9 +67,28 @@ type Certificate = {
 type Version = {
   id: number;
   timestamp: string;
-  type: "draft" | "diagnose";
+  type: "original" | "revision" | "diagnose";
+  title: string;
   snapshot: any;
   suggestions?: Record<string, string>;
+  revisions?: Version[];
+};
+
+type Education = {
+  schoolName: string;
+  major: string;
+  degree: string;
+  admissionDate: string;
+  graduationDate: string;
+  status: string;
+};
+
+type Experience = {
+  companyName: string;
+  position: string;
+  description: string;
+  startDate: string;
+  endDate: string;
 };
 
 const DEFAULT_STACK = ["TypeScript", "React", "Node.js", "PostgreSQL"];
@@ -67,8 +98,9 @@ const ALL_STACKS = ["React", "Vue", "Angular", "Svelte", "Next.js", "Nuxt.js", "
 const BASE_SECTIONS = [
   { id: "meta", label: "포트폴리오 정보" },
   { id: "profile", label: "프로필" },
-  { id: "career", label: "경력 요약" },
   { id: "certifications", label: "자격증" },
+  { id: "educations", label: "학력" },
+  { id: "experiences", label: "경력 상세" },
   { id: "projects", label: "프로젝트" },
   { id: "stack", label: "기술 스택" },
 ];
@@ -106,7 +138,7 @@ function EditorPage() {
   const [jobRole, setJobRole] = useState("백엔드 엔지니어");
 
   // 프로필
-  const [location, setLocation] = useState("서울, 대한민국");
+  const [location, setLocation] = useState("서울 강남구"); // 프로필(region) 연동
   const [email, setEmail] = useState("jihoon@example.com");
   const [github, setGithub] = useState("https://github.com/jihoon");
   const [website, setWebsite] = useState("https://jihoon.dev");
@@ -128,11 +160,27 @@ function EditorPage() {
     setCertifications(newCerts);
   };
 
+  // 학력
+  const [educations, setEducations] = useState<Education[]>([]);
+  const addEduRow = () => setEducations([...educations, { schoolName: "", major: "", degree: "", admissionDate: "", graduationDate: "", status: "" }]);
+  const removeEdu = (idx: number) => setEducations(educations.filter((_, i) => i !== idx));
+  const updateEdu = (idx: number, field: keyof Education, value: string) => {
+    const next = [...educations];
+    next[idx][field] = value;
+    setEducations(next);
+  };
+
   // 경력
-  const [career, setCareer] = useState(
-    "- 2022.03 ~ 현재 : 토스페이먼츠 / 결제 플랫폼 팀\n- 2020.01 ~ 2022.02 : 우아한형제들 / 정산 시스템 팀\n- 2019.01 ~ 2019.12 : 스타트업 인턴",
-  );
-  const [careerChecked, setCareerChecked] = useState(false);
+  const [experiences, setExperiences] = useState<Experience[]>([
+    { companyName: "토스페이먼츠", position: "결제 플랫폼 팀", description: "주요 업무 및 성과", startDate: "2022-03-01", endDate: "" }
+  ]);
+  const addExpRow = () => setExperiences([...experiences, { companyName: "", position: "", description: "", startDate: "", endDate: "" }]);
+  const removeExp = (idx: number) => setExperiences(experiences.filter((_, i) => i !== idx));
+  const updateExp = (idx: number, field: keyof Experience, value: string) => {
+    const next = [...experiences];
+    next[idx][field] = value;
+    setExperiences(next);
+  };
 
   // 프로젝트
   const [projects, setProjects] = useState<Project[]>([
@@ -193,19 +241,117 @@ function EditorPage() {
 
   // ✨ 버전 관리
   const [versions, setVersions] = useState<Version[]>([]);
+  const [activeVersionId, setActiveVersionId] = useState<number | null>(null);
 
-  const saveVersion = (type: "draft" | "diagnose", currentSuggestions?: Record<string, string>) => {
+  // 최초 로드 시 원본이 없으면 자동 생성
+  useEffect(() => {
+    if (versions.length === 0) {
+      const snapshot = {
+        title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
+      };
+      const newId = Date.now();
+      setVersions([{
+        id: newId,
+        timestamp: new Date().toISOString(),
+        type: "original",
+        title: "원본",
+        snapshot,
+        revisions: []
+      }]);
+      setActiveVersionId(newId);
+    }
+  }, []);
+
+  const saveVersion = (type: "revision" | "diagnose", currentSuggestions?: Record<string, string>) => {
     const snapshot = {
-      title, oneLiner, detail, jobRole, location, email, github, website, certifications, intro, career, projects, stack, customFields
+      title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
-    const newVersion: Version = {
-      id: Date.now(),
-      timestamp: new Date().toISOString(),
-      type,
-      snapshot,
-      suggestions: currentSuggestions
+    
+    setVersions(prev => {
+      // 진단은 최대 3개까지만 가능
+      if (type === "diagnose" && prev.filter(v => v.type === "diagnose").length >= 3) {
+        alert("AI 진단은 최대 3회까지만 가능합니다.");
+        return prev;
+      }
+      
+      const newVersion: Version = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        type,
+        title: type === "diagnose" ? `AI 진단 ${prev.filter(v => v.type === "diagnose").length + 1}` : "원본",
+        snapshot,
+        suggestions: currentSuggestions,
+        revisions: []
+      };
+      
+      return [newVersion, ...prev];
+    });
+  };
+
+  const addRevision = (parentId: number) => {
+    const snapshot = {
+      title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
-    setVersions(prev => [newVersion, ...prev].slice(0, 3));
+    
+    const newRevId = Date.now();
+    setVersions(prev => prev.map(v => {
+      if (v.id === parentId) {
+        const newRev: Version = {
+          id: newRevId,
+          timestamp: new Date().toISOString(),
+          type: "revision",
+          title: "수정본",
+          snapshot,
+        };
+        return { ...v, revisions: [...(v.revisions || []), newRev] };
+      }
+      return v;
+    }));
+    setActiveVersionId(newRevId);
+  };
+
+  const handleSave = () => {
+    if (!activeVersionId) return;
+    const snapshot = {
+      title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
+    };
+    setVersions(prev => prev.map(v => {
+      if (v.id === activeVersionId) {
+        return { ...v, snapshot, timestamp: new Date().toISOString() };
+      }
+      if (v.revisions) {
+        const updatedRevisions = v.revisions.map(r => r.id === activeVersionId ? { ...r, snapshot, timestamp: new Date().toISOString() } : r);
+        return { ...v, revisions: updatedRevisions };
+      }
+      return v;
+    }));
+    alert("현재 내용이 저장되었습니다.");
+  };
+
+  const updateRevisionTitle = (parentId: number, revId: number, newTitle: string) => {
+    setVersions(prev => prev.map(v => {
+      if (v.id === parentId && v.revisions) {
+        return { ...v, revisions: v.revisions.map(r => r.id === revId ? { ...r, title: newTitle } : r) };
+      }
+      return v;
+    }));
+  };
+
+  const removeRevision = (parentId: number, revId: number) => {
+    setVersions(prev => prev.map(v => {
+      if (v.id === parentId && v.revisions) {
+        return { ...v, revisions: v.revisions.filter(r => r.id !== revId) };
+      }
+      return v;
+    }));
+  };
+
+  const updateVersionTitle = (id: number, newTitle: string) => {
+    setVersions(prev => prev.map(v => v.id === id ? { ...v, title: newTitle } : v));
+  };
+
+  const removeVersion = (id: number) => {
+    setVersions(prev => prev.filter(v => v.id !== id));
   };
 
   const loadVersion = (v: Version) => {
@@ -218,13 +364,15 @@ function EditorPage() {
       setEmail(v.snapshot.email);
       setGithub(v.snapshot.github);
       setWebsite(v.snapshot.website);
-      setCertifications(v.snapshot.certifications);
+      setCertifications(v.snapshot.certifications || []);
+      setEducations(v.snapshot.educations || []);
+      setExperiences(v.snapshot.experiences || []);
       setIntro(v.snapshot.intro);
-      setCareer(v.snapshot.career);
       setProjects(v.snapshot.projects);
       setStack(v.snapshot.stack);
       setCustomFields(v.snapshot.customFields);
       if (v.suggestions) setSuggestions(v.suggestions);
+      setActiveVersionId(v.id);
     }
   };
 
@@ -279,7 +427,6 @@ function EditorPage() {
     if (oneLiner.trim()) next["oneLiner"] = improve(oneLiner, "oneLiner");
     if (detail.trim()) next["detail"] = improve(detail, "detail");
     if (intro.trim()) next["intro"] = improve(intro, "intro");
-    if (career.trim()) next["career"] = improve(career, "career");
     projects.forEach((p) => {
       if (p.summary.trim()) next[`project:${p.id}`] = improve(p.summary, "project");
     });
@@ -290,9 +437,11 @@ function EditorPage() {
     // AI 진단 총평 추가
     next["summary"] = "작성하신 포트폴리오는 직무 역량이 잘 드러나지만, 구체적인 성과 지표(%)를 추가하면 더 설득력 있는 포트폴리오가 될 수 있습니다. 기술 스택 섹션에 활용 수준을 함께 명시하는 것을 추천합니다.";
 
-    setSuggestions(next);
-    setDiagnosing(false);
-    saveVersion("diagnose", next);
+    setTimeout(() => {
+      setSuggestions(next);
+      setDiagnosing(false);
+      saveVersion("diagnose", next);
+    }, 1500);
   };
 
   // 적용(체크) / 거절(닫기)
@@ -302,7 +451,6 @@ function EditorPage() {
     if (key === "oneLiner") setOneLiner(text);
     else if (key === "detail") setDetail(text);
     else if (key === "intro") setIntro(text);
-    else if (key === "career") setCareer(text);
     else if (key.startsWith("project:")) {
       const pid = key.slice("project:".length);
       updateProject(pid, { summary: text });
@@ -320,7 +468,7 @@ function EditorPage() {
     });
 
   const completion = computeCompletion({
-    title, oneLiner, detail, jobRole, email, intro, career, projects, stack,
+    title, oneLiner, detail, jobRole, email, intro, experiences, projects, stack,
   });
 
   const sections = [
@@ -373,7 +521,7 @@ function EditorPage() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-8 lg:grid-cols-[220px_1fr]">
+      <div className="mx-auto grid max-w-[1400px] gap-8 px-5 py-8 xl:grid-cols-[220px_1fr_260px] lg:grid-cols-[220px_1fr]">
         {/* Sidebar */}
         <aside className="lg:sticky lg:top-20 lg:self-start">
           <div className="surface-card p-4">
@@ -415,20 +563,7 @@ function EditorPage() {
             >
               <Plus className="size-3.5" /> 필드 추가
             </button> */}
-            {versions.length > 0 && (
-              <div className="mt-5 space-y-2">
-                <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">버전 기록 (최대 3개)</p>
-                {versions.map((v, idx) => (
-                  <div key={v.id} className="p-3 rounded-md border border-line bg-surface flex justify-between items-center text-xs">
-                    <div>
-                      <span className="font-medium text-ink">{versions.length - idx}. {v.type === "draft" ? "초안" : "AI 진단"}</span>
-                      <p className="text-ink-soft mt-0.5">{new Date(v.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</p>
-                    </div>
-                    <button onClick={() => loadVersion(v)} className="px-2 py-1.5 bg-primary text-primary-foreground rounded hover:opacity-90">불러오기</button>
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Versions removed from here */}
             
           </div>
         </aside>
@@ -499,40 +634,110 @@ function EditorPage() {
             </Field>
           </Section>
 
-          {/* 경력 요약 */}
-          <Section
-            id="career"
-            title="경력 요약"
-            hint="주요 경력 및 이력을 입력하세요. 줄바꿈으로 구분합니다."
-            action={
-              <button
-                type="button"
-                onClick={() => setCareerChecked(true)}
-                className="chip cursor-pointer hover:border-ink/40"
-              >
-                <SpellCheck className="size-3.5" />
-                맞춤법 검사
-              </button>
-            }
-          >
-            <Textarea
-              value={career}
-              onChange={(e) => { setCareer(e.target.value); setCareerChecked(false); }}
-              rows={7}
-              placeholder={"- 2022.03 ~ 현재 : 회사명 / 팀명\n- 2020.01 ~ 2022.02 : 회사명 / 팀명"}
-              className="font-mono text-sm"
-            />
-            <AiSuggestion
-              suggestion={suggestions["career"]}
-              onApply={() => applySuggestion("career")}
-              onDismiss={() => dismissSuggestion("career")}
-            />
-            {careerChecked && (
-              <div className="mt-3 flex items-start gap-2 rounded-md border border-line bg-[color-mix(in_oklch,var(--color-mint)_14%,transparent)] px-3 py-2 text-sm text-ink">
-                <Check className="mt-0.5 size-4 shrink-0" />
-                맞춤법 검사 완료 · 0건의 교정 제안
-              </div>
-            )}
+          {/* 학력 */}
+          <Section id="educations" title="학력" hint="학력 사항을 추가해 주세요.">
+            <div className="overflow-hidden rounded-lg border border-line bg-surface">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-2">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">학교명</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">전공</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">학위</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">입학일</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">졸업일</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">상태</th>
+                    <th className="px-4 py-3 text-center font-semibold text-ink whitespace-nowrap w-16">삭제</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {educations.map((ed, idx) => (
+                    <tr key={idx}>
+                      <td className="px-4 py-2"><input value={ed.schoolName} onChange={(e) => updateEdu(idx, 'schoolName', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2"><input value={ed.major} onChange={(e) => updateEdu(idx, 'major', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2"><input value={ed.degree} onChange={(e) => updateEdu(idx, 'degree', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="학사/석사 등" /></td>
+                      <td className="px-4 py-2"><input type="date" value={ed.admissionDate} onChange={(e) => updateEdu(idx, 'admissionDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                      <td className="px-4 py-2"><input type="date" value={ed.graduationDate} onChange={(e) => updateEdu(idx, 'graduationDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                      <td className="px-4 py-2">
+                        <select value={ed.status} onChange={(e) => updateEdu(idx, 'status', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft">
+                          <option value="">선택</option>
+                          <option value="재학중">재학중</option>
+                          <option value="휴학">휴학</option>
+                          <option value="졸업">졸업</option>
+                          <option value="중퇴">중퇴</option>
+                          <option value="수료">수료</option>
+                        </select>
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <button type="button" onClick={() => removeEdu(idx)} className="text-coral hover:opacity-80 text-lg leading-none">×</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {educations.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-6 text-center text-ink-soft text-sm">
+                        등록된 학력이 없습니다.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <button
+              type="button"
+              onClick={addEduRow}
+              className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
+            >
+              + 학력 추가
+            </button>
+          </Section>
+
+          {/* 경력 상세 */}
+          <Section id="experiences" title="경력 상세" hint="경력 사항을 상세하게 추가해 주세요.">
+            <div className="overflow-hidden rounded-lg border border-line bg-surface">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-2">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">회사명</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">포지션</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">입사일</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">퇴사일</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">상세 설명</th>
+                    <th className="px-4 py-3 text-center font-semibold text-ink whitespace-nowrap w-16">삭제</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {experiences.map((exp, idx) => (
+                    <tr key={idx}>
+                      <td className="px-4 py-2"><input value={exp.companyName} onChange={(e) => updateExp(idx, 'companyName', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2"><input value={exp.position} onChange={(e) => updateExp(idx, 'position', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2"><input type="date" value={exp.startDate} onChange={(e) => updateExp(idx, 'startDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                      <td className="px-4 py-2">
+                        <input type="date" value={exp.endDate} onChange={(e) => updateExp(idx, 'endDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" />
+                        {!exp.endDate && <span className="text-[10px] text-ink-soft/70 block mt-1">비워두면 재직</span>}
+                      </td>
+                      <td className="px-4 py-2"><textarea value={exp.description} onChange={(e) => updateExp(idx, 'description', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50 min-h-[40px] resize-y text-xs" placeholder="주요 업무 및 성과" /></td>
+                      <td className="px-4 py-2 text-center align-top">
+                        <button type="button" onClick={() => removeExp(idx)} className="text-coral hover:opacity-80 text-lg leading-none mt-1">×</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {experiences.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-ink-soft text-sm">
+                        등록된 경력이 없습니다.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <button
+              type="button"
+              onClick={addExpRow}
+              className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
+            >
+              + 경력 추가
+            </button>
           </Section>
 
           {/* 자격증 */}
@@ -779,13 +984,97 @@ function EditorPage() {
 
           {/* Bottom action */}
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 border-t border-line pt-6 sm:flex-row sm:items-center">
-            <p className="text-xs text-ink-soft">자동 저장됨 · 마지막 저장 방금 전</p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="gap-2" onClick={handleSave}><Save className="size-4" />저장하기</Button>
+            </div>
             <div className="flex gap-2">
               <Button variant="outline" className="gap-2"><Eye className="size-4" />미리보기</Button>
-              <Button className="gap-2"><Globe className="size-4" />공개하기</Button>
+              <Button variant="outline" className="gap-2"><Share2 className="size-4" />공유하기</Button>
+              <Button className="gap-2"><Upload className="size-4" />게시하기</Button>
             </div>
           </div>
         </main>
+
+        {/* Right Sidebar for Version History */}
+        <aside className="lg:sticky lg:top-20 lg:self-start">
+          <div className="surface-card p-4">
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">AI 진단 기록</p>
+            </div>
+            
+            <div className="space-y-3">
+              {versions.map((v, idx) => (
+                <div key={v.id} className={`p-3 rounded-md border text-sm ${v.type === 'original' ? 'border-[color:var(--color-mint)] bg-[color-mix(in_oklch,var(--color-mint)_10%,transparent)]' : 'border-line bg-surface'}`}>
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1 min-w-0 pr-2">
+                      <input 
+                        value={v.title}
+                        onChange={(e) => updateVersionTitle(v.id, e.target.value)}
+                        className="font-medium text-ink bg-transparent focus:outline-none w-full truncate"
+                      />
+                      <p className="text-[10px] text-ink-soft mt-0.5 font-mono">
+                        {new Date(v.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </p>
+                    </div>
+                    <div className="flex gap-1 shrink-0">
+                      {v.type !== 'original' && (
+                        <button onClick={() => removeVersion(v.id)} className="p-1 hover:bg-line rounded text-ink-soft hover:text-coral transition">
+                          <Trash2 className="size-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <button onClick={() => loadVersion(v)} className="w-full text-center py-1.5 bg-surface-2 hover:bg-line transition text-ink rounded text-xs mb-1.5">
+                    불러오기
+                  </button>
+
+                  {/* Render nested revisions */}
+                  {v.revisions && v.revisions.length > 0 && (
+                    <div className="mt-3 mb-2 space-y-2 border-t border-line/50 pt-2">
+                      {v.revisions.map(rev => (
+                        <div key={rev.id} className="p-2 rounded bg-background border border-line/50">
+                          <div className="flex justify-between items-start mb-1.5">
+                            <div className="flex-1 min-w-0 pr-2">
+                              <input 
+                                value={rev.title}
+                                onChange={(e) => updateRevisionTitle(v.id, rev.id, e.target.value)}
+                                className="font-medium text-ink bg-transparent focus:outline-none w-full truncate text-xs"
+                              />
+                              <p className="text-[9px] text-ink-soft mt-0.5 font-mono">
+                                {new Date(rev.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                              </p>
+                            </div>
+                            <button onClick={() => removeRevision(v.id, rev.id)} className="p-1 hover:bg-line rounded text-ink-soft hover:text-coral transition">
+                              <Trash2 className="size-3" />
+                            </button>
+                          </div>
+                          <button onClick={() => loadVersion(rev)} className="w-full text-center py-1.5 bg-surface hover:bg-surface-2 transition text-ink rounded text-[11px]">
+                            불러오기
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button 
+                    onClick={() => {
+                      addRevision(v.id);
+                      alert("수정본으로 저장되었습니다.");
+                    }}
+                    className="w-full text-center py-1.5 border border-line bg-surface hover:bg-surface-2 transition text-ink rounded text-xs mt-1"
+                  >
+                    + 수정본 만들기
+                  </button>
+                </div>
+              ))}
+              {versions.length === 0 && (
+                <div className="py-8 text-center text-xs text-ink-soft">
+                  버전 기록이 없습니다.
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
@@ -995,7 +1284,7 @@ function Toggle({
 
 function computeCompletion(data: {
   title: string; oneLiner: string; detail: string; jobRole: string; email: string;
-  intro: string; career: string; projects: Project[]; stack: string[];
+  intro: string; experiences: Experience[]; projects: Project[]; stack: string[];
 }) {
   const checks = [
     data.title.trim().length > 0,
@@ -1004,7 +1293,7 @@ function computeCompletion(data: {
     data.jobRole.trim().length > 0,
     /\S+@\S+\.\S+/.test(data.email),
     data.intro.trim().length > 0,
-    data.career.trim().length > 0,
+    data.experiences.length > 0,
     data.projects.length > 0 && data.projects.every((p) => p.name.trim().length > 0),
     data.stack.length >= 3,
   ];

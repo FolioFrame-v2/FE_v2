@@ -27,7 +27,7 @@ function MessageDetail() {
   const thread = useMemo(() => THREADS.find((t) => t.id === id), [id]);
   const [reply, setReply] = useState("");
   const [messages, setMessages] = useState<Message[]>(thread?.messages ?? []);
-  const [starred, setStarred] = useState(thread?.starred ?? false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   if (!thread) {
     return (
@@ -72,11 +72,7 @@ function MessageDetail() {
           <div className="text-xs text-ink-soft truncate">{thread.counterpart.tag} · {thread.counterpart.handle}</div>
         </div>
         <div className="flex items-center gap-1">
-          <IconBtn onClick={() => setStarred((s) => !s)} active={starred}>
-            <Star className={"size-4 " + (starred ? "fill-current" : "")} />
-          </IconBtn>
-          <IconBtn><Archive className="size-4" /></IconBtn>
-          <IconBtn><Trash2 className="size-4" /></IconBtn>
+          <IconBtn onClick={() => setShowDeleteConfirm(true)}><Trash2 className="size-4" /></IconBtn>
           <IconBtn><MoreHorizontal className="size-4" /></IconBtn>
         </div>
       </header>
@@ -154,6 +150,35 @@ function MessageDetail() {
           </div>
         </div>
       </footer>
+
+      {/* Delete Confirmation Popup */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/20 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-background p-6 shadow-xl border border-line">
+            <h3 className="text-lg font-display font-semibold text-ink">메시지 삭제</h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              정말로 이 메시지를 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-ink hover:bg-surface transition"
+              >
+                취소
+              </button>
+              <button
+                onClick={() => {
+                  alert("메시지가 삭제되었습니다.");
+                  setShowDeleteConfirm(false);
+                }}
+                className="rounded-lg bg-coral px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition"
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
