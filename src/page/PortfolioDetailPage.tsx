@@ -49,8 +49,10 @@ const PortfolioDetailPage = () => {
   const [modalMessage, setModalMessage] = useState(""); //"연락" 버튼 눌렀을 때 창에 띄워지는 메세지
   const [isOwner, setIsOwner] = useState(true);
   const [isLiked, setIsLiked] = useState(false); //"좋아요" 눌렀을 때 상태 반영
+  const [isBookmarked, setIsBookmarked] = useState(false); // 북마크 상태
+  const [isProposed, setIsProposed] = useState(false); // 기업 제안 상태
 
-  const currentUser = { id: "mock-id", email: "owner@example.com", recruiter: false, name: "MockUser" }; 
+  const currentUser = { id: "mock-id", email: "owner@example.com", recruiter: true, name: "MockUser" }; // Changed to recruiter: true for testing
   const navigate = useNavigate();
 
 
@@ -70,6 +72,12 @@ const PortfolioDetailPage = () => {
     }
   };
 
+  const handleProposal = (propose: boolean) => {
+    setIsProposed(propose);
+    setShowModal(true);
+    setModalMessage(propose ? "작성자에게 제안을 보냈습니다. (알림 발송)" : "제안을 회수했습니다.");
+  };
+
   //좋아요 클릭
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
@@ -85,8 +93,16 @@ const PortfolioDetailPage = () => {
       );
     } else if (currentUser.recruiter) {
       return (
-        <div className="flex justify-center items-center my-[1.2vh]">
-          <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']" onClick={handleContactClick}>연락</button>
+        <div className="flex justify-center items-center gap-4 my-[1.2vh]">
+          {!isProposed ? (
+            <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']" onClick={() => handleProposal(true)}>
+              제안하기
+            </button>
+          ) : (
+            <button className="bg-surface-2 border border-line text-ink py-[8px] px-[12px] rounded-[4px] cursor-pointer font-['OTF_B'] transition hover:bg-surface" onClick={() => handleProposal(false)}>
+              제안회수
+            </button>
+          )}
         </div>
       );
     } else {
@@ -103,7 +119,7 @@ const PortfolioDetailPage = () => {
     return <div className="flex justify-center text-[1vw] font-bold">로딩 중...</div>;
   }
   return (
-    <div className="w-[85%] mx-auto">
+    <div className="w-[85%] mx-auto py-10">
       <div className="mb-[2.5vw]">
         <div className="flex justify-center items-center">
           <div className="w-[6vw] h-[6vw] [&>img]:w-full [&>img]:h-full [&>img]:object-contain">
@@ -121,18 +137,26 @@ const PortfolioDetailPage = () => {
                   <img src={logo} alt="projectLogo" />
                 )}
           </div>
-          <h1 className="font-bold font-['OTF_B']">{portfolioData.projectTitle}</h1>
+          <h1 className="font-bold font-['OTF_B'] text-3xl ml-4">{portfolioData.projectTitle}</h1>
         </div>
-        <p>{portfolioData.description}</p>
-        <div className="flex gap-[1vw]">
+        <p className="mt-4 text-center text-ink-soft">{portfolioData.description}</p>
+        <div className="flex items-center justify-center gap-6 mt-8 mb-4">
           <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']">조회수 {portfolioData.hits || 0}</button>
           <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']">기업 연락 {portfolioData.contacts.length || 0}</button>
-          <div className="flex justify-between items-center gap-[0.4vw] w-[2vw] cursor-pointer font-bold [&>img]:w-[1.5vw] [&>img]:h-auto [&>img]:object-contain" onClick={handleLikeClick}>
+          <div className="flex justify-between items-center gap-[0.4vw] cursor-pointer font-bold [&>img]:w-[1.5vw] [&>img]:h-auto [&>img]:object-contain" onClick={handleLikeClick}>
             <img
               src={isLiked ? heart_fill : heart_none} // 좋아요 상태에 따라 이미지 변경
               alt={isLiked ? "heart-fill" : "heart-none"}
             />
-            <div className="font-['OTF_B']">{portfolioData.likes.length}</div>
+            <div className="font-['OTF_B'] text-lg">{portfolioData.likes.length + (isLiked ? 1 : 0)}</div>
+          </div>
+          <div className="flex justify-between items-center gap-[0.4vw] cursor-pointer font-bold text-ink-soft hover:text-ink transition" onClick={() => setIsBookmarked(!isBookmarked)}>
+            {isBookmarked ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-[var(--color-mint)]"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+            )}
+            <div className="font-['OTF_B'] text-lg">{isBookmarked ? 1 : 0}</div>
           </div>
         </div>
       </div>

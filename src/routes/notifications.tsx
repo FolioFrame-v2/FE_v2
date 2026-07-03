@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Nav } from "@/components/ui/nav";
 import { INITIAL_NOTIFICATIONS, toneFor, type Notification, type NotificationType } from "@/lib/notifications";
 
 export const Route = createFileRoute("/notifications")({
@@ -42,7 +41,6 @@ function NotificationsPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <Nav />
       <main className="mx-auto max-w-4xl px-6 py-10">
         <header className="flex items-end justify-between gap-4 flex-wrap">
           <div>

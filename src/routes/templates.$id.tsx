@@ -80,12 +80,10 @@ function TemplateDetailPage() {
   const others = TEMPLATES.filter((t) => t.id !== meta.id);
 
   const apply = () =>
-    navigate({ to: "/portfoliopageeditor" });
+    navigate({ to: "/portfoliopageeditor", search: { templateId: id } });
 
   return (
     <div className="min-h-screen">
-      <Nav />
-
       {/* Sticky toolbar */}
       <div className="border-b border-line bg-background/85 backdrop-blur sticky top-16 z-30">
         <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">

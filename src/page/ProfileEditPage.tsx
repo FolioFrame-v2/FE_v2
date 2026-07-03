@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Nav } from "@/components/ui/nav";
+import { useMemo, useState, useEffect } from "react";
+import { REGIONS } from "@/lib/regions";
 
 export default ProfileEditPage;
 
@@ -12,12 +12,28 @@ const GENDERS = [
   { v: "none", l: "선택 안 함" },
 ] as const;
 const CAREER = ["학생", "신입", "1-3년", "3-5년", "5년+"] as const;
-const REGIONS = ["서울", "경기/인천", "부산", "대구", "대전", "광주", "기타", "원격"] as const;
+
+const TECH_STACKS = [
+  "Java", "Spring Boot", "Python", "Django", "FastAPI",
+  "JavaScript", "TypeScript", "React", "Next.js", "Vue.js",
+  "Node.js", "Express", "NestJS", "Android", "Kotlin",
+  "Java(Android)", "iOS", "Swift", "MySQL", "PostgreSQL",
+  "MongoDB", "Redis", "AWS", "Docker", "Kubernetes",
+  "Git", "GitHub", "TensorFlow", "PyTorch"
+];
 const VISIBILITY = [
   { v: "public", l: "전체 공개" },
   { v: "link", l: "링크 소유자만" },
   { v: "private", l: "비공개" },
 ] as const;
+
+export type Certification = {
+  name: string;
+  organization: string;
+  issueDate: string;
+  expiryDate: string;
+  id: string;
+};
 
 type Form = {
   name: string;
@@ -39,7 +55,8 @@ type Form = {
   notifyMatch: boolean;
   notifyMessage: boolean;
   notifyMarketing: boolean;
-  certifications: string[];
+  certifications: Certification[];
+  techStacks: string[];
 };
 
 const CURRENT: Form = {
@@ -55,14 +72,17 @@ const CURRENT: Form = {
   field: "Web",
   parts: ["Frontend"],
   career: "1-3년",
-  region: "서울",
+  region: "서울 강남",
   bio: "사용자 경험을 코드로 옮기는 프론트엔드 엔지니어",
   headline: "Frontend Engineer · 서울 · 강남구",
   visibility: "public",
   notifyMatch: true,
   notifyMessage: true,
   notifyMarketing: false,
-  certifications: ["정보처리기사"],
+  certifications: [
+    { name: "정보처리기사", organization: "한국산업인력공단", issueDate: "2023-08-15", expiryDate: "", id: "12-34-5678" }
+  ],
+  techStacks: ["React", "TypeScript", "JavaScript"],
 };
 
 function ProfileEditPage() {
@@ -70,24 +90,55 @@ function ProfileEditPage() {
   const [baseForm, setBaseForm] = useState<Form>(CURRENT);
   const [f, setF] = useState<Form>(CURRENT);
   const [saved, setSaved] = useState<null | "saving" | "done">(null);
-  const [certInput, setCertInput] = useState("");
+  const [techInput, setTechInput] = useState("");
+
+  const [province, setProvince] = useState(f.region.split(" ")[0] || "");
+  const [district, setDistrict] = useState(f.region.split(" ").slice(1).join(" ") || "");
+
+  useEffect(() => {
+    if (province) {
+      if (!REGIONS[province] || REGIONS[province].length === 0) {
+        set("region", province);
+      } else {
+        set("region", district ? `${province} ${district}` : province);
+      }
+    } else {
+      set("region", "");
+    }
+  }, [province, district]);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
   const togglePart = (p: string) =>
     set("parts", f.parts.includes(p) ? f.parts.filter((x) => x !== p) : [...f.parts, p]);
+  const toggleTechStack = (t: string) =>
+    set("techStacks", f.techStacks.includes(t) ? f.techStacks.filter((x) => x !== t) : [...f.techStacks, t]);
 
-  const addCert = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && certInput.trim()) {
+  const addTechStack = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && techInput.trim()) {
       e.preventDefault();
-      if (!f.certifications.includes(certInput.trim())) {
-        set("certifications", [...f.certifications, certInput.trim()]);
+      const val = techInput.trim();
+      const matched = TECH_STACKS.find(t => t.toLowerCase() === val.toLowerCase()) || val;
+      if (!f.techStacks.includes(matched)) {
+        set("techStacks", [...f.techStacks, matched]);
       }
-      setCertInput("");
+      setTechInput("");
     }
   };
 
-  const removeCert = (c: string) => {
-    set("certifications", f.certifications.filter((x) => x !== c));
+  const addCertRow = () => {
+    set("certifications", [...f.certifications, { name: "", organization: "", issueDate: "", expiryDate: "", id: "" }]);
+  };
+
+  const updateCert = (idx: number, field: keyof Certification, value: string) => {
+    const newCerts = [...f.certifications];
+    newCerts[idx] = { ...newCerts[idx], [field]: value };
+    set("certifications", newCerts);
+  };
+
+  const removeCert = (idx: number) => {
+    const newCerts = [...f.certifications];
+    newCerts.splice(idx, 1);
+    set("certifications", newCerts);
   };
 
   const completion = useMemo(() => {
@@ -109,11 +160,14 @@ function ProfileEditPage() {
     }, 700);
   };
 
-  const onReset = () => setF(baseForm);
+  const onReset = () => {
+    setF(baseForm);
+    setProvince(baseForm.region.split(" ")[0] || "");
+    setDistrict(baseForm.region.split(" ").slice(1).join(" ") || "");
+  };
 
   return (
     <div className="min-h-screen text-foreground">
-      <Nav />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
           <div>
@@ -133,7 +187,6 @@ function ProfileEditPage() {
         </header>
 
         <form onSubmit={onSubmit} className="grid lg:grid-cols-12 gap-6">
-          {/* Sidebar summary */}
           <aside className="lg:col-span-4 space-y-6">
             <div className="surface-card p-6">
               <div className="flex items-center gap-4">
@@ -158,6 +211,7 @@ function ProfileEditPage() {
                   ["#basic", "기본 정보"],
                   ["#links", "링크"],
                   ["#career", "분야 & 경력"],
+                  ["#techstacks", "관심 기술 스택"],
                   ["#certifications", "자격증"],
                   ["#bio", "소개"],
                   ["#privacy", "공개 & 알림"],
@@ -173,7 +227,6 @@ function ProfileEditPage() {
             </nav>
           </aside>
 
-          {/* Main content */}
           <div className="lg:col-span-8 space-y-6">
             <Section id="basic" title="기본 정보">
               <Grid>
@@ -245,25 +298,39 @@ function ProfileEditPage() {
                   </div>
                 </Field>
                 <Field label="희망 근무 지역">
-                  <div className="flex gap-2 flex-wrap">
-                    {REGIONS.map((x) => (
-                      <Chip key={x} active={f.region === x} onClick={() => set("region", x)}>{x}</Chip>
-                    ))}
+                  <div className="flex gap-2">
+                    <select 
+                      value={province} 
+                      onChange={(e) => { setProvince(e.target.value); setDistrict(""); }}
+                      className={inp + " appearance-none bg-surface pr-8"}
+                    >
+                      <option value="" disabled>시/도 선택</option>
+                      {Object.keys(REGIONS).map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                    <select 
+                      value={district} 
+                      onChange={(e) => setDistrict(e.target.value)}
+                      className={inp + " appearance-none bg-surface pr-8"}
+                      disabled={!province || !REGIONS[province] || REGIONS[province].length === 0}
+                    >
+                      <option value="" disabled>시/구/군 선택</option>
+                      {province && REGIONS[province] && REGIONS[province].map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
                   </div>
                 </Field>
               </Grid>
             </Section>
 
-            <Section id="certifications" title="자격증">
-              <Field label="자격증">
+            <Section id="techstacks" title="관심 기술 스택">
+              <Field label="기술 스택">
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    {f.certifications.map((c) => (
-                      <span key={c} className="chip bg-surface border-line text-ink-soft pr-1 flex items-center gap-1">
-                        {c}
+                    {f.techStacks.map((t) => (
+                      <span key={t} className="chip bg-surface border-line text-ink-soft pr-1 flex items-center gap-1">
+                        {t}
                         <button
                           type="button"
-                          onClick={() => removeCert(c)}
+                          onClick={() => toggleTechStack(t)}
                           className="h-5 w-5 rounded-full hover:bg-line flex items-center justify-center transition-colors text-ink-soft/70 hover:text-ink"
                         >
                           ×
@@ -272,14 +339,74 @@ function ProfileEditPage() {
                     ))}
                   </div>
                   <input 
-                    value={certInput} 
-                    onChange={(e) => setCertInput(e.target.value)} 
-                    onKeyDown={addCert}
-                    placeholder="자격증 입력 후 Enter" 
+                    value={techInput} 
+                    onChange={(e) => setTechInput(e.target.value)} 
+                    onKeyDown={addTechStack}
+                    placeholder="기술 스택 검색 후 선택 또는 Enter" 
                     className={inp} 
                   />
+                  {techInput.trim() && TECH_STACKS.filter(t => t.toLowerCase().includes(techInput.toLowerCase()) && !f.techStacks.includes(t)).length > 0 && (
+                    <div className="flex gap-2 flex-wrap mt-2 p-3 bg-surface-2 rounded-md border border-line">
+                      {TECH_STACKS.filter(t => t.toLowerCase().includes(techInput.toLowerCase()) && !f.techStacks.includes(t)).map(t => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => { setTechInput(""); toggleTechStack(t); }}
+                          className="text-sm px-3 py-1.5 rounded-full bg-surface border border-line hover:bg-line hover:text-ink transition"
+                        >
+                          + {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Field>
+              <p className="mt-2 text-xs text-ink-soft">관심 기술 스택이 포함된 기업 공고가 등록되면 알림을 받을 수 있어요.</p>
+            </Section>
+
+            <Section id="certifications" title="자격증">
+              <div className="overflow-hidden rounded-lg border border-line bg-surface">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-surface-2">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">자격증 명</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">기관</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">발급일자</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">만료일자</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">자격증 고유 번호</th>
+                      <th className="px-4 py-3 text-center font-semibold text-ink whitespace-nowrap w-16">삭제</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {f.certifications.map((c, idx) => (
+                      <tr key={idx}>
+                        <td className="px-4 py-2"><input value={c.name} onChange={(e) => updateCert(idx, 'name', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2"><input value={c.organization} onChange={(e) => updateCert(idx, 'organization', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2"><input type="date" value={c.issueDate} onChange={(e) => updateCert(idx, 'issueDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                        <td className="px-4 py-2"><input type="date" value={c.expiryDate} onChange={(e) => updateCert(idx, 'expiryDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                        <td className="px-4 py-2"><input value={c.id} onChange={(e) => updateCert(idx, 'id', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2 text-center">
+                          <button type="button" onClick={() => removeCert(idx)} className="text-coral hover:opacity-80 text-lg leading-none">×</button>
+                        </td>
+                      </tr>
+                    ))}
+                    {f.certifications.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-6 text-center text-ink-soft text-sm">
+                          등록된 자격증이 없습니다.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <button
+                type="button"
+                onClick={addCertRow}
+                className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
+              >
+                + 자격증 추가
+              </button>
             </Section>
 
             <Section id="bio" title="소개">
@@ -292,7 +419,7 @@ function ProfileEditPage() {
                   value={f.bio}
                   onChange={(e) => set("bio", e.target.value)}
                   maxLength={240}
-                  className={inp + " min-h-[112px] resize-y"}
+                  className={inp + " min-h-[112px] resize-y py-2"}
                 />
                 <div className="mt-1 text-right text-[11px] font-mono text-ink-soft">{f.bio.length} / 240</div>
               </Field>
@@ -347,7 +474,6 @@ function ProfileEditPage() {
               </div>
             </Section>
 
-            {/* Sticky action bar */}
             <div className="sticky bottom-4 z-10">
               <div className="surface-card p-4 flex items-center justify-between gap-3 shadow-sm">
                 <div className="text-xs text-ink-soft font-mono">

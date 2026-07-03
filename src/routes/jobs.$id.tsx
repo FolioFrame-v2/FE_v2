@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   Users,
 } from "lucide-react";
-import { Nav } from "@/components/ui/nav";
 
 export const Route = createFileRoute("/jobs/$id")({
   component: JobDetailPage,
@@ -142,8 +141,6 @@ function JobDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Nav />
-
       <div className="border-b border-line bg-surface/40">
         <div className="mx-auto max-w-6xl px-6 py-4 text-sm text-ink-soft flex items-center gap-2">
           <Link to="/" className="hover:text-ink">홈</Link>

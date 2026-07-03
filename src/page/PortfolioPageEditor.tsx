@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Check,
@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useSearch } from "@tanstack/react-router";
+import { TEMPLATES } from "@/lib/portfolio-data";
 
 type Visibility = "private" | "link" | "public";
 
@@ -42,6 +44,22 @@ type CustomField = {
   value: string;
 };
 
+type Certificate = {
+  name: string;
+  organization: string;
+  issueDate: string;
+  expiryDate: string;
+  id: string;
+};
+
+type Version = {
+  id: number;
+  timestamp: string;
+  type: "draft" | "diagnose";
+  snapshot: any;
+  suggestions?: Record<string, string>;
+};
+
 const DEFAULT_STACK = ["TypeScript", "React", "Node.js", "PostgreSQL"];
 const SUGGEST_STACK = ["Next.js", "TanStack", "Tailwind", "GraphQL", "Docker", "AWS", "Kotlin", "Go", "Rust", "Python"];
 const ALL_STACKS = ["React", "Vue", "Angular", "Svelte", "Next.js", "Nuxt.js", "TypeScript", "JavaScript", "Python", "Java", "Kotlin", "Go", "Rust", "C++", "C#", "Spring", "Node.js", "Express", "NestJS", "Django", "Flask", "Ruby on Rails", "PHP", "Laravel", "MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch", "AWS", "Google Cloud", "Azure", "Docker", "Kubernetes", "GraphQL", "REST API", "Tailwind", "Sass", "Figma", "Git", "Linux", "WebRTC", "Yjs"];
@@ -50,9 +68,9 @@ const BASE_SECTIONS = [
   { id: "meta", label: "포트폴리오 정보" },
   { id: "profile", label: "프로필" },
   { id: "career", label: "경력 요약" },
+  { id: "certifications", label: "자격증" },
   { id: "projects", label: "프로젝트" },
   { id: "stack", label: "기술 스택" },
-  { id: "visibility", label: "공개 설정" },
 ];
 
 // Mock AI improvement — wraps text into a more polished STAR-style version.
@@ -92,10 +110,23 @@ function EditorPage() {
   const [email, setEmail] = useState("jihoon@example.com");
   const [github, setGithub] = useState("https://github.com/jihoon");
   const [website, setWebsite] = useState("https://jihoon.dev");
-  const [certifications, setCertifications] = useState("정보처리기사 (2023.08)\nSQLD (2022.05)");
   const [intro, setIntro] = useState(
     "안녕하세요. 안정적인 서비스를 만드는 데 관심이 많은 백엔드 엔지니어 김지훈입니다.",
   );
+
+  // 자격증
+  const [certifications, setCertifications] = useState<Certificate[]>([
+    { name: "정보처리기사", organization: "한국산업인력공단", issueDate: "2023-08-01", expiryDate: "", id: "1234-5678" },
+    { name: "SQLD", organization: "한국데이터산업진흥원", issueDate: "2022-05-01", expiryDate: "", id: "5678-1234" }
+  ]);
+  
+  const addCertRow = () => setCertifications([...certifications, { name: "", organization: "", issueDate: "", expiryDate: "", id: "" }]);
+  const removeCert = (idx: number) => setCertifications(certifications.filter((_, i) => i !== idx));
+  const updateCert = (idx: number, field: keyof Certificate, value: string) => {
+    const newCerts = [...certifications];
+    newCerts[idx][field] = value;
+    setCertifications(newCerts);
+  };
 
   // 경력
   const [career, setCareer] = useState(
@@ -136,6 +167,22 @@ function EditorPage() {
 
   // ✨ 사용자 추가 필드
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
+  
+  const searchParams = useSearch({ from: '/portfoliopageeditor' }) as { templateId?: string };
+  const templateId = searchParams.templateId || "minimal";
+
+  useEffect(() => {
+    const template = TEMPLATES.find(t => t.id === templateId);
+    if (template && customFields.length === 0) {
+      setCustomFields(template.defaultFields.map((f, i) => ({
+        id: `cf_default_${i}_${Date.now()}`,
+        label: f.label,
+        type: f.type,
+        value: "",
+      })));
+    }
+  }, [templateId]);
+
   const [addOpen, setAddOpen] = useState(false);
   const [newLabel, setNewLabel] = useState("");
   const [newType, setNewType] = useState<"text" | "textarea">("textarea");
@@ -143,6 +190,43 @@ function EditorPage() {
   // ✨ AI 진단 결과 (필드 키 → 추천 문장)
   const [suggestions, setSuggestions] = useState<Record<string, string>>({});
   const [diagnosing, setDiagnosing] = useState(false);
+
+  // ✨ 버전 관리
+  const [versions, setVersions] = useState<Version[]>([]);
+
+  const saveVersion = (type: "draft" | "diagnose", currentSuggestions?: Record<string, string>) => {
+    const snapshot = {
+      title, oneLiner, detail, jobRole, location, email, github, website, certifications, intro, career, projects, stack, customFields
+    };
+    const newVersion: Version = {
+      id: Date.now(),
+      timestamp: new Date().toISOString(),
+      type,
+      snapshot,
+      suggestions: currentSuggestions
+    };
+    setVersions(prev => [newVersion, ...prev].slice(0, 3));
+  };
+
+  const loadVersion = (v: Version) => {
+    if (confirm("이 버전으로 되돌리시겠습니까? 현재 작성 중인 내용은 덮어씌워집니다.")) {
+      setTitle(v.snapshot.title);
+      setOneLiner(v.snapshot.oneLiner);
+      setDetail(v.snapshot.detail);
+      setJobRole(v.snapshot.jobRole);
+      setLocation(v.snapshot.location);
+      setEmail(v.snapshot.email);
+      setGithub(v.snapshot.github);
+      setWebsite(v.snapshot.website);
+      setCertifications(v.snapshot.certifications);
+      setIntro(v.snapshot.intro);
+      setCareer(v.snapshot.career);
+      setProjects(v.snapshot.projects);
+      setStack(v.snapshot.stack);
+      setCustomFields(v.snapshot.customFields);
+      if (v.suggestions) setSuggestions(v.suggestions);
+    }
+  };
 
   const addProject = () => {
     setProjects((prev) => [
@@ -162,7 +246,7 @@ function EditorPage() {
   };
   const removeStack = (value: string) => setStack((s) => s.filter((t) => t !== value));
 
-  const filteredStacks = ALL_STACKS.filter((s) => 
+  const filteredStacks = ALL_STACKS.filter((s) =>
     s.toLowerCase().includes(stackInput.toLowerCase()) && !stack.includes(s)
   );
 
@@ -202,12 +286,13 @@ function EditorPage() {
     customFields.forEach((f) => {
       if (f.value.trim()) next[`custom:${f.id}`] = improve(f.value, "custom");
     });
-    
+
     // AI 진단 총평 추가
     next["summary"] = "작성하신 포트폴리오는 직무 역량이 잘 드러나지만, 구체적인 성과 지표(%)를 추가하면 더 설득력 있는 포트폴리오가 될 수 있습니다. 기술 스택 섹션에 활용 수준을 함께 명시하는 것을 추천합니다.";
-    
+
     setSuggestions(next);
     setDiagnosing(false);
+    saveVersion("diagnose", next);
   };
 
   // 적용(체크) / 거절(닫기)
@@ -241,6 +326,7 @@ function EditorPage() {
   const sections = [
     ...BASE_SECTIONS,
     ...customFields.map((f) => ({ id: `custom-${f.id}`, label: f.label })),
+    { id: "visibility", label: "공개 설정" },
   ];
 
   const suggestionCount = Object.keys(suggestions).length;
@@ -274,7 +360,10 @@ function EditorPage() {
             <Button variant="ghost" size="sm" className="gap-2">
               <Eye className="size-4" /> 미리보기
             </Button>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => {
+              saveVersion("draft");
+              alert("임시 저장되었습니다.");
+            }}>
               <Save className="size-4" /> 임시 저장
             </Button>
             <Button size="sm" className="gap-2">
@@ -319,13 +408,28 @@ function EditorPage() {
               ))}
             </nav>
 
-            <button
+            {/* <button
               type="button"
               onClick={() => setAddOpen((o) => !o)}
               className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-line py-1.5 text-xs text-ink-soft hover:border-ink/40 hover:text-ink"
             >
               <Plus className="size-3.5" /> 필드 추가
-            </button>
+            </button> */}
+            {versions.length > 0 && (
+              <div className="mt-5 space-y-2">
+                <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">버전 기록 (최대 3개)</p>
+                {versions.map((v, idx) => (
+                  <div key={v.id} className="p-3 rounded-md border border-line bg-surface flex justify-between items-center text-xs">
+                    <div>
+                      <span className="font-medium text-ink">{versions.length - idx}. {v.type === "draft" ? "초안" : "AI 진단"}</span>
+                      <p className="text-ink-soft mt-0.5">{new Date(v.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</p>
+                    </div>
+                    <button onClick={() => loadVersion(v)} className="px-2 py-1.5 bg-primary text-primary-foreground rounded hover:opacity-90">불러오기</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
           </div>
         </aside>
 
@@ -385,9 +489,6 @@ function EditorPage() {
                 <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://your.site" />
               </Field>
             </div>
-            <Field label="자격증" hint="보유하신 자격증을 입력해주세요.">
-              <Textarea value={certifications} onChange={(e) => setCertifications(e.target.value)} rows={2} placeholder="예) 정보처리기사 (2023.08)" />
-            </Field>
             <Field label="프로필 소개" hint={`${intro.length}/500`}>
               <Textarea value={intro} maxLength={500} onChange={(e) => setIntro(e.target.value)} rows={3} placeholder="간단한 자기소개" />
               <AiSuggestion
@@ -432,6 +533,52 @@ function EditorPage() {
                 맞춤법 검사 완료 · 0건의 교정 제안
               </div>
             )}
+          </Section>
+
+          {/* 자격증 */}
+          <Section id="certifications" title="자격증" hint="보유하신 자격증을 표 형태로 추가해 주세요.">
+            <div className="overflow-hidden rounded-lg border border-line bg-surface">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-2">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">자격증 명</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">기관</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">발급일자</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">만료일자</th>
+                    <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">자격증 번호</th>
+                    <th className="px-4 py-3 text-center font-semibold text-ink whitespace-nowrap w-16">삭제</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {certifications.map((c, idx) => (
+                    <tr key={idx}>
+                      <td className="px-4 py-2"><input value={c.name} onChange={(e) => updateCert(idx, 'name', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2"><input value={c.organization} onChange={(e) => updateCert(idx, 'organization', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2"><input type="date" value={c.issueDate} onChange={(e) => updateCert(idx, 'issueDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                      <td className="px-4 py-2"><input type="date" value={c.expiryDate} onChange={(e) => updateCert(idx, 'expiryDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                      <td className="px-4 py-2"><input value={c.id} onChange={(e) => updateCert(idx, 'id', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                      <td className="px-4 py-2 text-center">
+                        <button type="button" onClick={() => removeCert(idx)} className="text-coral hover:opacity-80 text-lg leading-none">×</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {certifications.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-ink-soft text-sm">
+                        등록된 자격증이 없습니다.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <button
+              type="button"
+              onClick={addCertRow}
+              className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
+            >
+              <Plus className="size-4" /> 자격증 추가
+            </button>
           </Section>
 
           {/* 프로젝트 */}
@@ -521,19 +668,6 @@ function EditorPage() {
             </div>
           </Section>
 
-          {/* 공개 설정 */}
-          <Section id="visibility" title="공개 설정 및 접근 제어" hint="누가 이 포트폴리오를 볼 수 있는지 정합니다.">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <VisibilityOption active={visibility === "private"} onClick={() => setVisibility("private")} icon={<Lock className="size-4" />} title="비공개" desc="나만 볼 수 있음" />
-              <VisibilityOption active={visibility === "link"} onClick={() => setVisibility("link")} icon={<Sparkles className="size-4" />} title="링크 공유" desc="링크가 있는 사람만" />
-              <VisibilityOption active={visibility === "public"} onClick={() => setVisibility("public")} icon={<Globe className="size-4" />} title="전체 공개" desc="검색·매칭에 노출" />
-            </div>
-            {/* <div className="mt-5 space-y-3">
-              <Toggle icon={<Users className="size-4" />} title="채용 담당자 매칭 허용" desc="기업 담당자에게 추천 후보로 노출됩니다." checked={allowRecruiter} onChange={setAllowRecruiter} />
-              <Toggle icon={<Mail className="size-4" />} title="연락처 비공개" desc="이메일·전화번호를 가립니다. 연락은 플랫폼 메시지로만." checked={hideContact} onChange={setHideContact} />
-            </div> */}
-          </Section>
-
           {/* 사용자 추가 필드들 — 각 필드가 별도 섹션으로 렌더링 */}
           {customFields.map((f) => (
             <Section
@@ -566,6 +700,15 @@ function EditorPage() {
               </Field>
             </Section>
           ))}
+
+          {/* 공개 설정 */}
+          <Section id="visibility" title="공개 설정 및 접근 제어" hint="누가 이 포트폴리오를 볼 수 있는지 정합니다.">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <VisibilityOption active={visibility === "private"} onClick={() => setVisibility("private")} icon={<Lock className="size-4" />} title="비공개" desc="나만 볼 수 있음" />
+              <VisibilityOption active={visibility === "link"} onClick={() => setVisibility("link")} icon={<Sparkles className="size-4" />} title="링크 공유" desc="링크가 있는 사람만" />
+              <VisibilityOption active={visibility === "public"} onClick={() => setVisibility("public")} icon={<Globe className="size-4" />} title="전체 공개" desc="검색·매칭에 노출" />
+            </div>
+          </Section>
 
           {/* 필드 추가 카드 */}
           {/* <section id="add-field" className="surface-card p-6 sm:p-7">

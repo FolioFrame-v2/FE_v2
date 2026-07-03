@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Nav } from "@/components/ui/nav";
 import { TEMPLATES } from "@/lib/portfolio-data";
 
 export const Route = createFileRoute("/templates/")({
@@ -19,7 +18,6 @@ function TemplatesPage() {
 
   return (
     <div className="min-h-screen text-foreground">
-      <Nav />
       <main className="mx-auto max-w-7xl px-6 py-10 space-y-10">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -29,7 +27,7 @@ function TemplatesPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => navigate({ to: "/portfoliopageeditor" })}
+              onClick={() => navigate({ to: "/portfoliopageeditor", search: { templateId: selected } })}
               className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium inline-flex items-center hover:opacity-90"
             >
               이 템플릿으로 적용하기 →
