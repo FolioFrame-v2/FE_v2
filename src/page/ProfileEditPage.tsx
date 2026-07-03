@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { ChevronDown, Check } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { REGIONS } from "@/lib/regions";
 
@@ -11,7 +12,7 @@ const GENDERS = [
   { v: "male", l: "남성" },
   { v: "none", l: "선택 안 함" },
 ] as const;
-const CAREER = ["학생", "신입", "1-3년", "3-5년", "5년+"] as const;
+const CAREER = ["없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"] as const;
 
 const TECH_STACKS = [
   "Java", "Spring Boot", "Python", "Django", "FastAPI",
@@ -35,6 +36,23 @@ export type Certification = {
   id: string;
 };
 
+export type Education = {
+  schoolName: string;
+  major: string;
+  degree: string;
+  admissionDate: string;
+  graduationDate: string;
+  status: string;
+};
+
+export type Experience = {
+  companyName: string;
+  position: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+};
+
 type Form = {
   name: string;
   handle: string;
@@ -56,6 +74,8 @@ type Form = {
   notifyMessage: boolean;
   notifyMarketing: boolean;
   certifications: Certification[];
+  educations: Education[];
+  experiences: Experience[];
   techStacks: string[];
 };
 
@@ -71,8 +91,8 @@ const CURRENT: Form = {
   linkedin: "",
   field: "Web",
   parts: ["Frontend"],
-  career: "1-3년",
-  region: "서울 강남",
+  career: "1~3년",
+  region: "서울 강남구",
   bio: "사용자 경험을 코드로 옮기는 프론트엔드 엔지니어",
   headline: "Frontend Engineer · 서울 · 강남구",
   visibility: "public",
@@ -82,6 +102,8 @@ const CURRENT: Form = {
   certifications: [
     { name: "정보처리기사", organization: "한국산업인력공단", issueDate: "2023-08-15", expiryDate: "", id: "12-34-5678" }
   ],
+  educations: [],
+  experiences: [],
   techStacks: ["React", "TypeScript", "JavaScript"],
 };
 
@@ -91,6 +113,8 @@ function ProfileEditPage() {
   const [f, setF] = useState<Form>(CURRENT);
   const [saved, setSaved] = useState<null | "saving" | "done">(null);
   const [techInput, setTechInput] = useState("");
+  const [fieldInput, setFieldInput] = useState("");
+  const [partInput, setPartInput] = useState("");
 
   const [province, setProvince] = useState(f.region.split(" ")[0] || "");
   const [district, setDistrict] = useState(f.region.split(" ").slice(1).join(" ") || "");
@@ -106,6 +130,9 @@ function ProfileEditPage() {
       set("region", "");
     }
   }, [province, district]);
+
+  const [openProvince, setOpenProvince] = useState(false);
+  const [openDistrict, setOpenDistrict] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
   const togglePart = (p: string) =>
@@ -125,6 +152,28 @@ function ProfileEditPage() {
     }
   };
 
+  const addField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && fieldInput.trim()) {
+      e.preventDefault();
+      const val = fieldInput.trim();
+      const matched = FIELDS.find(t => t.toLowerCase() === val.toLowerCase()) || val;
+      set("field", matched);
+      setFieldInput("");
+    }
+  };
+
+  const addPart = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && partInput.trim()) {
+      e.preventDefault();
+      const val = partInput.trim();
+      const matched = PARTS.find(t => t.toLowerCase() === val.toLowerCase()) || val;
+      if (!f.parts.includes(matched)) {
+        set("parts", [...f.parts, matched]);
+      }
+      setPartInput("");
+    }
+  };
+
   const addCertRow = () => {
     set("certifications", [...f.certifications, { name: "", organization: "", issueDate: "", expiryDate: "", id: "" }]);
   };
@@ -139,6 +188,30 @@ function ProfileEditPage() {
     const newCerts = [...f.certifications];
     newCerts.splice(idx, 1);
     set("certifications", newCerts);
+  };
+
+  const addEduRow = () => {
+    set("educations", [...f.educations, { schoolName: "", major: "", degree: "", admissionDate: "", graduationDate: "", status: "" }]);
+  };
+  const updateEdu = (idx: number, field: keyof Education, value: string) => {
+    const next = [...f.educations];
+    next[idx] = { ...next[idx], [field]: value };
+    set("educations", next);
+  };
+  const removeEdu = (idx: number) => {
+    set("educations", f.educations.filter((_, i) => i !== idx));
+  };
+
+  const addExpRow = () => {
+    set("experiences", [...f.experiences, { companyName: "", position: "", description: "", startDate: "", endDate: "" }]);
+  };
+  const updateExp = (idx: number, field: keyof Experience, value: string) => {
+    const next = [...f.experiences];
+    next[idx] = { ...next[idx], [field]: value };
+    set("experiences", next);
+  };
+  const removeExp = (idx: number) => {
+    set("experiences", f.experiences.filter((_, i) => i !== idx));
   };
 
   const completion = useMemo(() => {
@@ -233,12 +306,81 @@ function ProfileEditPage() {
                 <Field label="이름" required>
                   <input value={f.name} onChange={(e) => set("name", e.target.value)} className={inp} />
                 </Field>
-                <Field label="핸들 (URL)">
-                  <div className="flex">
-                    <span className="inline-flex items-center h-10 px-3 rounded-l-md border border-r-0 border-line bg-surface-2 text-xs font-mono text-ink-soft">
-                      devfolio.io/@
-                    </span>
-                    <input value={f.handle} onChange={(e) => set("handle", e.target.value)} className={inp + " rounded-l-none"} />
+                <Field label="거주 지역">
+                  <div className="flex flex-wrap gap-3">
+                    {/* 첫 번째 선택바: 시/도 */}
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.preventDefault(); setOpenProvince(!openProvince); setOpenDistrict(false); }}
+                        className="flex items-center gap-2 px-4 py-2 bg-background border border-line rounded-full text-sm font-medium text-ink hover:bg-surface transition focus:outline-none focus:border-ink"
+                      >
+                        {province || "시/도 선택"}
+                        <ChevronDown className="size-4 text-ink-soft" />
+                      </button>
+                      {openProvince && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setOpenProvince(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
+                            {Object.keys(REGIONS).map(r => (
+                              <button
+                                key={r}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setProvince(r);
+                                  setDistrict("");
+                                  setOpenProvince(false);
+                                }}
+                                className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition ${province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                                  }`}
+                              >
+                                <span>{r}</span>
+                                {province === r && <Check className="size-4" />}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* 두 번째 선택바: 시/구/군 상세 지역 */}
+                    {province && REGIONS[province] && REGIONS[province].length > 0 && (
+                      <div className="relative">
+                        <button
+                          onClick={(e) => { e.preventDefault(); setOpenDistrict(!openDistrict); setOpenProvince(false); }}
+                          className="flex items-center gap-2 px-4 py-2 bg-background border border-line rounded-full text-sm font-medium text-ink hover:bg-surface transition focus:outline-none focus:border-ink"
+                        >
+                          {district || "시/구/군 선택"}
+                          <ChevronDown className="size-4 text-ink-soft" />
+                        </button>
+                        {openDistrict && (
+                          <>
+                            <div className="fixed inset-0 z-40" onClick={() => setOpenDistrict(false)} />
+                            <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
+                              {REGIONS[province].map(d => (
+                                <button
+                                  key={d}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setDistrict(d);
+                                    set("region", `${province} ${d}`.trim());
+                                    setOpenDistrict(false);
+                                  }}
+                                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition ${district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                                    }`}
+                                >
+                                  <span>{d}</span>
+                                  {district === d && <Check className="size-4" />}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    {province === "원격" && (
+                      <div className="flex items-center text-sm text-ink-soft px-1">원격 근무를 희망합니다.</div>
+                    )}
                   </div>
                 </Field>
                 <Field label="이메일" required>
@@ -276,49 +418,94 @@ function ProfileEditPage() {
 
             <Section id="career" title="분야 & 경력">
               <Field label="지원 분야" required>
-                <div className="flex gap-2 flex-wrap">
-                  {FIELDS.map((x) => (
-                    <Chip key={x} active={f.field === x} onClick={() => set("field", x)}>{x}</Chip>
-                  ))}
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {f.field && (
+                      <span className="chip bg-surface border-line text-ink-soft pr-1 flex items-center gap-1 w-fit">
+                        {f.field}
+                        <button
+                          type="button"
+                          onClick={() => set("field", "")}
+                          className="h-5 w-5 rounded-full hover:bg-line flex items-center justify-center transition-colors text-ink-soft/70 hover:text-ink"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                  {!f.field && (
+                    <>
+                      <input 
+                        value={fieldInput} 
+                        onChange={(e) => setFieldInput(e.target.value)} 
+                        onKeyDown={addField}
+                        placeholder="지원 분야 검색 후 선택 또는 Enter" 
+                        className={inp} 
+                      />
+                      {fieldInput.trim() && FIELDS.filter(t => t.toLowerCase().includes(fieldInput.toLowerCase())).length > 0 && (
+                        <div className="flex gap-2 flex-wrap mt-2 p-3 bg-surface-2 rounded-md border border-line">
+                          {FIELDS.filter(t => t.toLowerCase().includes(fieldInput.toLowerCase())).map(t => (
+                            <button
+                              key={t}
+                              type="button"
+                              onClick={() => { setFieldInput(""); set("field", t); }}
+                              className="text-sm px-3 py-1.5 rounded-full bg-surface border border-line hover:bg-line hover:text-ink transition"
+                            >
+                              + {t}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </Field>
               <Field label={`파트 (${f.parts.length} 선택)`} required>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {f.parts.map((p) => (
+                      <span key={p} className="chip bg-surface border-line text-ink-soft pr-1 flex items-center gap-1">
+                        {p}
+                        <button
+                          type="button"
+                          onClick={() => togglePart(p)}
+                          className="h-5 w-5 rounded-full hover:bg-line flex items-center justify-center transition-colors text-ink-soft/70 hover:text-ink"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <input 
+                    value={partInput} 
+                    onChange={(e) => setPartInput(e.target.value)} 
+                    onKeyDown={addPart}
+                    placeholder="파트 검색 후 선택 또는 Enter" 
+                    className={inp} 
+                  />
+                  {partInput.trim() && PARTS.filter(t => t.toLowerCase().includes(partInput.toLowerCase()) && !f.parts.includes(t)).length > 0 && (
+                    <div className="flex gap-2 flex-wrap mt-2 p-3 bg-surface-2 rounded-md border border-line">
+                      {PARTS.filter(t => t.toLowerCase().includes(partInput.toLowerCase()) && !f.parts.includes(t)).map(t => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => { setPartInput(""); togglePart(t); }}
+                          className="text-sm px-3 py-1.5 rounded-full bg-surface border border-line hover:bg-line hover:text-ink transition"
+                        >
+                          + {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Field>
+              <Field label="경력">
                 <div className="flex gap-2 flex-wrap">
-                  {PARTS.map((x) => (
-                    <Chip key={x} active={f.parts.includes(x)} onClick={() => togglePart(x)}>{x}</Chip>
+                  {CAREER.map((x) => (
+                    <Chip key={x} active={f.career === x} onClick={() => set("career", x)}>{x}</Chip>
                   ))}
                 </div>
               </Field>
-              <Grid>
-                <Field label="경력">
-                  <div className="flex gap-2 flex-wrap">
-                    {CAREER.map((x) => (
-                      <Chip key={x} active={f.career === x} onClick={() => set("career", x)}>{x}</Chip>
-                    ))}
-                  </div>
-                </Field>
-                <Field label="희망 근무 지역">
-                  <div className="flex gap-2">
-                    <select 
-                      value={province} 
-                      onChange={(e) => { setProvince(e.target.value); setDistrict(""); }}
-                      className={inp + " appearance-none bg-surface pr-8"}
-                    >
-                      <option value="" disabled>시/도 선택</option>
-                      {Object.keys(REGIONS).map(r => <option key={r} value={r}>{r}</option>)}
-                    </select>
-                    <select 
-                      value={district} 
-                      onChange={(e) => setDistrict(e.target.value)}
-                      className={inp + " appearance-none bg-surface pr-8"}
-                      disabled={!province || !REGIONS[province] || REGIONS[province].length === 0}
-                    >
-                      <option value="" disabled>시/구/군 선택</option>
-                      {province && REGIONS[province] && REGIONS[province].map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                  </div>
-                </Field>
-              </Grid>
             </Section>
 
             <Section id="techstacks" title="관심 기술 스택">
@@ -338,12 +525,12 @@ function ProfileEditPage() {
                       </span>
                     ))}
                   </div>
-                  <input 
-                    value={techInput} 
-                    onChange={(e) => setTechInput(e.target.value)} 
+                  <input
+                    value={techInput}
+                    onChange={(e) => setTechInput(e.target.value)}
                     onKeyDown={addTechStack}
-                    placeholder="기술 스택 검색 후 선택 또는 Enter" 
-                    className={inp} 
+                    placeholder="기술 스택 검색 후 선택 또는 Enter"
+                    className={inp}
                   />
                   {techInput.trim() && TECH_STACKS.filter(t => t.toLowerCase().includes(techInput.toLowerCase()) && !f.techStacks.includes(t)).length > 0 && (
                     <div className="flex gap-2 flex-wrap mt-2 p-3 bg-surface-2 rounded-md border border-line">
@@ -406,6 +593,110 @@ function ProfileEditPage() {
                 className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
               >
                 + 자격증 추가
+              </button>
+            </Section>
+
+            <Section id="educations" title="학력">
+              <div className="overflow-hidden rounded-lg border border-line bg-surface">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-surface-2">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">학교명</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">전공</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">학위</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">입학일</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">졸업일</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">상태</th>
+                      <th className="px-4 py-3 text-center font-semibold text-ink whitespace-nowrap w-16">삭제</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {f.educations.map((ed, idx) => (
+                      <tr key={idx}>
+                        <td className="px-4 py-2"><input value={ed.schoolName} onChange={(e) => updateEdu(idx, 'schoolName', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2"><input value={ed.major} onChange={(e) => updateEdu(idx, 'major', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2"><input value={ed.degree} onChange={(e) => updateEdu(idx, 'degree', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입학/학사/석사 등" /></td>
+                        <td className="px-4 py-2"><input type="date" value={ed.admissionDate} onChange={(e) => updateEdu(idx, 'admissionDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                        <td className="px-4 py-2"><input type="date" value={ed.graduationDate} onChange={(e) => updateEdu(idx, 'graduationDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                        <td className="px-4 py-2">
+                          <select value={ed.status} onChange={(e) => updateEdu(idx, 'status', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft">
+                            <option value="">선택</option>
+                            <option value="재학중">재학중</option>
+                            <option value="휴학">휴학</option>
+                            <option value="졸업">졸업</option>
+                            <option value="중퇴">중퇴</option>
+                            <option value="수료">수료</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-2 text-center">
+                          <button type="button" onClick={() => removeEdu(idx)} className="text-coral hover:opacity-80 text-lg leading-none">×</button>
+                        </td>
+                      </tr>
+                    ))}
+                    {f.educations.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="px-4 py-6 text-center text-ink-soft text-sm">
+                          등록된 학력이 없습니다.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <button
+                type="button"
+                onClick={addEduRow}
+                className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
+              >
+                + 학력 추가
+              </button>
+            </Section>
+
+            <Section id="experiences" title="경력 상세">
+              <div className="overflow-hidden rounded-lg border border-line bg-surface">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-surface-2">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">회사명</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">포지션</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">입사일</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">퇴사일</th>
+                      <th className="px-4 py-3 font-semibold text-ink whitespace-nowrap">상세 설명</th>
+                      <th className="px-4 py-3 text-center font-semibold text-ink whitespace-nowrap w-16">삭제</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {f.experiences.map((exp, idx) => (
+                      <tr key={idx}>
+                        <td className="px-4 py-2"><input value={exp.companyName} onChange={(e) => updateExp(idx, 'companyName', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2"><input value={exp.position} onChange={(e) => updateExp(idx, 'position', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50" placeholder="입력" /></td>
+                        <td className="px-4 py-2"><input type="date" value={exp.startDate} onChange={(e) => updateExp(idx, 'startDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" /></td>
+                        <td className="px-4 py-2">
+                          <input type="date" value={exp.endDate} onChange={(e) => updateExp(idx, 'endDate', e.target.value)} className="w-full bg-transparent focus:outline-none text-ink-soft" />
+                          {!exp.endDate && <span className="text-[10px] text-ink-soft/70 block mt-1">비워두면 재직</span>}
+                        </td>
+                        <td className="px-4 py-2"><textarea value={exp.description} onChange={(e) => updateExp(idx, 'description', e.target.value)} className="w-full bg-transparent focus:outline-none placeholder:text-ink-soft/50 min-h-[40px] resize-y text-xs" placeholder="주요 업무 및 성과" /></td>
+                        <td className="px-4 py-2 text-center align-top">
+                          <button type="button" onClick={() => removeExp(idx)} className="text-coral hover:opacity-80 text-lg leading-none mt-1">×</button>
+                        </td>
+                      </tr>
+                    ))}
+                    {f.experiences.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-6 text-center text-ink-soft text-sm">
+                          등록된 경력이 없습니다.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <button
+                type="button"
+                onClick={addExpRow}
+                className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-surface px-4 py-2 text-sm text-ink hover:bg-surface-2 transition"
+              >
+                + 경력 추가
               </button>
             </Section>
 

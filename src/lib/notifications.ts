@@ -8,6 +8,8 @@ export type Notification = {
   time: string;
   read: boolean;
   href?: string;
+  starred?: boolean;
+  archived?: boolean;
 };
 
 export const INITIAL_NOTIFICATIONS: Notification[] = [

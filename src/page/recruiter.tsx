@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { ChevronDown, Check, X } from "lucide-react";
 
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
+import { REGIONS } from "@/lib/regions";
 
 export default RecruiterPage;
 
@@ -30,19 +32,54 @@ const JOB_POSTINGS: JobPosting[] = [
 ];
 
 const GROUPS: FilterGroup[] = [
-  { key: "region", label: "지역", options: ["전체", "서울 강남구", "서울 서초구", "서울 송파구", "판교", "분당", "원격"] },
-  { key: "experience", label: "경력", options: ["전체", "신입/경력", "경력 무관", "1~3년", "3년 이상", "5년 이상"] },
-  { key: "status", label: "상태", options: ["전체", "채용 중", "마감 임박"] },
+  { key: "status", label: "상태", options: ["전체", "채용 중", "마감 임박"], optionsClassName: "flex-nowrap" },
+  { key: "experience", label: "경력", options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"], optionsClassName: "flex-nowrap" },
 ];
 
 function RecruiterPage() {
-  const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", experience: "전체", status: "전체" });
+  const [filters, setFilters] = useState<Record<string, string>>({ experience: "전체", status: "전체" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("최신순");
 
+  // 지역 필터 상태 (온보딩과 동일한 구조)
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [openProvince, setOpenProvince] = useState(false);
+  const [openDistrict, setOpenDistrict] = useState(false);
+
+  const ALL_DISTRICTS = useMemo(() => {
+    const set = new Set<string>();
+    Object.values(REGIONS).forEach(list => list.forEach(d => {
+      if (d !== "전체") set.add(d);
+    }));
+    return Array.from(set).sort();
+  }, []);
+
+  // 선택된 지역 문자열 (필터링에 사용)
+  const selectedRegion = province
+    ? district && district !== "전체"
+      ? `${province} ${district}`
+      : province
+    : "";
+
+  const clearRegion = () => {
+    setProvince("");
+    setDistrict("");
+  };
+
   const filtered = useMemo(() => {
     let result = JOB_POSTINGS.filter((job) => {
-      if (filters.region !== "전체" && job.region !== filters.region) return false;
+      // 지역 필터링: 선택된 province/district가 있으면 부분 일치
+      if (province) {
+        const jobRegion = job.region.toLowerCase();
+        if (district && district !== "전체") {
+          // 시/도 + 구/군 둘 다 선택
+          if (!jobRegion.includes(province.toLowerCase()) || !jobRegion.includes(district.toLowerCase())) return false;
+        } else {
+          // 시/도만 선택
+          if (!jobRegion.includes(province.toLowerCase())) return false;
+        }
+      }
       if (filters.experience !== "전체" && job.experience !== filters.experience) return false;
       if (filters.status !== "전체" && job.status !== filters.status) return false;
       if (search && !(job.company + job.title + job.intro + job.skills.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
@@ -83,6 +120,101 @@ function RecruiterPage() {
           sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
+          layoutClassName="flex flex-wrap gap-6 items-start pb-2 relative z-20"
+          customFiltersPosition={1}
+          customFilters={
+            <div className="space-y-1.5 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">지역</div>
+                {/* 현재 선택된 지역 표시 */}
+                {selectedRegion && (
+                  <span className="text-[10px] font-mono text-ink-soft">선택: {selectedRegion}</span>
+                )}
+              </div>
+              <div className="flex flex-nowrap items-center gap-1.5">
+                {/* 시/도 선택 */}
+                <div className="relative">
+                  <button
+                    onClick={() => { setOpenProvince(!openProvince); setOpenDistrict(false); }}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${province ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                      }`}
+                  >
+                    {province || "시/도"}
+                    <ChevronDown className="size-3 opacity-70" />
+                  </button>
+                  {openProvince && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setOpenProvince(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col">
+                        {Object.keys(REGIONS).map(r => (
+                          <button
+                            key={r}
+                            onClick={() => { setProvince(r); setDistrict(""); setOpenProvince(false); }}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                              }`}
+                          >
+                            <span>{r}</span>
+                            {province === r && <Check className="size-4" />}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* 시/구/군 선택 (항상 표시됨) */}
+                <div className="relative">
+                  <button
+                    onClick={() => {
+                      setOpenDistrict(!openDistrict);
+                      setOpenProvince(false);
+                    }}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${district ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                      }`}
+                  >
+                    {district || "시/구/군"}
+                    <ChevronDown className="size-3 opacity-70" />
+                  </button>
+                  {openDistrict && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setOpenDistrict(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col">
+                        {(province && REGIONS[province] ? REGIONS[province] : ALL_DISTRICTS).map(d => (
+                          <button
+                            key={d}
+                            onClick={() => {
+                              setDistrict(d);
+                              if (!province && d !== "전체") {
+                                const foundProv = Object.keys(REGIONS).find(p => REGIONS[p].includes(d));
+                                if (foundProv) setProvince(foundProv);
+                              }
+                              setOpenDistrict(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                              }`}
+                          >
+                            <span>{d}</span>
+                            {district === d && <Check className="size-4" />}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* 선택 초기화 */}
+                {province && (
+                  <button
+                    onClick={clearRegion}
+                    className="flex items-center gap-0.5 px-2 py-1 text-[10px] text-ink-soft hover:text-ink border border-line rounded-full hover:bg-surface transition ml-1"
+                  >
+                    <X className="size-3" />
+                    초기화
+                  </button>
+                )}
+              </div>
+            </div>
+          }
         />
 
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

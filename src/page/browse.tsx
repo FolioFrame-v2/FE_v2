@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { Check, ChevronDown, X } from "lucide-react";
 
+import { REGIONS } from "@/lib/regions";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 
 export default BrowsePage;
@@ -32,16 +34,41 @@ const PORTFOLIOS: Portfolio[] = [
 ];
 
 const GROUPS: FilterGroup[] = [
-  { key: "region", label: "지역", options: ["전체", "서울", "경기", "인천", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주", "원격"] },
   { key: "part", label: "파트", options: ["전체", "Frontend", "Backend", "Fullstack", "Mobile", "Data", "DevOps", "Embedded"] },
   { key: "field", label: "분야", options: ["전체", "AI/ML", "이커머스", "협업툴", "헬스케어", "에듀테크", "미디어", "IoT", "인프라"] },
-  { key: "experience", label: "경력", options: ["전체", "신입/경력", "경력 무관", "1~3년", "3년 이상", "5년 이상"] },
+  { key: "experience", label: "경력", options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"] },
 ];
 
 function BrowsePage() {
-  const [filters, setFilters] = useState<Record<string, string>>({ region: "전체", part: "전체", field: "전체", experience: "전체" });
+  const [filters, setFilters] = useState<Record<string, string>>({ part: "전체", field: "전체", experience: "전체" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("최신순");
+  
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [openProvince, setOpenProvince] = useState(false);
+  const [openDistrict, setOpenDistrict] = useState(false);
+
+  const ALL_DISTRICTS = useMemo(() => {
+    const set = new Set<string>();
+    Object.values(REGIONS).forEach(list => list.forEach(d => {
+      if (d !== "전체") set.add(d);
+    }));
+    return Array.from(set).sort();
+  }, []);
+
+  const selectedRegion = province
+    ? district && district !== "전체"
+      ? district
+      : province
+    : district && district !== "전체"
+      ? district
+      : "";
+
+  const clearRegion = () => {
+    setProvince("");
+    setDistrict("");
+  };
   const [proposalTarget, setProposalTarget] = useState<any>(null);
   const currentUser = false; // 로그인 상태 (Nav와 다르게 테스트용으로 임시 false 처리. true로 변경하면 전체 열람 가능)
   const isGuest = !currentUser;
@@ -54,7 +81,9 @@ function BrowsePage() {
 
   const filtered = useMemo(() => {
     let result = PORTFOLIOS.filter((p) => {
-      if (filters.region !== "전체" && p.region !== filters.region) return false;
+      if (selectedRegion && selectedRegion !== "전체") {
+        if (!p.region.includes(selectedRegion)) return false;
+      }
       if (filters.part !== "전체" && p.part !== filters.part) return false;
       if (filters.field !== "전체" && p.field !== filters.field) return false;
       if (filters.experience !== "전체" && p.experience !== filters.experience) return false;
@@ -84,7 +113,7 @@ function BrowsePage() {
             <p className="mt-2 text-ink-soft text-sm">다른 개발자들이 만든 포트폴리오를 둘러보세요.</p>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <Link to="/portfoliopageeditor" search={{}} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
+            <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
               새 포트폴리오
             </Link>
             <div className="text-xs font-mono text-ink-soft">
@@ -103,6 +132,101 @@ function BrowsePage() {
           sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
+          layoutClassName="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 relative z-20"
+          customFiltersPosition="start"
+          customFilters={
+            <div className="space-y-1.5 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">지역</div>
+                {selectedRegion && (
+                  <span className="text-[10px] font-mono text-ink-soft">선택: {selectedRegion}</span>
+                )}
+              </div>
+              <div className="flex flex-nowrap items-center gap-1.5">
+                <div className="relative">
+                  <button
+                    onClick={() => { setOpenProvince(!openProvince); setOpenDistrict(false); }}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${
+                      province ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                    }`}
+                  >
+                    {province || "시/도"}
+                    <ChevronDown className="size-3 opacity-70" />
+                  </button>
+                  {openProvince && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setOpenProvince(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
+                        {Object.keys(REGIONS).map(r => (
+                          <button
+                            key={r}
+                            onClick={() => { setProvince(r); setDistrict(""); setOpenProvince(false); }}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${
+                              province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                            }`}
+                          >
+                            <span>{r}</span>
+                            {province === r && <Check className="size-4" />}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <button
+                    onClick={() => {
+                      setOpenDistrict(!openDistrict); 
+                      setOpenProvince(false); 
+                    }}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${
+                      district ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                    }`}
+                  >
+                    {district || "시/구/군"}
+                    <ChevronDown className="size-3 opacity-70" />
+                  </button>
+                  {openDistrict && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setOpenDistrict(false)} />
+                      <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
+                        {(province && REGIONS[province] ? REGIONS[province] : ALL_DISTRICTS).map(d => (
+                          <button
+                            key={d}
+                            onClick={() => {
+                              setDistrict(d);
+                              if (!province && d !== "전체") {
+                                const foundProv = Object.keys(REGIONS).find(p => REGIONS[p].includes(d));
+                                if (foundProv) setProvince(foundProv);
+                              }
+                              setOpenDistrict(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${
+                              district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                            }`}
+                          >
+                            <span>{d}</span>
+                            {district === d && <Check className="size-4" />}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {province && (
+                  <button
+                    onClick={clearRegion}
+                    className="flex items-center gap-0.5 px-2 py-1 text-[10px] text-ink-soft hover:text-ink border border-line rounded-full hover:bg-surface transition ml-1"
+                  >
+                    <X className="size-3" />
+                    초기화
+                  </button>
+                )}
+              </div>
+            </div>
+          }
         />
 
         <section className="relative">
@@ -169,7 +293,7 @@ function BrowsePage() {
                 <div className="w-16 h-16 mx-auto bg-surface border border-line shadow-sm rounded-2xl flex items-center justify-center text-3xl mb-5">🔒</div>
                 <h2 className="text-2xl font-display font-semibold tracking-tight text-ink mb-3 break-keep">더 많은 포트폴리오를 확인하시겠어요?</h2>
                 <p className="text-ink-soft text-sm leading-relaxed mb-8 break-keep">
-                  FolioFrame에 가입하고 뛰어난 인재들의<br/>모든 포트폴리오를 제한 없이 열람하세요.
+                  FolioFrame에 가입하고 뛰어난 인재들의<br />모든 포트폴리오를 제한 없이 열람하세요.
                 </p>
                 <div className="space-y-3">
                   <Link to="/onboarding" className="h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center hover:opacity-90 transition shadow-sm">

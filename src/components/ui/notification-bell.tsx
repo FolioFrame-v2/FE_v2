@@ -12,6 +12,23 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
   const markAllRead = () => setItems((xs) => xs.map((n) => ({ ...n, read: true })));
   const markRead = (id: string) =>
     setItems((xs) => xs.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  const toggleStar = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setItems((xs) => xs.map((n) => (n.id === id ? { ...n, starred: !n.starred } : n)));
+  };
+  const archive = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setItems((xs) => xs.map((n) => (n.id === id ? { ...n, archived: true } : n)));
+  };
+  const remove = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm("이 알림을 삭제하시겠습니까?")) {
+      setItems((xs) => xs.filter((n) => n.id !== id));
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -51,7 +68,7 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
           {items.length === 0 && (
             <li className="px-4 py-10 text-center text-sm text-ink-soft">알림이 없어요</li>
           )}
-          {items.map((n) => {
+          {items.filter(n => !n.archived).map((n) => {
             const tone = toneFor(n.type);
             const body = (
               <div className="flex gap-3 px-4 py-3 hover:bg-surface-2/60 transition">
