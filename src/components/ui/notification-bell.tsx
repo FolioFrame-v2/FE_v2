@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Star, Archive, Trash2 } from "lucide-react";
 import { INITIAL_NOTIFICATIONS, toneFor, type Notification } from "@/lib/notifications";
 
 export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
@@ -81,17 +80,6 @@ export function NotificationBell({ signedIn = true }: { signedIn?: boolean }) {
                   </div>
                   <p className="mt-0.5 text-xs text-ink-soft line-clamp-2">{n.message}</p>
                   <p className="mt-1 text-[10px] font-mono text-ink-soft uppercase">{n.time}</p>
-                </div>
-                <div className="shrink-0 flex flex-col items-center gap-1">
-                  <button onClick={(e) => toggleStar(n.id, e)} className={"h-6 w-6 rounded-md grid place-items-center hover:bg-surface transition " + (n.starred ? "text-coral" : "text-ink-soft hover:text-ink")}>
-                    <Star className={"size-3 " + (n.starred ? "fill-current" : "")} />
-                  </button>
-                  <button onClick={(e) => archive(n.id, e)} className="h-6 w-6 rounded-md grid place-items-center hover:bg-surface text-ink-soft hover:text-ink transition">
-                    <Archive className="size-3" />
-                  </button>
-                  <button onClick={(e) => remove(n.id, e)} className="h-6 w-6 rounded-md grid place-items-center hover:bg-surface text-ink-soft hover:text-coral transition">
-                    <Trash2 className="size-3" />
-                  </button>
                 </div>
               </div>
             );
