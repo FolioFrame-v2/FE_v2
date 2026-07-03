@@ -300,7 +300,7 @@ function EditorPage() {
     let parentSnapshot = {
       title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
-    
+
     const parentVersion = versions.find(v => v.id === parentId);
     if (parentVersion) {
       parentSnapshot = parentVersion.snapshot;
@@ -320,7 +320,7 @@ function EditorPage() {
       }
       return v;
     }));
-    
+
     // 수정본 만들기를 클릭하면 해당 버전을 화면에 반영
     if (parentVersion) {
       setTitle(parentSnapshot.title);
@@ -953,9 +953,8 @@ function EditorPage() {
 
           {/* 공개 설정 */}
           <Section id="visibility" title="공개 설정 및 접근 제어" hint="누가 이 포트폴리오를 볼 수 있는지 정합니다.">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-2 sm:grid-cols-2">
               <VisibilityOption active={visibility === "private"} onClick={() => setVisibility("private")} icon={<Lock className="size-4" />} title="비공개" desc="나만 볼 수 있음" />
-              <VisibilityOption active={visibility === "link"} onClick={() => setVisibility("link")} icon={<Sparkles className="size-4" />} title="링크 공유" desc="링크가 있는 사람만" />
               <VisibilityOption active={visibility === "public"} onClick={() => setVisibility("public")} icon={<Globe className="size-4" />} title="전체 공개" desc="검색·매칭에 노출" />
             </div>
           </Section>
@@ -1071,13 +1070,13 @@ function EditorPage() {
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-32">
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => document.getElementById(`title-input-v-${v.id}`)?.focus()}
                             >
                               이름 변경
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => removeVersion(v.id)} 
+                            <DropdownMenuItem
+                              onClick={() => removeVersion(v.id)}
                               className="text-[var(--color-coral)] focus:text-[var(--color-coral)] focus:bg-[color-mix(in_oklch,var(--color-coral)_10%,transparent)]"
                             >
                               그룹 삭제
@@ -1115,13 +1114,13 @@ function EditorPage() {
                                 </button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-32">
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   onClick={() => document.getElementById(`title-input-r-${rev.id}`)?.focus()}
                                 >
                                   이름 변경
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => removeRevision(v.id, rev.id)} 
+                                <DropdownMenuItem
+                                  onClick={() => removeRevision(v.id, rev.id)}
                                   className="text-[var(--color-coral)] focus:text-[var(--color-coral)] focus:bg-[color-mix(in_oklch,var(--color-coral)_10%,transparent)]"
                                 >
                                   삭제
