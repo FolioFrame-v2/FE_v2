@@ -99,13 +99,13 @@ function MyPage() {
                     <span className="text-xs text-ink-soft">{p.views.toLocaleString()} views</span>
                     <div className="flex gap-2">
                       <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">공유</button>
-                      <Link to="/portfoliopageeditor" search={{}} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
+                      <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
                       <button className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
                     </div>
                   </div>
                 </article>
               ))}
-              <Link to="/portfoliopageeditor" search={{}} className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
+              <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
                 <div className="text-center">
                   <div className="text-3xl font-display">＋</div>
                   <div className="mt-1 text-sm">새 포트폴리오</div>

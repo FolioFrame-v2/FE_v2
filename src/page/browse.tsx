@@ -35,7 +35,7 @@ const GROUPS: FilterGroup[] = [
   { key: "region", label: "지역", options: ["전체", "서울", "경기", "인천", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주", "원격"] },
   { key: "part", label: "파트", options: ["전체", "Frontend", "Backend", "Fullstack", "Mobile", "Data", "DevOps", "Embedded"] },
   { key: "field", label: "분야", options: ["전체", "AI/ML", "이커머스", "협업툴", "헬스케어", "에듀테크", "미디어", "IoT", "인프라"] },
-  { key: "experience", label: "경력", options: ["전체", "신입/경력", "경력 무관", "1~3년", "3년 이상", "5년 이상"] },
+  { key: "experience", label: "경력", options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"] },
 ];
 
 function BrowsePage() {
@@ -84,7 +84,7 @@ function BrowsePage() {
             <p className="mt-2 text-ink-soft text-sm">다른 개발자들이 만든 포트폴리오를 둘러보세요.</p>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <Link to="/portfoliopageeditor" search={{}} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
+            <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
               새 포트폴리오
             </Link>
             <div className="text-xs font-mono text-ink-soft">
@@ -103,6 +103,7 @@ function BrowsePage() {
           sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
+          layoutClassName="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
         />
 
         <section className="relative">
@@ -169,7 +170,7 @@ function BrowsePage() {
                 <div className="w-16 h-16 mx-auto bg-surface border border-line shadow-sm rounded-2xl flex items-center justify-center text-3xl mb-5">🔒</div>
                 <h2 className="text-2xl font-display font-semibold tracking-tight text-ink mb-3 break-keep">더 많은 포트폴리오를 확인하시겠어요?</h2>
                 <p className="text-ink-soft text-sm leading-relaxed mb-8 break-keep">
-                  FolioFrame에 가입하고 뛰어난 인재들의<br/>모든 포트폴리오를 제한 없이 열람하세요.
+                  FolioFrame에 가입하고 뛰어난 인재들의<br />모든 포트폴리오를 제한 없이 열람하세요.
                 </p>
                 <div className="space-y-3">
                   <Link to="/onboarding" className="h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center hover:opacity-90 transition shadow-sm">
