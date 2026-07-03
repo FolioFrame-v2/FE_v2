@@ -32,8 +32,8 @@ const JOB_POSTINGS: JobPosting[] = [
 ];
 
 const GROUPS: FilterGroup[] = [
-  { key: "experience", label: "경력", options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"], optionsClassName: "flex-nowrap" },
   { key: "status", label: "상태", options: ["전체", "채용 중", "마감 임박"], optionsClassName: "flex-nowrap" },
+  { key: "experience", label: "경력", options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"], optionsClassName: "flex-nowrap" },
 ];
 
 function RecruiterPage() {
@@ -46,6 +46,14 @@ function RecruiterPage() {
   const [district, setDistrict] = useState("");
   const [openProvince, setOpenProvince] = useState(false);
   const [openDistrict, setOpenDistrict] = useState(false);
+
+  const ALL_DISTRICTS = useMemo(() => {
+    const set = new Set<string>();
+    Object.values(REGIONS).forEach(list => list.forEach(d => {
+      if (d !== "전체") set.add(d);
+    }));
+    return Array.from(set).sort();
+  }, []);
 
   // 선택된 지역 문자열 (필터링에 사용)
   const selectedRegion = province
@@ -112,11 +120,12 @@ function RecruiterPage() {
           sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
-          layoutClassName="flex overflow-x-auto hide-scrollbar gap-6 items-start pb-2"
+          layoutClassName="flex flex-wrap gap-6 items-start pb-2 relative z-20"
+          customFiltersPosition={1}
           customFilters={
             <div className="space-y-1.5 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">근무 지역</div>
+                <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">지역</div>
                 {/* 현재 선택된 지역 표시 */}
                 {selectedRegion && (
                   <span className="text-[10px] font-mono text-ink-soft">선택: {selectedRegion}</span>
@@ -127,9 +136,8 @@ function RecruiterPage() {
                 <div className="relative">
                   <button
                     onClick={() => { setOpenProvince(!openProvince); setOpenDistrict(false); }}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${
-                      province ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
-                    }`}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${province ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                      }`}
                   >
                     {province || "시/도"}
                     <ChevronDown className="size-3 opacity-70" />
@@ -137,14 +145,13 @@ function RecruiterPage() {
                   {openProvince && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setOpenProvince(false)} />
-                      <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-background border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col">
+                      <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col">
                         {Object.keys(REGIONS).map(r => (
                           <button
                             key={r}
                             onClick={() => { setProvince(r); setDistrict(""); setOpenProvince(false); }}
-                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${
-                              province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
-                            }`}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                              }`}
                           >
                             <span>{r}</span>
                             {province === r && <Check className="size-4" />}
@@ -159,31 +166,32 @@ function RecruiterPage() {
                 <div className="relative">
                   <button
                     onClick={() => {
-                      if (!province) {
-                        alert("시/도를 먼저 선택해주세요.");
-                        return;
-                      }
-                      setOpenDistrict(!openDistrict); 
-                      setOpenProvince(false); 
+                      setOpenDistrict(!openDistrict);
+                      setOpenProvince(false);
                     }}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${
-                      district ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
-                    }`}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${district ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                      }`}
                   >
                     {district || "시/구/군"}
                     <ChevronDown className="size-3 opacity-70" />
                   </button>
-                  {openDistrict && province && REGIONS[province] && REGIONS[province].length > 0 && (
+                  {openDistrict && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setOpenDistrict(false)} />
-                      <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-background border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col">
-                        {REGIONS[province].map(d => (
+                      <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col">
+                        {(province && REGIONS[province] ? REGIONS[province] : ALL_DISTRICTS).map(d => (
                           <button
                             key={d}
-                            onClick={() => { setDistrict(d); setOpenDistrict(false); }}
-                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${
-                              district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
-                            }`}
+                            onClick={() => {
+                              setDistrict(d);
+                              if (!province && d !== "전체") {
+                                const foundProv = Object.keys(REGIONS).find(p => REGIONS[p].includes(d));
+                                if (foundProv) setProvince(foundProv);
+                              }
+                              setOpenDistrict(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                              }`}
                           >
                             <span>{d}</span>
                             {district === d && <Check className="size-4" />}

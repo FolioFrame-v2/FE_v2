@@ -320,7 +320,7 @@ function ProfileEditPage() {
                       {openProvince && (
                         <>
                           <div className="fixed inset-0 z-40" onClick={() => setOpenProvince(false)} />
-                          <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-background border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
+                          <div className="absolute top-full left-0 mt-2 w-48 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
                             {Object.keys(REGIONS).map(r => (
                               <button
                                 key={r}
@@ -355,7 +355,7 @@ function ProfileEditPage() {
                         {openDistrict && (
                           <>
                             <div className="fixed inset-0 z-40" onClick={() => setOpenDistrict(false)} />
-                            <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-background border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
+                            <div className="absolute top-full left-0 mt-2 w-56 max-h-60 overflow-y-auto bg-surface border border-line rounded-xl shadow-lg z-50 py-2 flex flex-col hide-scrollbar">
                               {REGIONS[province].map(d => (
                                 <button
                                   key={d}

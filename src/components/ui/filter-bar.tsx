@@ -21,6 +21,7 @@ export function FilterBar({
   sort,
   onSortChange,
   customFilters,
+  customFiltersPosition = "end",
   layoutClassName,
 }: {
   groups: FilterGroup[];
@@ -33,6 +34,7 @@ export function FilterBar({
   sort?: string;
   onSortChange?: (v: string) => void;
   customFilters?: React.ReactNode;
+  customFiltersPosition?: "start" | "end" | number;
   layoutClassName?: string;
 }) {
   const activeCount = useMemo(
@@ -67,31 +69,35 @@ export function FilterBar({
         )}
       </div>
       <div className={layoutClassName || "grid gap-4 sm:grid-cols-2 lg:grid-cols-4"}>
-        {groups.map((g) => (
-          <div key={g.key} className={`space-y-1.5 shrink-0 ${g.className || ""}`}>
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{g.label}</div>
-            <div className={`flex gap-1.5 ${g.optionsClassName || "flex-wrap"}`}>
-              {g.options.map((opt) => {
-                const active = (value[g.key] ?? "전체") === opt;
-                return (
-                  <button
-                    key={opt}
-                    onClick={() => onChange({ ...value, [g.key]: opt })}
-                    className={
-                      "px-2.5 py-1 rounded-full text-xs border transition " +
-                      (active
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft")
-                    }
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
+        {customFiltersPosition === "start" && customFilters}
+        {groups.map((g, i) => (
+          <div key={g.key} className="contents">
+            {typeof customFiltersPosition === "number" && customFiltersPosition === i && customFilters}
+            <div className={`space-y-1.5 shrink-0 ${g.className || ""}`}>
+              <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{g.label}</div>
+              <div className={`flex gap-1.5 ${g.optionsClassName || "flex-wrap"}`}>
+                {g.options.map((opt) => {
+                  const active = (value[g.key] ?? "전체") === opt;
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => onChange({ ...value, [g.key]: opt })}
+                      className={
+                        "px-2.5 py-1 rounded-full text-xs border transition " +
+                        (active
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft")
+                      }
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         ))}
-        {customFilters}
+        {customFiltersPosition === "end" && customFilters}
       </div>
     </div>
   );
