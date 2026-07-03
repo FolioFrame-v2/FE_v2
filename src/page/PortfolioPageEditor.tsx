@@ -29,6 +29,7 @@ import {
   FileText,
   Layout,
   Upload,
+  MoreVertical,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useSearch } from "@tanstack/react-router";
 import { TEMPLATES } from "@/lib/portfolio-data";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 type Visibility = "private" | "link" | "public";
 
@@ -151,7 +158,7 @@ function EditorPage() {
     { name: "정보처리기사", organization: "한국산업인력공단", issueDate: "2023-08-01", expiryDate: "", id: "1234-5678" },
     { name: "SQLD", organization: "한국데이터산업진흥원", issueDate: "2022-05-01", expiryDate: "", id: "5678-1234" }
   ]);
-  
+
   const addCertRow = () => setCertifications([...certifications, { name: "", organization: "", issueDate: "", expiryDate: "", id: "" }]);
   const removeCert = (idx: number) => setCertifications(certifications.filter((_, i) => i !== idx));
   const updateCert = (idx: number, field: keyof Certificate, value: string) => {
@@ -215,7 +222,7 @@ function EditorPage() {
 
   // ✨ 사용자 추가 필드
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
-  
+
   const searchParams = useSearch({ from: '/portfoliopageeditor' }) as { templateId?: string };
   const templateId = searchParams.templateId || "minimal";
 
@@ -242,6 +249,7 @@ function EditorPage() {
   // ✨ 버전 관리
   const [versions, setVersions] = useState<Version[]>([]);
   const [activeVersionId, setActiveVersionId] = useState<number | null>(null);
+  const [publishedVersionId, setPublishedVersionId] = useState<number | null>(null);
 
   // 최초 로드 시 원본이 없으면 자동 생성
   useEffect(() => {
@@ -262,37 +270,42 @@ function EditorPage() {
     }
   }, []);
 
-  const saveVersion = (type: "revision" | "diagnose", currentSuggestions?: Record<string, string>) => {
+  const saveVersion = (type: "diagnose", currentSuggestions?: Record<string, string>) => {
     const snapshot = {
       title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
-    
+
     setVersions(prev => {
       // 진단은 최대 3개까지만 가능
       if (type === "diagnose" && prev.filter(v => v.type === "diagnose").length >= 3) {
         alert("AI 진단은 최대 3회까지만 가능합니다.");
         return prev;
       }
-      
+
       const newVersion: Version = {
         id: Date.now(),
         timestamp: new Date().toISOString(),
         type,
-        title: type === "diagnose" ? `AI 진단 ${prev.filter(v => v.type === "diagnose").length + 1}` : "원본",
+        title: `AI 진단 ${prev.filter(v => v.type === "diagnose").length + 1}`,
         snapshot,
         suggestions: currentSuggestions,
         revisions: []
       };
-      
+
       return [newVersion, ...prev];
     });
   };
 
   const addRevision = (parentId: number) => {
-    const snapshot = {
+    let parentSnapshot = {
       title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
     
+    const parentVersion = versions.find(v => v.id === parentId);
+    if (parentVersion) {
+      parentSnapshot = parentVersion.snapshot;
+    }
+
     const newRevId = Date.now();
     setVersions(prev => prev.map(v => {
       if (v.id === parentId) {
@@ -301,12 +314,31 @@ function EditorPage() {
           timestamp: new Date().toISOString(),
           type: "revision",
           title: "수정본",
-          snapshot,
+          snapshot: parentSnapshot,
         };
         return { ...v, revisions: [...(v.revisions || []), newRev] };
       }
       return v;
     }));
+    
+    // 수정본 만들기를 클릭하면 해당 버전을 화면에 반영
+    if (parentVersion) {
+      setTitle(parentSnapshot.title);
+      setOneLiner(parentSnapshot.oneLiner);
+      setDetail(parentSnapshot.detail);
+      setJobRole(parentSnapshot.jobRole);
+      setLocation(parentSnapshot.location);
+      setEmail(parentSnapshot.email);
+      setGithub(parentSnapshot.github);
+      setWebsite(parentSnapshot.website);
+      setCertifications(parentSnapshot.certifications || []);
+      setEducations(parentSnapshot.educations || []);
+      setExperiences(parentSnapshot.experiences || []);
+      setIntro(parentSnapshot.intro);
+      setProjects(parentSnapshot.projects);
+      setStack(parentSnapshot.stack);
+      setCustomFields(parentSnapshot.customFields);
+    }
     setActiveVersionId(newRevId);
   };
 
@@ -325,7 +357,7 @@ function EditorPage() {
       }
       return v;
     }));
-    alert("현재 내용이 저장되었습니다.");
+    alert("현재 내용이 성공적으로 저장되었습니다.");
   };
 
   const updateRevisionTitle = (parentId: number, revId: number, newTitle: string) => {
@@ -338,6 +370,7 @@ function EditorPage() {
   };
 
   const removeRevision = (parentId: number, revId: number) => {
+    if (revId === publishedVersionId) setPublishedVersionId(null);
     setVersions(prev => prev.map(v => {
       if (v.id === parentId && v.revisions) {
         return { ...v, revisions: v.revisions.filter(r => r.id !== revId) };
@@ -351,7 +384,22 @@ function EditorPage() {
   };
 
   const removeVersion = (id: number) => {
-    setVersions(prev => prev.filter(v => v.id !== id));
+    if (id === publishedVersionId) setPublishedVersionId(null);
+    setVersions(prev => prev.map(v => {
+      if (v.id === id && v.revisions?.some(r => r.id === publishedVersionId)) {
+        setPublishedVersionId(null);
+      }
+      return v;
+    }).filter(v => v.id !== id));
+  };
+
+  const handlePublish = () => {
+    if (!activeVersionId) {
+      alert("게시할 버전을 선택해주세요.");
+      return;
+    }
+    setPublishedVersionId(activeVersionId);
+    alert("현재 적용된 버전이 성공적으로 게시되었습니다!");
   };
 
   const loadVersion = (v: Version) => {
@@ -508,11 +556,8 @@ function EditorPage() {
             <Button variant="ghost" size="sm" className="gap-2">
               <Eye className="size-4" /> 미리보기
             </Button>
-            <Button variant="outline" size="sm" className="gap-2" onClick={() => {
-              saveVersion("draft");
-              alert("임시 저장되었습니다.");
-            }}>
-              <Save className="size-4" /> 임시 저장
+            <Button variant="outline" size="sm" className="gap-2" onClick={handleSave}>
+              <Save className="size-4" /> 저장하기
             </Button>
             <Button size="sm" className="gap-2">
               <Globe className="size-4" /> 공개하기
@@ -564,7 +609,7 @@ function EditorPage() {
               <Plus className="size-3.5" /> 필드 추가
             </button> */}
             {/* Versions removed from here */}
-            
+
           </div>
         </aside>
 
@@ -990,7 +1035,7 @@ function EditorPage() {
             <div className="flex gap-2">
               <Button variant="outline" className="gap-2"><Eye className="size-4" />미리보기</Button>
               <Button variant="outline" className="gap-2"><Share2 className="size-4" />공유하기</Button>
-              <Button className="gap-2"><Upload className="size-4" />게시하기</Button>
+              <Button className="gap-2" onClick={handlePublish}><Upload className="size-4" />게시하기</Button>
             </div>
           </div>
         </main>
@@ -1001,13 +1046,14 @@ function EditorPage() {
             <div className="flex items-center justify-between mb-4">
               <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">AI 진단 기록</p>
             </div>
-            
+
             <div className="space-y-3">
               {versions.map((v, idx) => (
-                <div key={v.id} className={`p-3 rounded-md border text-sm ${v.type === 'original' ? 'border-[color:var(--color-mint)] bg-[color-mix(in_oklch,var(--color-mint)_10%,transparent)]' : 'border-line bg-surface'}`}>
+                <div key={v.id} className={`p-3 rounded-md border text-sm ${v.id === publishedVersionId ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)] bg-[color-mix(in_oklch,var(--color-primary)_10%,transparent)]' : v.type === 'original' ? 'border-[color:var(--color-mint)] bg-[color-mix(in_oklch,var(--color-mint)_10%,transparent)]' : 'border-line bg-surface'}`}>
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0 pr-2">
-                      <input 
+                      <input
+                        id={`title-input-v-${v.id}`}
                         value={v.title}
                         onChange={(e) => updateVersionTitle(v.id, e.target.value)}
                         className="font-medium text-ink bg-transparent focus:outline-none w-full truncate"
@@ -1018,9 +1064,26 @@ function EditorPage() {
                     </div>
                     <div className="flex gap-1 shrink-0">
                       {v.type !== 'original' && (
-                        <button onClick={() => removeVersion(v.id)} className="p-1 hover:bg-line rounded text-ink-soft hover:text-coral transition">
-                          <Trash2 className="size-3" />
-                        </button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="p-1 hover:bg-line rounded text-ink-soft hover:text-ink transition">
+                              <MoreVertical className="size-4" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-32">
+                            <DropdownMenuItem 
+                              onClick={() => document.getElementById(`title-input-v-${v.id}`)?.focus()}
+                            >
+                              이름 변경
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => removeVersion(v.id)} 
+                              className="text-[var(--color-coral)] focus:text-[var(--color-coral)] focus:bg-[color-mix(in_oklch,var(--color-coral)_10%,transparent)]"
+                            >
+                              그룹 삭제
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       )}
                     </div>
                   </div>
@@ -1032,10 +1095,11 @@ function EditorPage() {
                   {v.revisions && v.revisions.length > 0 && (
                     <div className="mt-3 mb-2 space-y-2 border-t border-line/50 pt-2">
                       {v.revisions.map(rev => (
-                        <div key={rev.id} className="p-2 rounded bg-background border border-line/50">
+                        <div key={rev.id} className={`p-2 rounded border ${rev.id === publishedVersionId ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)] bg-[color-mix(in_oklch,var(--color-primary)_5%,transparent)]' : 'border-line/50 bg-background'}`}>
                           <div className="flex justify-between items-start mb-1.5">
                             <div className="flex-1 min-w-0 pr-2">
-                              <input 
+                              <input
+                                id={`title-input-r-${rev.id}`}
                                 value={rev.title}
                                 onChange={(e) => updateRevisionTitle(v.id, rev.id, e.target.value)}
                                 className="font-medium text-ink bg-transparent focus:outline-none w-full truncate text-xs"
@@ -1044,9 +1108,26 @@ function EditorPage() {
                                 {new Date(rev.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                               </p>
                             </div>
-                            <button onClick={() => removeRevision(v.id, rev.id)} className="p-1 hover:bg-line rounded text-ink-soft hover:text-coral transition">
-                              <Trash2 className="size-3" />
-                            </button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button className="p-1 hover:bg-line rounded text-ink-soft hover:text-ink transition">
+                                  <MoreVertical className="size-3.5" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32">
+                                <DropdownMenuItem 
+                                  onClick={() => document.getElementById(`title-input-r-${rev.id}`)?.focus()}
+                                >
+                                  이름 변경
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={() => removeRevision(v.id, rev.id)} 
+                                  className="text-[var(--color-coral)] focus:text-[var(--color-coral)] focus:bg-[color-mix(in_oklch,var(--color-coral)_10%,transparent)]"
+                                >
+                                  삭제
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                           <button onClick={() => loadVersion(rev)} className="w-full text-center py-1.5 bg-surface hover:bg-surface-2 transition text-ink rounded text-[11px]">
                             불러오기
@@ -1056,7 +1137,7 @@ function EditorPage() {
                     </div>
                   )}
 
-                  <button 
+                  <button
                     onClick={() => {
                       addRevision(v.id);
                       alert("수정본으로 저장되었습니다.");

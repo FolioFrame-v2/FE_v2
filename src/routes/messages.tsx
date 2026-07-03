@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 
 import { THREADS, formatTime, type MessageThread } from "@/lib/messages";
@@ -20,6 +20,7 @@ function MessagesPage() {
   const [folder, setFolder] = useState<FolderType>("inbox");
   const [query, setQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const isDrawerOpen = location.pathname !== "/messages" && location.pathname !== "/messages/";
 
   const filtered = useMemo(() => {
@@ -41,9 +42,19 @@ function MessagesPage() {
   const totalUnread = THREADS.reduce((sum, t) => sum + (t.unread || 0), 0);
 
   return (
-    <div className="min-h-screen text-foreground">
+    <div 
+      className="min-h-screen text-foreground"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && isDrawerOpen) navigate({ to: "/messages" });
+      }}
+    >
 
-      <main className="mx-auto max-w-5xl px-6 py-10 flex gap-8 flex-col md:flex-row">
+      <main 
+        className={`mx-auto px-6 py-10 flex gap-8 flex-col md:flex-row transition-all duration-500 ${isDrawerOpen ? "max-w-6xl" : "max-w-4xl"}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget && isDrawerOpen) navigate({ to: "/messages" });
+        }}
+      >
         {/* Sidebar */}
         <aside className="w-full md:w-56 shrink-0 space-y-6">
           <div>
@@ -68,10 +79,15 @@ function MessagesPage() {
         </aside>
 
         {/* Content (Split View) */}
-        <div className="flex-1 min-w-0 flex gap-6 h-[calc(100vh-8rem)]">
+        <div 
+          className="flex-1 min-w-0 flex gap-6 h-[calc(100vh-8rem)]"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && isDrawerOpen) navigate({ to: "/messages" });
+          }}
+        >
           
           {/* List Column */}
-          <div className={`flex flex-col h-full ${isDrawerOpen ? "hidden lg:flex w-[380px] shrink-0" : "w-full"}`}>
+          <div className={`flex flex-col h-full transition-all duration-500 ${isDrawerOpen ? "hidden lg:flex w-[380px] shrink-0" : "w-full"}`}>
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
               <div className="relative w-full">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-ink-soft" />
@@ -147,7 +163,7 @@ function MessagesPage() {
 
           {/* Detail Column (Desktop Split View) */}
           {isDrawerOpen && (
-            <div className="hidden lg:flex flex-1 min-w-0 surface-card rounded-2xl border border-line overflow-hidden shadow-sm">
+            <div className="hidden lg:flex w-[400px] shrink-0 surface-card rounded-2xl border border-line overflow-hidden shadow-xl animate-in slide-in-from-right-8 fade-in-50 duration-300">
               <Outlet />
             </div>
           )}
