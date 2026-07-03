@@ -560,7 +560,7 @@ function EditorPage() {
               <Save className="size-4" /> 저장하기
             </Button>
             <Button size="sm" className="gap-2">
-              <Globe className="size-4" /> 공개하기
+              <Globe className="size-4" /> 게시하기
             </Button>
           </div>
         </div>
@@ -908,14 +908,6 @@ function EditorPage() {
                 </div>
               )}
             </div>
-            <div className="mt-4">
-              <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">추천</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {SUGGEST_STACK.filter((s) => !stack.includes(s)).map((s) => (
-                  <button key={s} type="button" onClick={() => addStack(s)} className="chip cursor-pointer hover:border-ink/40">+ {s}</button>
-                ))}
-              </div>
-            </div>
           </Section>
 
           {/* 사용자 추가 필드들 — 각 필드가 별도 섹션으로 렌더링 */}
@@ -1139,7 +1131,6 @@ function EditorPage() {
                   <button
                     onClick={() => {
                       addRevision(v.id);
-                      alert("수정본으로 저장되었습니다.");
                     }}
                     className="w-full text-center py-1.5 border border-line bg-surface hover:bg-surface-2 transition text-ink rounded text-xs mt-1"
                   >
