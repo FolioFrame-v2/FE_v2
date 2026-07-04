@@ -1,14 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useGetList, useDelete1 } from "@/api/generated/portfolio/portfolio";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export default MyPage;
 
-const MY_PORTFOLIOS = [
-  { id: "mp1", title: "실시간 협업 화이트보드", status: "공개", updated: "2026-06-20", views: 1240 },
-  { id: "mp2", title: "사이드 프로젝트 모음", status: "비공개", updated: "2026-06-12", views: 0 },
-  { id: "mp3", title: "졸업작품: AI 일정 추천", status: "비공개", updated: "2026-05-30", views: 312 },
-];
+// 목업 데이터 제거 (MY_PORTFOLIOS)
 
 const INITIAL_SAVED_COMPANIES = [
   { id: "co1", name: "Kakao", part: "Backend", region: "판교", stage: "지원완료", logo: "K", color: "var(--color-mint)", submittedPortfolio: "실시간 협업 화이트보드" },
@@ -18,10 +16,32 @@ const INITIAL_SAVED_COMPANIES = [
 ];
 
 function MyPage() {
+  const { data: portfoliosData, isLoading: portfoliosLoading } = useGetList({ page: 0, size: 10 });
+  const myPortfolios = portfoliosData?.data?.content || [];
+
   const [tab, setTab] = useState<"portfolios" | "companies">("portfolios");
   const [previewCompany, setPreviewCompany] = useState<any>(null);
   const [companies, setCompanies] = useState(INITIAL_SAVED_COMPANIES);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
+  const queryClient = useQueryClient();
+
+  const { mutate: deletePortfolio } = useDelete1({
+    mutation: {
+      onSuccess: () => {
+        alert("포트폴리오가 삭제되었습니다.");
+        queryClient.invalidateQueries({ queryKey: ['getList'] });
+      },
+      onError: (err: any) => {
+        alert("삭제 실패: " + err.message);
+      }
+    }
+  });
+
+  const handleDeletePortfolio = (id: number) => {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      deletePortfolio({ portfolioId: id });
+    }
+  };
 
   const handleCancelConfirm = () => {
     if (cancelTarget) {
@@ -88,23 +108,27 @@ function MyPage() {
 
           {tab === "portfolios" && (
             <div className="grid gap-4 sm:grid-cols-2">
-              {[...MY_PORTFOLIOS].sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()).map((p) => (
-                <article key={p.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
-                  <div className="flex items-start justify-between">
-                    <h3 className="font-display text-lg font-semibold tracking-tight">{p.title}</h3>
-                    <StatusChip status={p.status} />
-                  </div>
-                  <div className="mt-3 text-xs font-mono text-ink-soft">최근 수정 · {p.updated}</div>
-                  <div className="mt-4 flex items-center justify-between pt-4 border-t border-line">
-                    <span className="text-xs text-ink-soft">{p.views.toLocaleString()} views</span>
-                    <div className="flex gap-2">
-                      <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">공유</button>
-                      <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
-                      <button className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
+              {portfoliosLoading ? (
+                <div className="text-sm text-ink-soft">포트폴리오 불러오는 중...</div>
+              ) : (
+                [...myPortfolios].sort((a, b) => new Date(b.lastSavedAt || "").getTime() - new Date(a.lastSavedAt || "").getTime()).map((p) => (
+                  <article key={p.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
+                    <div className="flex items-start justify-between">
+                      <h3 className="font-display text-lg font-semibold tracking-tight">{p.title}</h3>
+                      <StatusChip status={p.visibility === "PUBLIC" ? "공개" : "비공개"} />
                     </div>
-                  </div>
-                </article>
-              ))}
+                    <div className="mt-3 text-xs font-mono text-ink-soft">최근 수정 · {p.lastSavedAt ? new Date(p.lastSavedAt).toLocaleDateString() : ""}</div>
+                    <div className="mt-4 flex items-center justify-between pt-4 border-t border-line">
+                      <span className="text-xs text-ink-soft">{(p.viewCount || 0).toLocaleString()} views</span>
+                      <div className="flex gap-2">
+                        <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">공유</button>
+                        <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: String(p.id) }} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
+                        <button onClick={() => handleDeletePortfolio(p.id)} className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              )}
               <Link to="/templates" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
                 <div className="text-center">
                   <div className="text-3xl font-display">＋</div>

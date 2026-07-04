@@ -149,7 +149,7 @@ export function useGetList2<TData = Awaited<ReturnType<typeof getList2>>, TError
 
 
 /**
- * 포트폴리오에 학력을 등록합니다. endedAt이 null이면 재학 중으로 처리됩니다.
+ * 포트폴리오에 학력을 등록합니다. status는 ENROLLED(재학중), ON_LEAVE(휴학), GRADUATED(졸업), DROPPED_OUT(중퇴), COMPLETED(수료) 중 하나입니다.
  * @summary 학력 등록
  */
 export const create2 = (

@@ -35,7 +35,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useSearch, useBlocker } from "@tanstack/react-router";
+import { useSearch, useBlocker, useNavigate } from "@tanstack/react-router";
+import {
+  useGetDetail,
+  useUpdate,
+  useConfirmSave,
+  useCreate
+} from "@/api/generated/portfolio/portfolio";
+import { useGetList1, useCreate1, useUpdate1, useDelete1 } from "@/api/generated/portfolio-project/portfolio-project";
+import { useGetList2, useCreate2, useUpdate2, useDelete2 } from "@/api/generated/portfolio-education/portfolio-education";
+import { useGetList3, useCreate3, useUpdate3, useDelete3 } from "@/api/generated/portfolio-certificate/portfolio-certificate";
+import { useGetList4, useCreate4, useUpdate4, useDelete4 } from "@/api/generated/portfolio-career/portfolio-career";
+import { useGetList6 } from "@/api/generated/template/template";
 import { TEMPLATES } from "@/lib/portfolio-data";
 import {
   DropdownMenu,
@@ -47,12 +58,13 @@ import {
 type Visibility = "private" | "link" | "public";
 
 type Project = {
-  id: string;
+  _id?: number; // Backend DB ID
+  id: string; // Local temp ID
   name: string;
   role: string;
   period: string;
   summary: string;
-  stack: string;
+  stack: string[];
   link: string;
 };
 
@@ -64,11 +76,12 @@ type CustomField = {
 };
 
 type Certificate = {
+  _id?: number; // Backend DB ID
   name: string;
   organization: string;
   issueDate: string;
   expiryDate: string;
-  id: string;
+  id: string; // Credential ID
 };
 
 type Version = {
@@ -82,6 +95,7 @@ type Version = {
 };
 
 type Education = {
+  _id?: number;
   schoolName: string;
   major: string;
   degree: string;
@@ -91,6 +105,7 @@ type Education = {
 };
 
 type Experience = {
+  _id?: number;
   companyName: string;
   position: string;
   description: string;
@@ -136,28 +151,58 @@ function improve(text: string, kind: "oneLiner" | "detail" | "intro" | "career" 
 }
 
 function EditorPage() {
-  // 포트폴리오 메타
-  const [title, setTitle] = useState("백엔드 엔지니어 김지훈의 포트폴리오");
-  const [oneLiner, setOneLiner] = useState("결제·정산 시스템을 다루는 5년 차 백엔드 엔지니어");
-  const [detail, setDetail] = useState(
-    "대용량 트래픽 환경에서의 결제·정산 도메인 설계와 운영 경험을 정리했습니다. Kotlin/Spring 기반 서비스 개발과 SRE 협업 경험이 강점입니다.",
-  );
-  const [jobRole, setJobRole] = useState("백엔드 엔지니어");
+  const searchParams = useSearch({ from: '/portfoliopageeditor' }) as { templateId?: string, portfolioId?: string };
+  const portfolioId = searchParams.portfolioId ? Number(searchParams.portfolioId) : null;
+  const navigate = useNavigate();
+
+  const { data: portfolioData, isLoading } = useGetDetail(portfolioId!, {
+    query: {
+      enabled: !!portfolioId
+    }
+  });
+
+  const { mutateAsync: createPortfolioApi } = useCreate();
+  const { mutateAsync: updatePortfolioApi } = useUpdate();
+  const { mutateAsync: confirmSavePortfolioApi } = useConfirmSave();
+
+  // Phase 2 Query Hooks
+  const { data: projectsData } = useGetList1(portfolioId || -1, { query: { enabled: !!portfolioId } });
+  const { data: educationsData } = useGetList2(portfolioId || -1, { query: { enabled: !!portfolioId } });
+  const { data: certsData } = useGetList3(portfolioId || -1, { query: { enabled: !!portfolioId } });
+  const { data: careersData } = useGetList4(portfolioId || -1, { query: { enabled: !!portfolioId } });
+
+  // Phase 2 Mutation Hooks
+  const { mutateAsync: createProjApi } = useCreate1();
+  const { mutateAsync: updateProjApi } = useUpdate1();
+  const { mutateAsync: deleteProjApi } = useDelete1();
+
+  const { mutateAsync: createEduApi } = useCreate2();
+  const { mutateAsync: updateEduApi } = useUpdate2();
+  const { mutateAsync: deleteEduApi } = useDelete2();
+
+  const { mutateAsync: createCertApi } = useCreate3();
+  const { mutateAsync: updateCertApi } = useUpdate3();
+  const { mutateAsync: deleteCertApi } = useDelete3();
+
+  const { mutateAsync: createCareerApi } = useCreate4();
+  const { mutateAsync: updateCareerApi } = useUpdate4();
+  const { mutateAsync: deleteCareerApi } = useDelete4();
+
+  // ✨ 기본 정보
+  const [title, setTitle] = useState("");
+  const [oneLiner, setOneLiner] = useState("");
+  const [detail, setDetail] = useState("");
+  const [jobRole, setJobRole] = useState("");
 
   // 프로필
-  const [location, setLocation] = useState("서울 강남구"); // 프로필(region) 연동
-  const [email, setEmail] = useState("jihoon@example.com");
-  const [github, setGithub] = useState("https://github.com/jihoon");
-  const [website, setWebsite] = useState("https://jihoon.dev");
-  const [intro, setIntro] = useState(
-    "안녕하세요. 안정적인 서비스를 만드는 데 관심이 많은 백엔드 엔지니어 김지훈입니다.",
-  );
+  const [location, setLocation] = useState("");
+  const [email, setEmail] = useState("");
+  const [github, setGithub] = useState("");
+  const [website, setWebsite] = useState("");
+  const [intro, setIntro] = useState("");
 
   // 자격증
-  const [certifications, setCertifications] = useState<Certificate[]>([
-    { name: "정보처리기사", organization: "한국산업인력공단", issueDate: "2023-08-01", expiryDate: "", id: "1234-5678" },
-    { name: "SQLD", organization: "한국데이터산업진흥원", issueDate: "2022-05-01", expiryDate: "", id: "5678-1234" }
-  ]);
+  const [certifications, setCertifications] = useState<Certificate[]>([]);
 
   const addCertRow = () => setCertifications([...certifications, { name: "", organization: "", issueDate: "", expiryDate: "", id: "" }]);
   const removeCert = (idx: number) => setCertifications(certifications.filter((_, i) => i !== idx));
@@ -178,9 +223,7 @@ function EditorPage() {
   };
 
   // 경력
-  const [experiences, setExperiences] = useState<Experience[]>([
-    { companyName: "토스페이먼츠", position: "결제 플랫폼 팀", description: "주요 업무 및 성과", startDate: "2022-03-01", endDate: "" }
-  ]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
   const addExpRow = () => setExperiences([...experiences, { companyName: "", position: "", description: "", startDate: "", endDate: "" }]);
   const removeExp = (idx: number) => setExperiences(experiences.filter((_, i) => i !== idx));
   const updateExp = (idx: number, field: keyof Experience, value: string) => {
@@ -190,29 +233,10 @@ function EditorPage() {
   };
 
   // 프로젝트
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: "p1",
-      name: "결제 게이트웨이 리뉴얼",
-      role: "백엔드 리드",
-      period: "2023.06 ~ 2024.02",
-      summary: "Kotlin/Spring 기반 게이트웨이 리뉴얼로 평균 응답 시간 38% 개선",
-      stack: "Kotlin, Spring, Kafka, Redis",
-      link: "https://github.com/jihoon/payment-gateway",
-    },
-    {
-      id: "p2",
-      name: "정산 파이프라인 자동화",
-      role: "백엔드 엔지니어",
-      period: "2022.09 ~ 2023.03",
-      summary: "Airflow + Kafka 기반 정산 파이프라인 도입, 운영 공수 60% 절감",
-      stack: "Python, Airflow, Kafka",
-      link: "",
-    },
-  ]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   // 기술 스택
-  const [stack, setStack] = useState<string[]>(DEFAULT_STACK);
+  const [stack, setStack] = useState<string[]>([]);
   const [stackInput, setStackInput] = useState("");
 
   // 공개 설정
@@ -223,8 +247,80 @@ function EditorPage() {
   // ✨ 사용자 추가 필드
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
 
-  const searchParams = useSearch({ from: '/portfoliopageeditor' }) as { templateId?: string };
   const templateId = searchParams.templateId || "minimal";
+
+  useEffect(() => {
+    if (portfolioData?.data?.result) {
+      const p = portfolioData.data.result;
+      setTitle(p.title || "");
+      setOneLiner(p.description || "");
+      setDetail(p.solving || ""); 
+      setJobRole(p.jobRole || "");
+      
+      if (p.talentProfile) {
+         setEmail(p.talentProfile.contactEmail || "");
+         setGithub(p.talentProfile.githubUrl || "");
+         setWebsite(p.talentProfile.portfolioWebsite || "");
+         setLocation(p.talentProfile.region?.name || "");
+         setIntro(p.talentProfile.oneLiner || "");
+      }
+    }
+  }, [portfolioData]);
+
+  useEffect(() => {
+    if (educationsData?.data?.result) {
+      setEducations(educationsData.data.result.map((e: any) => ({
+        _id: e.id,
+        schoolName: e.schoolName || "",
+        major: e.major || "",
+        degree: e.degree === "MASTER" ? "석사" : e.degree === "DOCTOR" ? "박사" : "학사",
+        admissionDate: e.startedAt || "",
+        graduationDate: e.endedAt || "",
+        status: e.status === "LEAVE_OF_ABSENCE" ? "휴학" : e.status === "GRADUATED" ? "졸업" : e.status === "DROPOUT" ? "중퇴" : "재학중"
+      })));
+    }
+  }, [educationsData]);
+
+  useEffect(() => {
+    if (careersData?.data?.result) {
+      setExperiences(careersData.data.result.map((c: any) => ({
+        _id: c.id,
+        companyName: c.companyName || "",
+        position: c.position || "",
+        startDate: c.startedAt || "",
+        endDate: c.endedAt || "",
+        description: c.description || ""
+      })));
+    }
+  }, [careersData]);
+
+  useEffect(() => {
+    if (projectsData?.data?.result) {
+      setProjects(projectsData.data.result.map((p: any) => ({
+        _id: p.id,
+        id: `p_${p.id}`,
+        name: p.name || "",
+        role: "", 
+        period: `${p.startedAt || ""} ~ ${p.endedAt || ""}`,
+        summary: p.description || "",
+        stack: [], 
+        link: p.githubUrl || p.projectUrl || ""
+      })));
+    }
+  }, [projectsData]);
+
+  useEffect(() => {
+    if (certsData?.data?.result) {
+      setCertifications(certsData.data.result.map((c: any) => ({
+        _id: c.id, 
+        id: c.credentialId || "",
+        name: c.name || "",
+        organization: c.issuer || "",
+        issueDate: c.issuedAt || "",
+        expiryDate: c.expiresAt || "" 
+      })));
+    }
+  }, [certsData]);
 
   useEffect(() => {
     const template = TEMPLATES.find(t => t.id === templateId);
@@ -348,23 +444,160 @@ function EditorPage() {
     }
     setActiveVersionId(newRevId);
   };
+  const syncEntities = async (targetPortfolioId: number) => {
+    if (!targetPortfolioId) return;
 
-  const handleSave = () => {
-    if (!activeVersionId) return;
-    const snapshot = {
-      title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
-    };
-    setVersions(prev => prev.map(v => {
-      if (v.id === activeVersionId) {
-        return { ...v, snapshot, timestamp: new Date().toISOString() };
+    // --- Educations ---
+    const origEduIds = educationsData?.data?.result?.map((e: any) => e.id) || [];
+    const curEduIds = educations.map(e => e._id).filter(Boolean) as number[];
+    const eduDeletes = origEduIds.filter(id => !curEduIds.includes(id));
+    
+    await Promise.all(eduDeletes.map(id => deleteEduApi({ portfolioId: targetPortfolioId, educationId: id })));
+    await Promise.all(educations.map(e => {
+      const payload = {
+        schoolName: e.schoolName,
+        major: e.major,
+        degree: e.degree === '석사' ? 'MASTER' : e.degree === '박사' ? 'DOCTOR' : 'BACHELOR',
+        startedAt: e.admissionDate || undefined,
+        endedAt: e.graduationDate || undefined,
+        status: e.status === '휴학' ? 'LEAVE_OF_ABSENCE' : e.status === '졸업' ? 'GRADUATED' : e.status === '중퇴' ? 'DROPOUT' : 'ATTENDING'
+      };
+      if (e._id) {
+        return updateEduApi({ portfolioId: targetPortfolioId, educationId: e._id, data: payload as any });
+      } else {
+        return createEduApi({ portfolioId: targetPortfolioId, data: payload as any });
       }
-      if (v.revisions) {
-        const updatedRevisions = v.revisions.map(r => r.id === activeVersionId ? { ...r, snapshot, timestamp: new Date().toISOString() } : r);
-        return { ...v, revisions: updatedRevisions };
-      }
-      return v;
     }));
-    alert("현재 내용이 성공적으로 저장되었습니다.");
+
+    // --- Careers ---
+    const origCarIds = careersData?.data?.result?.map((c: any) => c.id) || [];
+    const curCarIds = experiences.map(e => e._id).filter(Boolean) as number[];
+    const carDeletes = origCarIds.filter(id => !curCarIds.includes(id));
+
+    await Promise.all(carDeletes.map(id => deleteCareerApi({ portfolioId: targetPortfolioId, careerId: id })));
+    await Promise.all(experiences.map(e => {
+      const payload = {
+        companyName: e.companyName,
+        position: e.position,
+        description: e.description,
+        startedAt: e.startDate || undefined,
+        endedAt: e.endDate || undefined
+      };
+      if (e._id) {
+        return updateCareerApi({ portfolioId: targetPortfolioId, careerId: e._id, data: payload as any });
+      } else {
+        return createCareerApi({ portfolioId: targetPortfolioId, data: payload as any });
+      }
+    }));
+
+    // --- Projects ---
+    const origProjIds = projectsData?.data?.result?.map((p: any) => p.id) || [];
+    const curProjIds = projects.map(p => p._id).filter(Boolean) as number[];
+    const projDeletes = origProjIds.filter(id => !curProjIds.includes(id));
+
+    await Promise.all(projDeletes.map(id => deleteProjApi({ portfolioId: targetPortfolioId, projectId: id })));
+    await Promise.all(projects.map(p => {
+      const [start, end] = p.period.split('~').map(s => s.trim());
+      const payload = {
+        title: p.name,
+        role: p.role || undefined,
+        content: p.summary,
+        startedAt: start || undefined,
+        endedAt: end || undefined,
+        projectUrl: p.link || undefined
+      };
+      if (p._id) {
+        return updateProjApi({ portfolioId: targetPortfolioId, projectId: p._id, data: payload as any });
+      } else {
+        return createProjApi({ portfolioId: targetPortfolioId, data: payload as any });
+      }
+    }));
+
+    // --- Certificates ---
+    const origCertIds = certsData?.data?.result?.map((c: any) => c.id) || [];
+    const curCertIds = certifications.map(c => c._id).filter(Boolean) as number[];
+    const certDeletes = origCertIds.filter(id => !curCertIds.includes(id));
+
+    await Promise.all(certDeletes.map(id => deleteCertApi({ portfolioId: targetPortfolioId, certificateId: id })));
+    await Promise.all(certifications.map(c => {
+      const payload = {
+        name: c.name,
+        issuer: c.organization,
+        issuedAt: c.issueDate || undefined,
+        expiresAt: c.expiryDate || undefined,
+        credentialId: c.id
+      };
+      if (c._id) {
+        return updateCertApi({ portfolioId: targetPortfolioId, certificateId: c._id, data: payload as any });
+      } else {
+        return createCertApi({ portfolioId: targetPortfolioId, data: payload as any });
+      }
+    }));
+  };
+
+
+  // ✨ 저장 핸들러
+  const handleSave = async () => {
+    if (activeVersionId) {
+      const snapshot = {
+        title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
+      };
+      setVersions(prev => prev.map(v => {
+        if (v.id === activeVersionId) {
+          return { ...v, snapshot, timestamp: new Date().toISOString() };
+        }
+        if (v.revisions) {
+          const updatedRevisions = v.revisions.map(r => r.id === activeVersionId ? { ...r, snapshot, timestamp: new Date().toISOString() } : r);
+          return { ...v, revisions: updatedRevisions };
+        }
+        return v;
+      }));
+    }
+
+    let activePortfolioId = portfolioId;
+
+    try {
+      if (!activePortfolioId) {
+        let tid = 1;
+        if (templateId === "minimal") tid = 1;
+        else if (templateId === "editorial") tid = 2;
+        else if (templateId === "terminal") tid = 3;
+        else if (templateId === "playful") tid = 4;
+        
+        const res = await createPortfolioApi({
+          data: {
+            title: title || "제목 없는 포트폴리오",
+            templateId: tid,
+            visibility: visibility === "public" ? "PUBLIC" : "PRIVATE",
+            jobRole: jobRole as any || "BACKEND"
+          }
+        });
+        activePortfolioId = res.data?.result?.id;
+        
+        if (!activePortfolioId) {
+          throw new Error("포트폴리오 생성 결과에 ID가 없습니다.");
+        }
+      }
+
+      await syncEntities(activePortfolioId);
+      
+      await updatePortfolioApi({
+        portfolioId: activePortfolioId,
+        data: {
+          title: title || "제목 없는 포트폴리오",
+          oneLiner: oneLiner,
+          description: detail,
+          jobRole: jobRole as any || "BACKEND",
+          visibility: visibility === "public" ? "PUBLIC" : "PRIVATE",
+        } as any
+      });
+
+      await confirmSavePortfolioApi({ portfolioId: activePortfolioId });
+      alert("포트폴리오가 성공적으로 저장되었습니다!");
+      navigate({ to: "/mypage" });
+    } catch (err: any) {
+      alert("포트폴리오 저장 중 오류가 발생했습니다: " + (err.message || "알 수 없는 오류"));
+    }
   };
 
   const updateRevisionTitle = (parentId: number, revId: number, newTitle: string) => {
@@ -434,7 +667,7 @@ function EditorPage() {
   const addProject = () => {
     setProjects((prev) => [
       ...prev,
-      { id: `p${Date.now()}`, name: "", role: "", period: "", summary: "", stack: "", link: "" },
+      { id: `p${Date.now()}`, name: "", role: "", period: "", summary: "", stack: [], link: "" },
     ]);
   };
   const updateProject = (id: string, patch: Partial<Project>) =>
@@ -1252,6 +1485,24 @@ function ProjectCard({
   onDismissSuggestion: () => void;
 }) {
   const [open, setOpen] = useState(true);
+  const [stackInput, setStackInput] = useState("");
+
+  const addStack = (s: string) => {
+    if (!s.trim()) return;
+    if (!project.stack.includes(s)) {
+      onChange({ stack: [...project.stack, s] });
+    }
+    setStackInput("");
+  };
+
+  const removeStack = (s: string) => {
+    onChange({ stack: project.stack.filter((t: string) => t !== s) });
+  };
+
+  const filteredStacks = DEFAULT_STACK.filter(
+    s => s.toLowerCase().includes(stackInput.toLowerCase()) && !project.stack.includes(s)
+  );
+
   return (
     <div className="rounded-lg border border-line bg-surface/60 p-4">
       <div className="flex items-center justify-between gap-2">
@@ -1307,8 +1558,43 @@ function ProjectCard({
             </Field>
           </div>
           <div className="sm:col-span-2">
-            <Field label="사용 기술">
-              <Input value={project.stack} onChange={(e) => onChange({ stack: e.target.value })} placeholder="예) Kotlin, Spring, Kafka" />
+            <Field label="사용 기술" hint="사용해본 도구를 추가하세요. 엔터로 등록합니다.">
+              <div className="flex flex-wrap gap-2 mb-3">
+                {project.stack.map((t) => (
+                  <span key={t} className="chip border-ink/30 bg-surface-2 text-ink">
+                    {t}
+                    <button type="button" onClick={() => removeStack(t)} className="ml-1 text-ink-soft hover:text-ink" aria-label={`${t} 제거`}>×</button>
+                  </span>
+                ))}
+              </div>
+              <div className="relative w-full">
+                <Input
+                  value={stackInput}
+                  onChange={(e) => setStackInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addStack(stackInput); } }}
+                  placeholder="기술 스택 검색 및 추가 (예: TypeScript)"
+                />
+                {stackInput && (
+                  <div className="absolute top-full mt-1 w-full max-h-[200px] overflow-y-auto rounded-md border border-line bg-background shadow-lg z-10">
+                    {filteredStacks.length > 0 ? (
+                      filteredStacks.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          className="w-full px-3 py-2 text-left text-sm text-ink hover:bg-surface-2"
+                          onClick={() => addStack(s)}
+                        >
+                          {s}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-sm text-ink-soft">
+                        "{stackInput}" 스택을 새로 추가합니다 (Enter)
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </Field>
           </div>
         </div>

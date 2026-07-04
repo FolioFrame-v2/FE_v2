@@ -33,9 +33,11 @@ import type {
 
 import type {
   ApiResponseListProjectResDTO,
+  ApiResponseListTechstackResDTO,
   ApiResponseProjectResDTO,
   ApiResponseVoid,
-  ProjectReqDTO
+  ProjectReqDTO,
+  TechstackIdsReqDTO
 } from '../models';
 
 
@@ -149,7 +151,7 @@ export function useGetList1<TData = Awaited<ReturnType<typeof getList1>>, TError
 
 
 /**
- * 포트폴리오에 프로젝트를 등록합니다. durationRange는 LESS_THAN_1_MONTH / ONE_TO_THREE_MONTHS / THREE_TO_SIX_MONTHS / SIX_TO_TWELVE_MONTHS / OVER_ONE_YEAR 중 하나입니다.
+ * 포트폴리오에 프로젝트를 등록합니다. startedAt/endedAt은 연-월 단위로 사용하며(일자는 무시), endedAt이 없으면 진행 중인 프로젝트로 취급합니다. techstackIds로 프로젝트에 사용한 기술스택을 함께 등록할 수 있습니다.
  * @summary 프로젝트 등록
  */
 export const create1 = (
@@ -274,7 +276,7 @@ export const useDelete1 = <TError = AxiosError<ApiResponseVoid>,
       return useMutation(getDelete1MutationOptions(options), queryClient);
     }
     /**
- * 등록된 프로젝트 정보를 수정합니다. 본인 포트폴리오의 프로젝트만 수정 가능합니다.
+ * 등록된 프로젝트 정보를 수정합니다. 본인 포트폴리오의 프로젝트만 수정 가능합니다. techstackIds는 매번 전체 목록으로 교체됩니다.
  * @summary 프로젝트 수정
  */
 export const update1 = (
@@ -336,4 +338,68 @@ export const useUpdate1 = <TError = AxiosError<ApiResponseProjectResDTO>,
         TContext
       > => {
       return useMutation(getUpdate1MutationOptions(options), queryClient);
+    }
+    /**
+ * 프로젝트의 사용 기술스택만 가볍게 교체합니다. techstackIds에 남길 항목만 담아 보내면 되며(예: 태그 하나 제거), 다른 필드는 건드리지 않습니다.
+ * @summary 프로젝트 기술스택 수정
+ */
+export const updateTechstacks1 = (
+    portfolioId: number,
+    projectId: number,
+    techstackIdsReqDTO: TechstackIdsReqDTO, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ApiResponseListTechstackResDTO>> => {
+
+
+    return axios.patch(
+      `/api/v1/portfolios/${portfolioId}/projects/${projectId}/techstacks`,
+      techstackIdsReqDTO,options
+    );
+  }
+
+
+
+
+export const getUpdateTechstacks1MutationOptions = <TError = AxiosError<ApiResponseListTechstackResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTechstacks1>>, TError,{portfolioId: number;projectId: number;data: TechstackIdsReqDTO}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTechstacks1>>, TError,{portfolioId: number;projectId: number;data: TechstackIdsReqDTO}, TContext> => {
+
+const mutationKey = ['updateTechstacks1'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTechstacks1>>, {portfolioId: number;projectId: number;data: TechstackIdsReqDTO}> = (props) => {
+          const {portfolioId,projectId,data} = props ?? {};
+
+          return  updateTechstacks1(portfolioId,projectId,data,axiosOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateTechstacks1MutationResult = NonNullable<Awaited<ReturnType<typeof updateTechstacks1>>>
+    export type UpdateTechstacks1MutationBody = TechstackIdsReqDTO
+    export type UpdateTechstacks1MutationError = AxiosError<ApiResponseListTechstackResDTO>
+
+    /**
+ * @summary 프로젝트 기술스택 수정
+ */
+export const useUpdateTechstacks1 = <TError = AxiosError<ApiResponseListTechstackResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTechstacks1>>, TError,{portfolioId: number;projectId: number;data: TechstackIdsReqDTO}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateTechstacks1>>,
+        TError,
+        {portfolioId: number;projectId: number;data: TechstackIdsReqDTO},
+        TContext
+      > => {
+      return useMutation(getUpdateTechstacks1MutationOptions(options), queryClient);
     }

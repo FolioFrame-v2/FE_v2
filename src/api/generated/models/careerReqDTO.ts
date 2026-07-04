@@ -20,5 +20,4 @@ export interface CareerReqDTO {
   description?: string;
   startedAt: string;
   endedAt?: string;
-  current?: boolean;
 }

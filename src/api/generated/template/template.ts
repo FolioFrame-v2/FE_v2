@@ -62,7 +62,7 @@ export const getList6 = (
 
 
     return axios.get(
-      `/api/portfolio-templates`,{
+      `/api/v1/portfolio-templates`,{
     ...options,
         params: {...params, ...options?.params},}
     );
@@ -73,7 +73,7 @@ export const getList6 = (
 
 export const getGetList6QueryKey = (params?: GetList6Params,) => {
     return [
-    `/api/portfolio-templates`, ...(params ? [params] : [])
+    `/api/v1/portfolio-templates`, ...(params ? [params] : [])
     ] as const;
     }
 
@@ -155,7 +155,7 @@ export const getDetail1 = (
 
 
     return axios.get(
-      `/api/portfolio-templates/${templateId}`,options
+      `/api/v1/portfolio-templates/${templateId}`,options
     );
   }
 
@@ -164,7 +164,7 @@ export const getDetail1 = (
 
 export const getGetDetail1QueryKey = (templateId: number,) => {
     return [
-    `/api/portfolio-templates/${templateId}`
+    `/api/v1/portfolio-templates/${templateId}`
     ] as const;
     }
 

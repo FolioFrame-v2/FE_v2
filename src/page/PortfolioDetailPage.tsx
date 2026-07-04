@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
 import React, { useEffect, useState } from "react";
+import { useGetDetail } from "@/api/generated/portfolio/portfolio";
 
 
 //기업 연락
@@ -21,39 +22,26 @@ import heart_fill from "@/assets/images/PortfolioDetailPage3/heart-fill.svg";
 // removed domain/features import
 
 const PortfolioDetailPage = () => {
-  const portfolioId = "mock-portfolio-id";
-  const [portfolioData, setPortfolioData] = useState({
-    projectTitle: "Mock Portfolio",
-    description: "Mock Description",
-    ownerName: "Mock Owner",
-    ownerNickname: "MockNickname",
-    ownerEmail: "owner@example.com",
-    contacts: ["mock-contact"],
-    likes: ["mock-like"],
-    projectLink: "https://mock.link",
-    startDate: "2026-06-20",
-    endDate: "2026-06-30",
-    solving: "Mock solving problem",
-    challenge: "Mock challenge",
-    usedLanguage: "React, Node.js",
-    video: "",
-    images: [] as any[],
-    logo: "",
-    hits: 100,
-    certifications: "정보처리기사 (2026.05), SQLD (2025.10)",
-    education: "한국대학교 컴퓨터공학과 학사 졸업 (2022.03 - 2026.02)",
+  const { portfolioId } = useParams({ strict: false });
+  const navigate = useNavigate();
+
+  const { data: detailData, isLoading } = useGetDetail(Number(portfolioId), {
+    query: {
+      enabled: !!portfolioId
+    }
   });
+
+  const apiPortfolio = detailData?.data;
   const [comments, setComments] = useState<any[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [showModal, setShowModal] = useState(false); // "연락" 버튼 눌렀을 때 true
   const [modalMessage, setModalMessage] = useState(""); //"연락" 버튼 눌렀을 때 창에 띄워지는 메세지
-  const [isOwner, setIsOwner] = useState(true);
+  const [isOwner, setIsOwner] = useState(true); // TODO: 로그인된 유저와 작성자 비교
   const [isLiked, setIsLiked] = useState(false); //"좋아요" 눌렀을 때 상태 반영
   const [isBookmarked, setIsBookmarked] = useState(false); // 북마크 상태
   const [isProposed, setIsProposed] = useState(false); // 기업 제안 상태
 
   const currentUser = { id: "mock-id", email: "owner@example.com", recruiter: true, name: "MockUser" }; // Changed to recruiter: true for testing
-  const navigate = useNavigate();
 
 
   const addComment = (text: any) => {
@@ -87,8 +75,8 @@ const PortfolioDetailPage = () => {
     if (currentUser.recruiter && showContactInfo) {
       return (
         <>
-          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{portfolioData.ownerName}</div>
-          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{portfolioData.ownerEmail || "이메일 없음"}</div>
+          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.name || "이름 없음"}</div>
+          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.email || "이메일 없음"}</div>
         </>
       );
     } else if (currentUser.recruiter) {
@@ -108,47 +96,39 @@ const PortfolioDetailPage = () => {
     } else {
       return (
         <>
-          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{portfolioData.ownerNickname || "익명"}</div>
+          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.name || "익명"}</div>
           <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">example@example.com</div>
         </>
       );
     }
   };
 
-  if (!portfolioData) {
+  if (isLoading) {
     return <div className="flex justify-center text-[1vw] font-bold">로딩 중...</div>;
+  }
+  if (!apiPortfolio) {
+    return <div className="flex justify-center text-[1vw] font-bold">포트폴리오가 없습니다.</div>;
   }
   return (
     <div className="w-[85%] mx-auto py-10">
       <div className="mb-[2.5vw]">
         <div className="flex justify-center items-center">
           <div className="w-[6vw] h-[6vw] [&>img]:w-full [&>img]:h-full [&>img]:object-contain">
-              {portfolioData.logo ? (
-                <img
-                  src={`http://localhost:3000/${portfolioData.logo}`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "1em",
-                  }}
-                  />
-                ) : (
-                  <img src={logo} alt="projectLogo" />
-                )}
+              {/* 로고 대신 첫 글자 표시 등 대체 처리 가능 */}
+              <img src={logo} alt="projectLogo" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "1em" }} />
           </div>
-          <h1 className="font-bold font-['OTF_B'] text-3xl ml-4">{portfolioData.projectTitle}</h1>
+          <h1 className="font-bold font-['OTF_B'] text-3xl ml-4">{apiPortfolio.title}</h1>
         </div>
-        <p className="mt-4 text-center text-ink-soft">{portfolioData.description}</p>
+        <p className="mt-4 text-center text-ink-soft">{apiPortfolio.description}</p>
         <div className="flex items-center justify-center gap-6 mt-8 mb-4">
-          <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']">조회수 {portfolioData.hits || 0}</button>
-          <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']">기업 연락 {portfolioData.contacts.length || 0}</button>
+          <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']">조회수 {apiPortfolio.viewCount || 0}</button>
+          <button className="bg-[#0a27a6] text-white py-[8px] px-[12px] border-none rounded-[4px] cursor-pointer font-['OTF_B']">기업 연락 0</button>
           <div className="flex justify-between items-center gap-[0.4vw] cursor-pointer font-bold [&>img]:w-[1.5vw] [&>img]:h-auto [&>img]:object-contain" onClick={handleLikeClick}>
             <img
               src={isLiked ? heart_fill : heart_none} // 좋아요 상태에 따라 이미지 변경
               alt={isLiked ? "heart-fill" : "heart-none"}
             />
-            <div className="font-['OTF_B'] text-lg">{portfolioData.likes.length + (isLiked ? 1 : 0)}</div>
+            <div className="font-['OTF_B'] text-lg">0</div>
           </div>
           <div className="flex justify-between items-center gap-[0.4vw] cursor-pointer font-bold text-ink-soft hover:text-ink transition" onClick={() => setIsBookmarked(!isBookmarked)}>
             {isBookmarked ? (
@@ -166,9 +146,7 @@ const PortfolioDetailPage = () => {
           <div className="mb-[4vh] border-[0.1vw] border-[#d0d1d9] rounded-[0.3125em] shadow-[0em_0.25em_0.25em_rgba(0,0,0,0.25)] flex flex-col">
             <div className="m-[0.8vw] font-bold text-[1.2vw]">프로젝트 링크</div>
             <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">
-              {portfolioData.projectLink
-                ? portfolioData.projectLink
-                : "프로젝트 링크 없음."}
+              프로젝트 링크 없음.
             </div>{" "}
             {/*portfolioInfo에 추가해야함 */}
           </div>
@@ -192,89 +170,55 @@ const PortfolioDetailPage = () => {
           <div className="flex flex-col mb-[3vh] [grid-area:participationPeriod]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">참여 기간</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {portfolioData.startDate} - {portfolioData.endDate}
+              {apiPortfolio?.projects?.[0]?.startDate || ""} - {apiPortfolio?.projects?.[0]?.endDate || ""}
             </div>
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:education]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">학력</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {portfolioData.education || "학력 정보 없음"}
+              {apiPortfolio?.educations?.map(e => `${e.schoolName} ${e.major} (${e.admissionDate} - ${e.graduationDate})`).join(", ") || "학력 정보 없음"}
             </div>
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:certifications]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">자격증</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {portfolioData.certifications || "자격증 정보 없음"}
+              {apiPortfolio?.certificates?.map(c => `${c.name} (${c.acquisitionDate})`).join(", ") || "자격증 정보 없음"}
             </div>
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:problemSolving]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">해결하는 문제</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {portfolioData.solving
-                ? portfolioData.solving
-                : "문제 해결 내용 없음."}
+              {apiPortfolio?.projects?.[0]?.description || "문제 해결 내용 없음."}
             </div>
-            {/*portfolioInfo에 추가해야함*/}
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:learned]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">내가 마주친 도전</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {portfolioData.challenge
-                ? portfolioData.challenge
-                : "배운 점 없음."}
+              배운 점 없음.
             </div>
-            {/*portfolioInfo에 추가해야함*/}
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:languagesUsed]">
-            <label className="font-bolder text-[1.6vw] mb-[8px]">사용한 프로그램</label>
+            <label className="font-bolder text-[1.6vw] mb-[8px]">기술 스택</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {portfolioData.usedLanguage
-                ? portfolioData.usedLanguage
-                : "사용 언어 없음."}
+              {apiPortfolio?.techstacks?.map(t => t.name).join(", ") || "사용 언어 없음."}
             </div>
             {/*portfolioInfo에 추가해야함*/}
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:demoVideo]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">데모 비디오</label>
-            {portfolioData.video ? (
-              <div className="bg-[#f0f0f0] flex items-center justify-center h-[200px] border border-dashed border-[#ccc] text-[1vw]">
-                <video width="100%" height="100%" controls>
-                  <source src={portfolioData.video} type="video/mp4" />
-                  비디오를 지원하지 않는 브라우저입니다.
-                </video>
-              </div>
-            ) : (
               <div className="bg-[#f0f0f0] flex items-center justify-center h-[200px] border border-dashed border-[#ccc] text-[1vw]">비디오 없음</div>
-            )}
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:images]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">사진</label>
             <div className="flex gap-[10px]">
-                  {portfolioData.images && portfolioData.images.length > 0 ? (
-                    portfolioData.images.slice(0, 4).map((image, index) => (
-                      <div className="bg-[#f0f0f0] w-[100px] h-[100px] border border-dashed border-[#ccc] flex items-center justify-center text-[1vw]" key={index}>
-                        <img
-                          src={`http://localhost:3000/${image}`}
-                          alt={`프로젝트 이미지 ${index + 1}`}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            borderRadius: "8px",
-                          }}
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    <div className="bg-[#f0f0f0] w-[100px] h-[100px] border border-dashed border-[#ccc] flex items-center justify-center text-[1vw]">사진 없음</div>
-                  )}
+                  <div className="bg-[#f0f0f0] w-[100px] h-[100px] border border-dashed border-[#ccc] flex items-center justify-center text-[1vw]">사진 없음</div>
                 </div>
           </div>
         </div>

@@ -16,8 +16,11 @@ export default defineConfig({
     server: {
       proxy: {
         '/api': {
-          target: 'http://13.209.72.246',
+          target: 'http://13.124.130.226',
           changeOrigin: true,
+          headers: {
+            Origin: 'http://localhost:5173'
+          }
         },
       },
     },

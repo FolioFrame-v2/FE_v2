@@ -5,6 +5,8 @@ import { SAMPLE_PORTFOLIO, TEMPLATES } from "@/lib/portfolio-data";
 import { Heart, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useBookmark, useCancelBookmark } from "@/api/generated/portfolio-bookmark/portfolio-bookmark";
+import { useGetDetail } from "@/api/generated/portfolio/portfolio";
 
 const searchSchema = z.object({
   template: z.string().optional().default("minimal"),
@@ -34,6 +36,31 @@ function PortfolioPage() {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [proposed, setProposed] = useState(false);
+
+  const { data: portfolioRes } = useGetDetail(Number(id));
+  const portfolioData = portfolioRes?.data?.result;
+
+  const { mutateAsync: addBookmark } = useBookmark();
+  const { mutateAsync: removeBookmark } = useCancelBookmark();
+
+  const handleBookmarkToggle = async () => {
+    if (isOwner) return;
+    const currentlyBookmarked = bookmarked;
+    setBookmarked(!currentlyBookmarked);
+    
+    try {
+      if (currentlyBookmarked) {
+        await removeBookmark({ portfolioId: Number(id) });
+        toast("북마크가 취소되었습니다.");
+      } else {
+        await addBookmark({ portfolioId: Number(id) });
+        toast.success("북마크에 추가되었습니다.");
+      }
+    } catch (err) {
+      setBookmarked(currentlyBookmarked);
+      toast.error("북마크 처리에 실패했습니다.");
+    }
+  };
 
   const handleProposeToggle = () => {
     if (proposed) {
@@ -88,7 +115,7 @@ function PortfolioPage() {
               </button>
               <button 
                 disabled={isOwner}
-                onClick={() => setBookmarked(!bookmarked)}
+                onClick={handleBookmarkToggle}
                 className={`p-1.5 rounded-full transition-colors flex items-center gap-1 text-xs ${bookmarked ? 'text-coral' : 'text-ink-soft'} ${isOwner ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-2'}`}
                 title={isOwner ? "자신의 포트폴리오에는 북마크를 누를 수 없습니다" : "북마크"}
               >

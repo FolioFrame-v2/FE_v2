@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "@tanstack/react-router";
 import Consent from "@/components/Consent/Consent.js";
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
+import { useSignup, useCheckId, useCheckPhone } from "@/api/generated/auth-api/auth-api";
 
 const signUpDeveloperPage = () => {
   const navigate = useNavigate();
@@ -69,13 +70,21 @@ const signUpDeveloperPage = () => {
     setIdChecked(false);
   };
 
-  const handleIdCheck = () => {
+  const { mutateAsync: checkIdMutate } = useCheckId();
+
+  const handleIdCheck = async () => {
     if (!idInput) {
       alert("아이디를 입력해주세요.");
       return;
     }
-    alert("사용 가능한 아이디입니다.");
-    setIdChecked(true);
+    try {
+      await checkIdMutate({ data: { loginId: idInput } });
+      alert("사용 가능한 아이디입니다.");
+      setIdChecked(true);
+    } catch (error: any) {
+      alert(error?.response?.data?.message || "이미 사용 중인 아이디입니다.");
+      setIdChecked(false);
+    }
   };
 
   // 전화번호 인증 부분
@@ -84,13 +93,22 @@ const signUpDeveloperPage = () => {
     setPhone(autoHyphen(value));
     setPhoneChecked(false);
   };
-  const handlePhoneCheck = () => {
+
+  const { mutateAsync: checkPhoneMutate } = useCheckPhone();
+
+  const handlePhoneCheck = async () => {
     if (!phone) {
       alert("전화번호를 입력해주세요.");
       return;
     }
-    alert("전화번호 인증이 완료되었습니다.");
-    setPhoneChecked(true);
+    try {
+      await checkPhoneMutate({ data: { phone: phone } });
+      alert("사용 가능한 전화번호입니다.");
+      setPhoneChecked(true);
+    } catch (error: any) {
+      alert(error?.response?.data?.message || "이미 사용 중인 휴대폰번호입니다.");
+      setPhoneChecked(false);
+    }
   };
 
 
@@ -99,9 +117,9 @@ const signUpDeveloperPage = () => {
     if (password.length >= 8 && password.length <= 20) {
       setIsPasswordValid(true);
       setIsRePasswordEnabled(true);
-      alert("사용 가능한 비밀번호입니다.");
+      // alert("사용 가능한 비밀번호입니다."); // onBlur 시 무한 루프 발생 방지
     } else {
-      alert("비밀번호는 8자 이상 20자 이하로 입력해주세요.");
+      // alert("비밀번호는 8자 이상 20자 이하로 입력해주세요.");
       setIsPasswordValid(false);
       setIsRePasswordEnabled(false);
     }
@@ -115,16 +133,34 @@ const signUpDeveloperPage = () => {
     setPassword(e.target.value);
   };
 
+  const { mutateAsync: signupMutate } = useSignup();
+
   const handleSignUp = async () => {
     if (!agree) {
       alert("가입 기본약관에 동의해야 회원가입이 가능합니다.");
       return;
     }
-    console.log("Mock handleSignUp");
-    alert('회원가입이 성공!');
-    localStorage.setItem('isFirstLogin', 'true');
-    localStorage.setItem('userType', 'developer');
-    navigate({ to: `/login` });
+    
+    try {
+      await signupMutate({
+        data: {
+          loginId: idInput,
+          password: password,
+          passwordConfirm: repassword,
+          name: name,
+          birthDate: birthday.join('-'),
+          phone: phone,
+          memberType: "TALENT",
+          agreedTerms: [1, 2, 3] // 필수 약관 번호 배열 전달
+        }
+      });
+      alert('회원가입이 성공적으로 완료되었습니다! 이제 로그인해 주세요.');
+      localStorage.setItem('isFirstLogin', 'true');
+      navigate({ to: `/login` });
+    } catch (error: any) {
+      console.error("Signup failed:", error);
+      alert(error?.response?.data?.message || "회원가입에 실패했습니다.");
+    }
   };
 
   return (

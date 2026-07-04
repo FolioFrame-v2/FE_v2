@@ -5,7 +5,7 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import type { ProjectResDTODurationRange } from './projectResDTODurationRange.ts';
+import type { TechstackResDTO } from './techstackResDTO.ts';
 
 export interface ProjectResDTO {
   id?: number;
@@ -13,9 +13,10 @@ export interface ProjectResDTO {
   title?: string;
   role?: string;
   content?: string;
-  thumbnailUrl?: string;
   projectUrl?: string;
-  durationRange?: ProjectResDTODurationRange;
+  startedAt?: string;
+  endedAt?: string;
+  techstacks?: TechstackResDTO[];
   createdAt?: string;
   updatedAt?: string;
 }

@@ -149,7 +149,7 @@ export function useGetList4<TData = Awaited<ReturnType<typeof getList4>>, TError
 
 
 /**
- * 포트폴리오에 경력을 등록합니다. current가 true이거나 endedAt이 null이면 현재 재직 중으로 처리됩니다.
+ * 포트폴리오에 경력을 등록합니다. endedAt이 null이면 현재 재직 중으로 처리됩니다.
  * @summary 경력 등록
  */
 export const create4 = (

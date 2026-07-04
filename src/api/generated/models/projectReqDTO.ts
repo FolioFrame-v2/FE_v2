@@ -5,7 +5,6 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import type { ProjectReqDTODurationRange } from './projectReqDTODurationRange.ts';
 
 export interface ProjectReqDTO {
   /**
@@ -18,16 +17,17 @@ export interface ProjectReqDTO {
      * @maxLength 100
      */
   role?: string;
+  /**
+     * @minLength 0
+     * @maxLength 500
+     */
   content?: string;
   /**
      * @minLength 0
      * @maxLength 500
      */
-  thumbnailUrl?: string;
-  /**
-     * @minLength 0
-     * @maxLength 500
-     */
   projectUrl?: string;
-  durationRange?: ProjectReqDTODurationRange;
+  startedAt?: string;
+  endedAt?: string;
+  techstackIds?: number[];
 }

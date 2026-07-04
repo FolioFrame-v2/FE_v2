@@ -6,13 +6,31 @@
  * OpenAPI spec version: v1.0.0
  */
 import type { GetActivitiesCategory } from './getActivitiesCategory.ts';
+import type { GetActivitiesField } from './getActivitiesField.ts';
 import type { GetActivitiesSort } from './getActivitiesSort.ts';
+import type { GetActivitiesTeamSize } from './getActivitiesTeamSize.ts';
 
 export type GetActivitiesParams = {
 /**
- * 카테고리 (CONTEST / HACKATHON / 미입력 시 전체)
+ * 검색어 (공모전명/주최사, 부분 일치)
+ */
+keyword?: string;
+/**
+ * 유형 (CONTEST / HACKATHON / 미입력 시 전체)
  */
 category?: GetActivitiesCategory;
+/**
+ * 지역 ID (region.region_id). 시/도 ID면 하위 시/군/구 전체 포함, 시/군/구 ID면 정확히 일치하는 것만 조회. 미입력 시 전체
+ */
+regionId?: number;
+/**
+ * 분야 (AI_ML / HEALTHCARE / EDUTECH / LIFESTYLE / OPEN_SOURCE / INFRA / ETC / 미입력 시 전체)
+ */
+field?: GetActivitiesField;
+/**
+ * 인원수 (ONE / TWO_TO_THREE / FOUR_TO_SIX / SEVEN_PLUS / 미입력 시 전체)
+ */
+teamSize?: GetActivitiesTeamSize;
 /**
  * 정렬 (LATEST / POPULAR / MOST_VIEWED, 기본값: LATEST)
  */

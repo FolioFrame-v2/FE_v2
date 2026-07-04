@@ -51,7 +51,7 @@ function ContestsPage() {
 
   const filtered = useMemo(() => {
     let result = activities.filter((c) => {
-      if (filters.region !== "전체" && c.region !== filters.region) return false;
+      if (filters.region !== "전체" && c.region?.name !== filters.region) return false;
       if (filters.field !== "전체" && c.field !== filters.field) return false;
       if (filters.team !== "전체" && c.teamSize !== filters.team) return false;
       if (search && !(c.title + (c.organizer || "")).toLowerCase().includes(search.toLowerCase())) return false;
@@ -190,7 +190,7 @@ function ContestsPage() {
                 <div className="p-5 space-y-3">
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <Info label="유형" value={c.category === "HACKATHON" ? "해커톤" : c.category === "CONTEST" ? "공모전" : (c.category || "-")} />
-                    <Info label="지역" value={c.region || "-"} />
+                    <Info label="지역" value={c.region?.name || "-"} />
                     <Info label="분야" value={c.field || "-"} />
                     <Info label="인원" value={c.teamSize || "-"} />
                   </div>

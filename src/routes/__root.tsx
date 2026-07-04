@@ -11,6 +11,68 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "@/styles.css?url";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
+import axios from "axios";
+
+// 전역 Axios 인터셉터 설정 (요청 시마다 로컬스토리지의 토큰을 헤더에 자동 주입)
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// 토큰 만료 등 401 에러 발생 시 자동 로그아웃 처리 및 토큰 재발급
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    // 401 에러이고, 재시도한 적이 없으며, 리프레시 토큰 재발급 요청 자체가 아닌 경우
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/api/auth/refresh')) {
+      originalRequest._retry = true;
+      try {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) {
+          throw new Error("No refresh token");
+        }
+        
+        // 리프레시 토큰으로 새 토큰 발급 요청
+        const res = await axios.post('/api/auth/refresh', undefined, {
+          headers: {
+            'Refresh-Token': refreshToken
+          }
+        });
+        
+        const newAccessToken = res.data?.result?.accessToken;
+        const newRefreshToken = res.data?.result?.refreshToken;
+        
+        if (newAccessToken) {
+          localStorage.setItem("accessToken", newAccessToken);
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          
+          if (newRefreshToken) {
+            localStorage.setItem("refreshToken", newRefreshToken);
+          }
+          
+          // 원래 요청 재시도
+          return axios(originalRequest);
+        }
+      } catch (refreshError) {
+        // 리프레시 실패 시 로그아웃 처리
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("userType");
+        // window.location.href = '/login';
+      }
+    } else if (error.response?.status === 401) {
+      // 리프레시 토큰도 없거나 재시도해도 401인 경우
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userType");
+    }
+    return Promise.reject(error);
+  }
+);
 
 function NotFoundComponent() {
   return (

@@ -6,6 +6,8 @@ import ModifyPortfolioTemplate from "@/components/ModifyPortfolioPage/ModifyPort
 // removed domain/features import
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
+import { useUpdate } from "@/api/generated/portfolio/portfolio";
+
 const templateInfo = [{ id: 1, name: "Mock Template" }];
 
 const ModifyPortfolioPage = () => {
@@ -68,9 +70,31 @@ const ModifyPortfolioPage = () => {
   };
 
   //이미지, 비디오 업로드
+  const { mutate: updatePortfolio, isPending } = useUpdate({
+    mutation: {
+      onSuccess: () => {
+        alert("포트폴리오가 수정되었습니다!");
+        navigate({ to: `/mypage` });
+      },
+      onError: (err: any) => {
+        alert("수정 실패: " + err.message);
+      }
+    }
+  });
+
   const handleSavePortfolio = () => {
-    console.log("Mock handleSavePortfolio called", formData);
-    navigate({ to: `/my` });
+    if (!formData.projectId || !formData.projectTitle) {
+      alert("포트폴리오 ID와 이름을 확인해주세요.");
+      return;
+    }
+    updatePortfolio({
+      portfolioId: formData.projectId,
+      data: {
+        title: formData.projectTitle,
+        description: formData.description,
+        visibility: formData.share ? "PUBLIC" : "PRIVATE",
+      }
+    });
   };
 
 
@@ -91,10 +115,11 @@ const ModifyPortfolioPage = () => {
           templates={templateInfo}
           setProjectTemplate={setProjectTemplate}
         />
-        <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] mt-[2em] font-['OTF_R'] cursor-pointer flex items-center justify-center relative" onClick={() => {
-          handleSavePortfolio(); // 프로젝트 저장 함수 호출
-          navigate({ to: `/my` }); // 페이지 이동
-        }}>수정완료
+        <button className="text-white text-[1em] font-extrabold rounded-[2em] border-none bg-[#0a27a6] h-[3em] w-[20%] mt-[2em] font-['OTF_R'] cursor-pointer flex items-center justify-center relative disabled:bg-[#0a27a6] disabled:opacity-50 disabled:cursor-not-allowed" 
+          disabled={isPending}
+          onClick={() => {
+            handleSavePortfolio();
+          }}>{isPending ? "수정 중..." : "수정완료"}
         </button>
       </div>
     </>
