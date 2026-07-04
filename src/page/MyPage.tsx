@@ -105,7 +105,7 @@ function MyPage() {
                   </div>
                 </article>
               ))}
-              <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
+              <Link to="/templates" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
                 <div className="text-center">
                   <div className="text-3xl font-display">＋</div>
                   <div className="mt-1 text-sm">새 포트폴리오</div>

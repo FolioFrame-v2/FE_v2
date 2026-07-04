@@ -122,8 +122,8 @@ import { useRouterState } from "@tanstack/react-router";
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const location = useRouterState({ select: (s) => s.location });
-  
-  const NO_LAYOUT_PATHS = ["/login", "/signup", "/onboarding", "/portfoliopageeditor", "/createportfolio", "/modifyportfolio"];
+
+  const NO_LAYOUT_PATHS = ["/login", "/signup", "/onboarding", "/onboarding-recruiter", "/portfoliopageeditor", "/createportfolio", "/modifyportfolio", "/memberselection"];
   const isNoLayout = NO_LAYOUT_PATHS.some(path => location.pathname.startsWith(path));
 
   return (

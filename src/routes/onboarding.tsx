@@ -211,7 +211,7 @@ function OnboardingPage() {
     e.preventDefault();
     if (!required) return;
     setSubmitted(true);
-    setTimeout(() => navigate({ to: "/mypage" }), 900);
+    setTimeout(() => navigate({ to: "/" }), 900);
   };
 
   return (

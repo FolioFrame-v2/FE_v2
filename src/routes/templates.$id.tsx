@@ -195,7 +195,13 @@ function TemplateDetailPage() {
             </div>
           </div>
           <div className="rounded-2xl border border-line overflow-hidden shadow-sm bg-card">
-            <PortfolioTemplate id={meta.id} data={SAMPLE_PORTFOLIO} />
+            <PortfolioTemplate id={meta.id} data={{
+              ...SAMPLE_PORTFOLIO,
+              customFields: meta.defaultFields.map(f => ({
+                label: f.label,
+                value: `이곳에 ${f.label}에 대한 내용을 자유롭게 작성할 수 있습니다.`
+              }))
+            }} />
           </div>
         </div>
       </section>

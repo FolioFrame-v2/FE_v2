@@ -9,8 +9,17 @@ const Nav = () => {
     navigate({ to: `/login` });
   };
 
-  const currentUser = true;
-  // const currentUser = false;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("userType"));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userType");
+    localStorage.removeItem("isFirstLogin");
+    setIsLoggedIn(false);
+    navigate({ to: `/` });
+  };
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-line">
@@ -27,13 +36,21 @@ const Nav = () => {
           <Link to="/recruiter" className="hover:text-ink transition active:text-ink">기업 공고</Link>
         </nav>
         <div className="flex items-center gap-2">
-          <NotificationBell signedIn={currentUser} />
-          {currentUser ? (
-            <Link to="/mypage" className="h-9 px-4 rounded-full font-['OTF_R'] bg-primary text-white text-sm transition shadow-sm grid place-items-center">
-              마이페이지
-            </Link>
+          <NotificationBell signedIn={isLoggedIn} />
+          {isLoggedIn ? (
+            <div className="flex items-center gap-2">
+              <Link to="/mypage" className="h-9 px-4 rounded-full font-['OTF_R'] bg-primary text-white text-sm transition shadow-sm grid place-items-center hover:opacity-90">
+                마이페이지
+              </Link>
+              <button 
+                className="h-9 px-4 rounded-full font-['OTF_R'] border border-line bg-surface text-ink text-sm transition shadow-sm hover:bg-surface-2" 
+                onClick={handleLogout}
+              >
+                로그아웃
+              </button>
+            </div>
           ) : (
-            <button className="h-9 px-4 font-['OTF_R'] rounded-full bg-primary text-primary-foreground text-sm transition shadow-sm" onClick={onClickImg}>
+            <button className="h-9 px-4 font-['OTF_R'] rounded-full bg-primary text-primary-foreground text-sm transition shadow-sm hover:opacity-90" onClick={onClickImg}>
               로그인
             </button>
           )}

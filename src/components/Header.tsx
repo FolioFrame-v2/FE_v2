@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import defaultProfilePicture from "@/assets/icons/Header/profileIcon.png"; // 기본 이미지
@@ -21,9 +21,14 @@ function Header({}) {
   //   localStorage.getItem("accessToken")
   // );
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  // 프로필 클릭 이벤트 추가했다구리
   const menuRef = useRef(null);
-  const currentUser = null;
+  
+  // Checking login state from localStorage
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("userType"));
+  }, []);
+
   const location = useLocation();
 
   const isActive = (path: any) => location.pathname === path;
@@ -49,12 +54,10 @@ function Header({}) {
   }, []);
 
   const handleLogout = () => {
-    // localStorage.removeItem("accessToken");
-    // localStorage.removeItem("Id");
-    clearCurrentUser();
-    //setAccessToken(null); // 로그아웃 시 상태 초기화
-    //void 0;
-    navigate({ to: `./` });
+    localStorage.removeItem("userType");
+    localStorage.removeItem("isFirstLogin");
+    setIsLoggedIn(false);
+    navigate({ to: `/` });
   };
 
   const handleMenuClick = (option: any) => {
@@ -98,43 +101,14 @@ function Header({}) {
         </nav>
 
         {/* <Nav>
-          <NavLink href="#templates">템플릿</NavLink>
-          <NavLink href="#hackathon">해커톤</NavLink>
-        </Nav> */}
       </div>
 
       {/* 로그인 여부에 따라 프로필 이미지 또는 로그인/로그아웃 버튼 렌더링 */}
-      <div className="relative w-[6vw] rounded-full flex items-center Profile">
-        {currentUser ? (
+      <div className="relative flex items-center gap-4 pr-6">
+        {isLoggedIn ? (
           <>
-            <div className="relative flex items-center justify-center w-full ProfileWrapper">
-              <img
-                className="rounded-full cursor-pointer w-[2.8vw] ProfilePic"
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                src={defaultProfilePicture}
-                alt="profile"
-              />
-              {isProfileMenuOpen && (
-                <div className="absolute top-full flex flex-col justify-center" ref={menuRef}>
-                  <div className="flex justify-center text-[#15243e80]">
-                    <TbTriangleFilled />
-                  </div>
-                  <div className={`w-[10vw] bg-[#15243e80] rounded-[0.625em] flex-col justify-between z-[3] ${isProfileMenuOpen ? "flex" : "hidden"}`}>
-                    {profileMenuItems.map((item, index) => (
-                      <div
-                        className="m-[0.625em] p-[0.25vw] text-white text-[1vw] font-normal font-['OTF_B'] flex items-center border-[0.2em] border-transparent rounded-[0.625em] box-border hover:bg-[#15243e60] hover:cursor-pointer"
-                        key={index}
-                        onClick={() => handleMenuClick(item.label)}
-                      >
-                        <div className="inline-block mr-[0.2vw] text-[0.85vw] cursor-pointer">{item.icon}</div>
-                        {item.label}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {/* <LoginButton onClick={handleLogout}>로그아웃</LoginButton> */}
-            </div>
+            <StyledButton text="마이페이지" onClick={() => navigate({ to: `/mypage` })} />
+            <StyledButton text="로그아웃" onClick={handleLogout} />
           </>
         ) : (
           <StyledButton text="로그인" onClick={() => navigate({ to: `/login` })} />

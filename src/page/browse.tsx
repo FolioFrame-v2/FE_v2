@@ -113,7 +113,7 @@ function BrowsePage() {
             <p className="mt-2 text-ink-soft text-sm">다른 개발자들이 만든 포트폴리오를 둘러보세요.</p>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
+            <Link to="/templates" className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
               새 포트폴리오
             </Link>
             <div className="text-xs font-mono text-ink-soft">

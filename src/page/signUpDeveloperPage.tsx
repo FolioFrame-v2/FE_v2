@@ -57,7 +57,7 @@ const signUpDeveloperPage = () => {
   };
 
   const autoHyphen = (value: any) => {
-    const cleanedValue = value.replace(/[^0-9]/g, "");
+    const cleanedValue = value.replace(/[^0-9]/g, "").slice(0, 11);
     const formattedValue = cleanedValue
       .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/, "$1-$2-$3")
       .replace(/(\-{1,2})$/, "");
@@ -70,6 +70,11 @@ const signUpDeveloperPage = () => {
   };
 
   const handleIdCheck = () => {
+    if (!idInput) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+    alert("사용 가능한 아이디입니다.");
     setIdChecked(true);
   };
 
@@ -80,15 +85,26 @@ const signUpDeveloperPage = () => {
     setPhoneChecked(false);
   };
   const handlePhoneCheck = () => {
-    console.log("입력된 전화번호:", phone);
+    if (!phone) {
+      alert("전화번호를 입력해주세요.");
+      return;
+    }
+    alert("전화번호 인증이 완료되었습니다.");
     setPhoneChecked(true);
   };
 
 
   // 비밀번호 유효성 검사 및 비밀번호 확인
   const handlePassValidation = () => {
-    setIsPasswordValid(true);
-    setIsRePasswordEnabled(true);
+    if (password.length >= 8 && password.length <= 20) {
+      setIsPasswordValid(true);
+      setIsRePasswordEnabled(true);
+      alert("사용 가능한 비밀번호입니다.");
+    } else {
+      alert("비밀번호는 8자 이상 20자 이하로 입력해주세요.");
+      setIsPasswordValid(false);
+      setIsRePasswordEnabled(false);
+    }
   };
 
   const passwordCheck = () => {
@@ -107,6 +123,7 @@ const signUpDeveloperPage = () => {
     console.log("Mock handleSignUp");
     alert('회원가입이 성공!');
     localStorage.setItem('isFirstLogin', 'true');
+    localStorage.setItem('userType', 'developer');
     navigate({ to: `/login` });
   };
 

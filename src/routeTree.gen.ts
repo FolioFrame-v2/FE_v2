@@ -10,9 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TemplatesRouteImport } from './routes/templates'
-import { Route as SignuprecruiteremailRouteImport } from './routes/signuprecruiteremail'
 import { Route as SignuprecruiterRouteImport } from './routes/signuprecruiter'
-import { Route as SignupdeveloperemailRouteImport } from './routes/signupdeveloperemail'
 import { Route as SignupdeveloperRouteImport } from './routes/signupdeveloper'
 import { Route as RecruiterRouteImport } from './routes/recruiter'
 import { Route as ProfileeditRouteImport } from './routes/profileedit'
@@ -21,6 +19,7 @@ import { Route as Portfoliodetailpage3RouteImport } from './routes/portfoliodeta
 import { Route as Portfoliodetailpage2RouteImport } from './routes/portfoliodetailpage2'
 import { Route as PortfoliodetailRouteImport } from './routes/portfoliodetail'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as OnboardingRecruiterRouteImport } from './routes/onboarding-recruiter'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyprojectsRouteImport } from './routes/myprojects'
@@ -52,19 +51,9 @@ const TemplatesRoute = TemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignuprecruiteremailRoute = SignuprecruiteremailRouteImport.update({
-  id: '/signuprecruiteremail',
-  path: '/signuprecruiteremail',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignuprecruiterRoute = SignuprecruiterRouteImport.update({
   id: '/signuprecruiter',
   path: '/signuprecruiter',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupdeveloperemailRoute = SignupdeveloperemailRouteImport.update({
-  id: '/signupdeveloperemail',
-  path: '/signupdeveloperemail',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupdeveloperRoute = SignupdeveloperRouteImport.update({
@@ -105,6 +94,11 @@ const PortfoliodetailRoute = PortfoliodetailRouteImport.update({
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRecruiterRoute = OnboardingRecruiterRouteImport.update({
+  id: '/onboarding-recruiter',
+  path: '/onboarding-recruiter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -252,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/myprojects': typeof MyprojectsRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/onboarding-recruiter': typeof OnboardingRecruiterRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
@@ -260,9 +255,7 @@ export interface FileRoutesByFullPath {
   '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
-  '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
-  '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
   '/messages/$id': typeof MessagesIdRoute
@@ -291,6 +284,7 @@ export interface FileRoutesByTo {
   '/myprojects': typeof MyprojectsRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/onboarding-recruiter': typeof OnboardingRecruiterRoute
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
   '/portfoliodetailpage3': typeof Portfoliodetailpage3Route
@@ -298,9 +292,7 @@ export interface FileRoutesByTo {
   '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
-  '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
-  '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/jobs/$id': typeof JobsIdRoute
   '/messages/$id': typeof MessagesIdRoute
   '/messages/new': typeof MessagesNewRoute
@@ -329,6 +321,7 @@ export interface FileRoutesById {
   '/myprojects': typeof MyprojectsRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/onboarding-recruiter': typeof OnboardingRecruiterRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/portfoliodetail': typeof PortfoliodetailRoute
   '/portfoliodetailpage2': typeof Portfoliodetailpage2Route
@@ -337,9 +330,7 @@ export interface FileRoutesById {
   '/profileedit': typeof ProfileeditRoute
   '/recruiter': typeof RecruiterRoute
   '/signupdeveloper': typeof SignupdeveloperRoute
-  '/signupdeveloperemail': typeof SignupdeveloperemailRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
-  '/signuprecruiteremail': typeof SignuprecruiteremailRoute
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
   '/messages/$id': typeof MessagesIdRoute
@@ -370,6 +361,7 @@ export interface FileRouteTypes {
     | '/myprojects'
     | '/notifications'
     | '/onboarding'
+    | '/onboarding-recruiter'
     | '/portfolio'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
@@ -378,9 +370,7 @@ export interface FileRouteTypes {
     | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
-    | '/signupdeveloperemail'
     | '/signuprecruiter'
-    | '/signuprecruiteremail'
     | '/templates'
     | '/jobs/$id'
     | '/messages/$id'
@@ -409,6 +399,7 @@ export interface FileRouteTypes {
     | '/myprojects'
     | '/notifications'
     | '/onboarding'
+    | '/onboarding-recruiter'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
     | '/portfoliodetailpage3'
@@ -416,9 +407,7 @@ export interface FileRouteTypes {
     | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
-    | '/signupdeveloperemail'
     | '/signuprecruiter'
-    | '/signuprecruiteremail'
     | '/jobs/$id'
     | '/messages/$id'
     | '/messages/new'
@@ -446,6 +435,7 @@ export interface FileRouteTypes {
     | '/myprojects'
     | '/notifications'
     | '/onboarding'
+    | '/onboarding-recruiter'
     | '/portfolio'
     | '/portfoliodetail'
     | '/portfoliodetailpage2'
@@ -454,9 +444,7 @@ export interface FileRouteTypes {
     | '/profileedit'
     | '/recruiter'
     | '/signupdeveloper'
-    | '/signupdeveloperemail'
     | '/signuprecruiter'
-    | '/signuprecruiteremail'
     | '/templates'
     | '/jobs/$id'
     | '/messages/$id'
@@ -486,6 +474,7 @@ export interface RootRouteChildren {
   MyprojectsRoute: typeof MyprojectsRoute
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
+  OnboardingRecruiterRoute: typeof OnboardingRecruiterRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
   PortfoliodetailRoute: typeof PortfoliodetailRoute
   Portfoliodetailpage2Route: typeof Portfoliodetailpage2Route
@@ -494,9 +483,7 @@ export interface RootRouteChildren {
   ProfileeditRoute: typeof ProfileeditRoute
   RecruiterRoute: typeof RecruiterRoute
   SignupdeveloperRoute: typeof SignupdeveloperRoute
-  SignupdeveloperemailRoute: typeof SignupdeveloperemailRoute
   SignuprecruiterRoute: typeof SignuprecruiterRoute
-  SignuprecruiteremailRoute: typeof SignuprecruiteremailRoute
   TemplatesRoute: typeof TemplatesRouteWithChildren
   JobsIdRoute: typeof JobsIdRoute
 }
@@ -510,25 +497,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signuprecruiteremail': {
-      id: '/signuprecruiteremail'
-      path: '/signuprecruiteremail'
-      fullPath: '/signuprecruiteremail'
-      preLoaderRoute: typeof SignuprecruiteremailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/signuprecruiter': {
       id: '/signuprecruiter'
       path: '/signuprecruiter'
       fullPath: '/signuprecruiter'
       preLoaderRoute: typeof SignuprecruiterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signupdeveloperemail': {
-      id: '/signupdeveloperemail'
-      path: '/signupdeveloperemail'
-      fullPath: '/signupdeveloperemail'
-      preLoaderRoute: typeof SignupdeveloperemailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signupdeveloper': {
@@ -585,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: '/portfolio'
       fullPath: '/portfolio'
       preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding-recruiter': {
+      id: '/onboarding-recruiter'
+      path: '/onboarding-recruiter'
+      fullPath: '/onboarding-recruiter'
+      preLoaderRoute: typeof OnboardingRecruiterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -826,6 +806,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyprojectsRoute: MyprojectsRoute,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
+  OnboardingRecruiterRoute: OnboardingRecruiterRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
   PortfoliodetailRoute: PortfoliodetailRoute,
   Portfoliodetailpage2Route: Portfoliodetailpage2Route,
@@ -834,9 +815,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileeditRoute: ProfileeditRoute,
   RecruiterRoute: RecruiterRoute,
   SignupdeveloperRoute: SignupdeveloperRoute,
-  SignupdeveloperemailRoute: SignupdeveloperemailRoute,
   SignuprecruiterRoute: SignuprecruiterRoute,
-  SignuprecruiteremailRoute: SignuprecruiteremailRoute,
   TemplatesRoute: TemplatesRouteWithChildren,
   JobsIdRoute: JobsIdRoute,
 }
