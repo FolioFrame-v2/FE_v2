@@ -4,6 +4,7 @@ import { PortfolioTemplate } from "@/components/portfolio-templates";
 import { SAMPLE_PORTFOLIO, TEMPLATES } from "@/lib/portfolio-data";
 import { Heart, Bookmark } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const searchSchema = z.object({
   template: z.string().optional().default("minimal"),
@@ -33,6 +34,20 @@ function PortfolioPage() {
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [proposed, setProposed] = useState(false);
+
+  const handleProposeToggle = () => {
+    if (proposed) {
+      setProposed(false);
+      toast("제안을 취소했습니다.", {
+        description: "인재 측 알림 내역에서 제안이 삭제됩니다."
+      });
+    } else {
+      setProposed(true);
+      toast.success("제안이 성공적으로 전송되었습니다.", {
+        description: "해당 인재에게 알림이 발송되었습니다. (추후 알림 페이지 연동)"
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -97,7 +112,7 @@ function PortfolioPage() {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-ink-soft hidden md:inline">이 인재가 마음에 든다면?</span>
                 <button
-                  onClick={() => setProposed(!proposed)}
+                  onClick={handleProposeToggle}
                   className={`h-9 px-4 rounded-full text-xs font-medium transition ${
                     proposed ? "bg-surface border border-line text-ink" : "bg-primary text-primary-foreground"
                   }`}

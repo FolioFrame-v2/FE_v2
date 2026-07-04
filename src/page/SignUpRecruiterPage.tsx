@@ -70,7 +70,7 @@ const SignUpRecruiterPage = () => {
 
 
     const autoHyphen = (value: any) => {
-        const cleanedValue = value.replace(/[^0-9]/g, "");
+        const cleanedValue = value.replace(/[^0-9]/g, "").slice(0, 11);
         const formattedValue = cleanedValue
             .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/, "$1-$2-$3")
             .replace(/(\-{1,2})$/, "");
@@ -84,6 +84,11 @@ const SignUpRecruiterPage = () => {
     };
 
     const handleIdCheck = () => {
+        if (!idInput) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+        alert("사용 가능한 아이디입니다.");
         setIdChecked(true);
     };
 
@@ -95,15 +100,26 @@ const SignUpRecruiterPage = () => {
     };
 
     const handlePhoneCheck = () => {
-        console.log("입력된 전화번호:", phone);
+        if (!phone) {
+            alert("전화번호를 입력해주세요.");
+            return;
+        }
+        alert("전화번호 인증이 완료되었습니다.");
         setPhoneChecked(true);
     };
 
 
     // 비밀번호 유효성 검사 및 비밀번호 확인
     const handlePassValidation = () => {
-        setIsPasswordValid(true);
-        setIsRePasswordEnabled(true);
+        if (password.length >= 8 && password.length <= 20) {
+            setIsPasswordValid(true);
+            setIsRePasswordEnabled(true);
+            alert("사용 가능한 비밀번호입니다.");
+        } else {
+            alert("비밀번호는 8자 이상 20자 이하로 입력해주세요.");
+            setIsPasswordValid(false);
+            setIsRePasswordEnabled(false);
+        }
     };
 
 
@@ -117,7 +133,7 @@ const SignUpRecruiterPage = () => {
     //회사 인증
     const [Comemail, setComEmail] = useState('');
     const [isCompanyChecked, setCompanyChecked] = useState(false);
-    
+
     //사업자등록번호 인증
     const [businessNumber, setBusinessNumber] = useState('');
     const [isBusinessChecked, setBusinessChecked] = useState(false);
@@ -139,8 +155,9 @@ const SignUpRecruiterPage = () => {
         }
 
         console.log("Mock handleSignUp");
-        alert('회원가입 성공!');
+        alert('회원가입이 성공!');
         localStorage.setItem('isFirstLogin', 'true');
+        localStorage.setItem('userType', 'recruiter');
         navigate({ to: `/login` });
     };
 
@@ -261,7 +278,7 @@ const SignUpRecruiterPage = () => {
                 </div>
 
                 {/* 회사인증 */}
-                <div className="flex flex-col w-full gap-[0.5em]">
+                {/* <div className="flex flex-col w-full gap-[0.5em]">
                     <input
                         className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
                         placeholder="회사 이메일 인증"
@@ -269,7 +286,7 @@ const SignUpRecruiterPage = () => {
                         value={Comemail}
                         onChange={handleEmailChange}
                     />
-                </div>
+                </div> */}
                 <div className="flex flex-col w-full gap-[0.5em]">
                     <input
                         className="rounded-[2em] border border-[#d0d1d9] h-[3em] w-full indent-[1em] outline-none placeholder:indent-[1em] placeholder:text-[#d0d1d9]"
@@ -280,7 +297,7 @@ const SignUpRecruiterPage = () => {
                     />
                 </div>
                 <div className="flex items-center mt-[-0.5em] gap-[1em]">
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                         <input
                             className="border border-[#d0d1d9] mr-1"
                             type="checkbox"
@@ -290,7 +307,7 @@ const SignUpRecruiterPage = () => {
                             disabled={!Comemail}
                         />
                         <label htmlFor="company">이메일 인증</label>
-                    </div>
+                    </div> */}
                     <div className="flex items-center">
                         <input
                             className="border border-[#d0d1d9] mr-1"
@@ -302,7 +319,7 @@ const SignUpRecruiterPage = () => {
                         />
                         <label htmlFor="business">사업자 인증</label>
                     </div>
-                    
+
                     <div className="flex items-center ml-auto">
                         <input
                             className="border border-[#d0d1d9] mr-1"

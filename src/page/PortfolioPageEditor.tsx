@@ -35,7 +35,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useSearch } from "@tanstack/react-router";
+import { useSearch, useBlocker } from "@tanstack/react-router";
 import { TEMPLATES } from "@/lib/portfolio-data";
 import {
   DropdownMenu,
@@ -237,6 +237,13 @@ function EditorPage() {
       })));
     }
   }, [templateId]);
+
+  useBlocker({
+    shouldBlockFn: () => {
+      return !window.confirm("저장하지 않은 변경사항이 있습니다. 정말 나가시겠습니까?");
+    },
+    enableBeforeUnload: () => true,
+  });
 
   const [addOpen, setAddOpen] = useState(false);
   const [newLabel, setNewLabel] = useState("");

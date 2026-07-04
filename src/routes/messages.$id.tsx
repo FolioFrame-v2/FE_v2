@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Star,
   Archive,
@@ -28,6 +28,10 @@ function MessageDetail() {
   const [reply, setReply] = useState("");
   const [messages, setMessages] = useState<Message[]>(thread?.messages ?? []);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  useEffect(() => {
+    setMessages(thread?.messages ?? []);
+  }, [thread]);
 
   if (!thread) {
     return (

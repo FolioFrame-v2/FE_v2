@@ -60,14 +60,25 @@ function TemplatesPage() {
                     {t.bestFor.map((b) => <span key={b} className="chip text-[11px]">{b}</span>)}
                   </div>
                   <div className="flex items-center justify-between pt-3 border-t border-line">
-                    <Link
-                      to="/templates/$id"
-                      params={{ id: t.id }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-xs font-mono text-ink-soft hover:text-ink"
-                    >
-                      템플릿 미리보기 →
-                    </Link>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate({ to: "/portfoliopageeditor", search: { templateId: t.id, portfolioId: undefined } });
+                        }}
+                        className="text-xs font-mono text-primary hover:opacity-80 font-medium"
+                      >
+                        이 템플릿으로 작성하기 →
+                      </button>
+                      <Link
+                        to="/templates/$id"
+                        params={{ id: t.id }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs font-mono text-ink-soft hover:text-ink"
+                      >
+                        미리보기
+                      </Link>
+                    </div>
                     <span className="text-[11px] font-mono text-ink-soft">{t.id}</span>
                   </div>
                 </div>

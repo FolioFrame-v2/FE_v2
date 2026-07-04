@@ -20,9 +20,14 @@ const LoginPage = () => {
     const handleLogin = () => {
         console.log("Mock handleLogin", emailOrId, password);
         const isFirstLogin = localStorage.getItem('isFirstLogin');
+        const userType = localStorage.getItem('userType');
         if (isFirstLogin === 'true') {
             localStorage.removeItem('isFirstLogin');
-            navigate({ to: `/onboarding` });
+            if (userType === 'recruiter') {
+                 navigate({ to: `/onboarding-recruiter` });
+            } else {
+                 navigate({ to: `/onboarding` });
+            }
         } else {
             navigate({ to: `/` });
         }
