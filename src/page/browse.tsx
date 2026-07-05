@@ -6,6 +6,7 @@ import { REGIONS } from "@/lib/regions";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
 import { useGetPublicList } from "@/api/generated/portfolio/portfolio";
 import { useBookmark, useCancelBookmark } from "@/api/generated/portfolio-bookmark/portfolio-bookmark";
+import { useBookmarks } from "@/hooks/useBookmarks";
 import { toast } from "sonner";
 
 export default BrowsePage;
@@ -78,8 +79,8 @@ function BrowsePage() {
   
   const apiPortfolios = publicListData?.data?.result?.content || [];
 
-  // 북마크 상태 (낙관적 업데이트용)
-  const [localBookmarks, setLocalBookmarks] = useState<Record<number, boolean>>({});
+  // 북마크 상태 (전역 상태 공유)
+  const { bookmarks: localBookmarks, setBookmarkState } = useBookmarks();
   const [localBookmarkCounts, setLocalBookmarkCounts] = useState<Record<number, number>>({});
 
   const { mutateAsync: addBookmark } = useBookmark();
@@ -95,7 +96,7 @@ function BrowsePage() {
     const currentlyBookmarked = localBookmarks[pid] || false; // Backend lacks isBookmarked, assume false initially
     
     // Optimistic UI
-    setLocalBookmarks(prev => ({ ...prev, [pid]: !currentlyBookmarked }));
+    setBookmarkState(pid, !currentlyBookmarked);
     setLocalBookmarkCounts(prev => ({ 
       ...prev, 
       [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) + (currentlyBookmarked ? -1 : 1) 
@@ -110,8 +111,13 @@ function BrowsePage() {
         toast.success("북마크에 추가되었습니다.");
       }
     } catch (err) {
-      // Revert on error
-      setLocalBookmarks(prev => ({ ...prev, [pid]: currentlyBookmarked }));
+      if ((err as any)?.response?.data?.code === 'BOOKMARK409_1') {
+        toast.success("이미 북마크된 포트폴리오입니다.");
+        return;
+      }
+      console.error(err);
+      // Revert Optimistic UI
+      setBookmarkState(pid, currentlyBookmarked);
       setLocalBookmarkCounts(prev => ({ 
         ...prev, 
         [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) 

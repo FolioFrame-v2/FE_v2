@@ -12,6 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+
   vite: {
     server: {
       proxy: {
@@ -19,7 +20,7 @@ export default defineConfig({
           target: 'http://13.124.130.226',
           changeOrigin: true,
           headers: {
-            Origin: 'http://localhost:5173'
+            Origin: 'http://localhost:3000'
           }
         },
       },

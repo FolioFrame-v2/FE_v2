@@ -34,24 +34,36 @@
       "description": "대외활동 북마크 등록·취소 API"
     },
     {
+      "name": "Company Profile",
+      "description": "기업 프로필 관련 API"
+    },
+    {
       "name": "Portfolio",
       "description": "포트폴리오 생성·조회·수정·삭제 API"
+    },
+    {
+      "name": "Talent Certificate",
+      "description": "인재 프로필의 자격증 등록/조회/수정/삭제 API"
     },
     {
       "name": "Region",
       "description": "지역 목록 조회 API"
     },
     {
+      "name": "Talent Education",
+      "description": "인재 프로필의 학력 등록/조회/수정/삭제 API"
+    },
+    {
       "name": "Portfolio AI Feedback",
       "description": "포트폴리오 AI 첨삭 요청·조회·버전 관리 API"
     },
     {
-      "name": "Template",
-      "description": "포트폴리오 템플릿 조회 API"
+      "name": "Talent Career",
+      "description": "인재 프로필의 경력 등록/조회/수정/삭제 API"
     },
     {
-      "name": "Company API",
-      "description": "기업 프로필 관련 API"
+      "name": "Template",
+      "description": "포트폴리오 템플릿 조회 API"
     },
     {
       "name": "Portfolio Education",
@@ -62,12 +74,24 @@
       "description": "포트폴리오 템플릿 필드 조회·수정 API"
     },
     {
+      "name": "Talent Profile",
+      "description": "인재 프로필 등록, 조회, 수정 API"
+    },
+    {
+      "name": "Job Posting",
+      "description": "채용 공고 등록, 조회, 수정, 삭제 및 북마크 관련 API"
+    },
+    {
       "name": "Portfolio Project",
       "description": "포트폴리오 프로젝트 등록·조회·수정·삭제 API"
     },
     {
       "name": "Techstack",
       "description": "기술스택 검색·등록 API"
+    },
+    {
+      "name": "Chat",
+      "description": "프로필 간 실시간 채팅(채팅방/메시지) API"
     },
     {
       "name": "Portfolio Career",
@@ -152,6 +176,271 @@
         }
       }
     },
+    "/api/v1/talent-profiles": {
+      "post": {
+        "tags": [
+          "Talent Profile"
+        ],
+        "summary": "인재 프로필 등록 API",
+        "description": "새로운 인재 프로필을 등록합니다.",
+        "operationId": "createProfile",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentProfileCreateReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringLong"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/me/educations": {
+      "get": {
+        "tags": [
+          "Talent Education"
+        ],
+        "summary": "학력 목록 조회 API",
+        "description": "내 인재 프로필의 학력 목록을 조회합니다.",
+        "operationId": "getList",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTalentEducationResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Talent Education"
+        ],
+        "summary": "학력 등록 API",
+        "description": "내 인재 프로필에 학력을 등록합니다.",
+        "operationId": "create",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentEducationReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentEducationResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/me/certificates": {
+      "get": {
+        "tags": [
+          "Talent Certificate"
+        ],
+        "summary": "자격증 목록 조회 API",
+        "description": "내 인재 프로필의 자격증 목록을 조회합니다.",
+        "operationId": "getList_1",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTalentCertificateResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Talent Certificate"
+        ],
+        "summary": "자격증 등록 API",
+        "description": "내 인재 프로필에 자격증을 등록합니다.",
+        "operationId": "create_1",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentCertificateReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentCertificateResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/me/careers": {
+      "get": {
+        "tags": [
+          "Talent Career"
+        ],
+        "summary": "경력 목록 조회 API",
+        "description": "내 인재 프로필의 경력 목록을 조회합니다.",
+        "operationId": "getList_2",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTalentCareerResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Talent Career"
+        ],
+        "summary": "경력 등록 API",
+        "description": "내 인재 프로필에 경력을 등록합니다.",
+        "operationId": "create_2",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentCareerReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentCareerResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/portfolios": {
       "get": {
         "tags": [
@@ -159,7 +448,7 @@
         ],
         "summary": "내 포트폴리오 목록 조회 (마이페이지)",
         "description": "본인이 작성한 포트폴리오 목록을 최근 수정순으로 페이지 단위 조회합니다. (2×2, 기본 4개/페이지)\n\n제목, 마지막 저장일(lastSavedAt), 조회수, 공개/비공개 여부만 반환합니다. AI 첨삭 버전과 무관하게 라이브 콘텐츠가 실제로 마지막 저장된 시각입니다.",
-        "operationId": "getList",
+        "operationId": "getList_3",
         "parameters": [
           {
             "name": "page",
@@ -213,7 +502,7 @@
         ],
         "summary": "포트폴리오 생성",
         "description": "새 포트폴리오를 생성합니다. templateId는 필수이며 해당 템플릿의 필드가 자동으로 복사됩니다. 생성 시 공유용 publicSlug가 자동 발급됩니다. visibility를 지정하지 않으면 기본값 PRIVATE으로 생성됩니다. techstackIds로 포트폴리오 전체에서 사용해본 기술스택을 함께 등록할 수 있습니다.",
-        "operationId": "create",
+        "operationId": "create_3",
         "requestBody": {
           "content": {
             "application/json": {
@@ -319,7 +608,7 @@
         ],
         "summary": "프로젝트 목록 조회",
         "description": "포트폴리오에 등록된 프로젝트 목록을 등록일 기준 최신순으로 조회합니다.",
-        "operationId": "getList_1",
+        "operationId": "getList_4",
         "parameters": [
           {
             "name": "portfolioId",
@@ -361,7 +650,7 @@
         ],
         "summary": "프로젝트 등록",
         "description": "포트폴리오에 프로젝트를 등록합니다. startedAt/endedAt은 연-월 단위로 사용하며(일자는 무시), endedAt이 없으면 진행 중인 프로젝트로 취급합니다. techstackIds로 프로젝트에 사용한 기술스택을 함께 등록할 수 있습니다.",
-        "operationId": "create_1",
+        "operationId": "create_4",
         "parameters": [
           {
             "name": "portfolioId",
@@ -435,7 +724,7 @@
         ],
         "summary": "학력 목록 조회",
         "description": "포트폴리오에 등록된 학력 목록을 입학일 기준 최신순으로 조회합니다.",
-        "operationId": "getList_2",
+        "operationId": "getList_5",
         "parameters": [
           {
             "name": "portfolioId",
@@ -477,7 +766,7 @@
         ],
         "summary": "학력 등록",
         "description": "포트폴리오에 학력을 등록합니다. status는 ENROLLED(재학중), ON_LEAVE(휴학), GRADUATED(졸업), DROPPED_OUT(중퇴), COMPLETED(수료) 중 하나입니다.",
-        "operationId": "create_2",
+        "operationId": "create_5",
         "parameters": [
           {
             "name": "portfolioId",
@@ -551,7 +840,7 @@
         ],
         "summary": "자격증 목록 조회",
         "description": "포트폴리오에 등록된 자격증 목록을 취득일 기준 최신순으로 조회합니다.",
-        "operationId": "getList_3",
+        "operationId": "getList_6",
         "parameters": [
           {
             "name": "portfolioId",
@@ -593,7 +882,7 @@
         ],
         "summary": "자격증 등록",
         "description": "포트폴리오에 자격증을 등록합니다. expiresAt이 null이면 영구 유효로 처리됩니다.",
-        "operationId": "create_3",
+        "operationId": "create_6",
         "parameters": [
           {
             "name": "portfolioId",
@@ -667,7 +956,7 @@
         ],
         "summary": "경력 목록 조회",
         "description": "포트폴리오에 등록된 경력 목록을 입사일 기준 최신순으로 조회합니다.",
-        "operationId": "getList_4",
+        "operationId": "getList_7",
         "parameters": [
           {
             "name": "portfolioId",
@@ -709,7 +998,7 @@
         ],
         "summary": "경력 등록",
         "description": "포트폴리오에 경력을 등록합니다. endedAt이 null이면 현재 재직 중으로 처리됩니다.",
-        "operationId": "create_4",
+        "operationId": "create_7",
         "parameters": [
           {
             "name": "portfolioId",
@@ -1208,6 +1497,279 @@
         }
       }
     },
+    "/api/v1/job-postings": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "채용 공고 목록 조회",
+        "description": "통합 검색(keyword)과 지역·경력·상태 필터, 정렬(LATEST/POPULAR/MOST_VIEWED)을 사용하여 채용 공고 목록을 페이징 조회합니다.\n\n- `keyword`: 검색창 1개 — 기업명 / 직무(모집 파트 라벨·이름) / 요구 기술스택 중 하나라도 겹치면 매칭(OR)\n- `status`: 미지정 시 전체. CLOSING_SOON/CLOSED는 저장값이 아니라 마감일(D-7) 기준으로 판정",
+        "operationId": "getJobPostings",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "regionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "careerLevel",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NONE",
+                "UNDER_ONE_YEAR",
+                "ONE_TO_THREE_YEARS",
+                "THREE_TO_FIVE_YEARS",
+                "FIVE_TO_SEVEN_YEARS",
+                "SEVEN_TO_TEN_YEARS",
+                "OVER_TEN_YEARS"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "CLOSING_SOON",
+                "CLOSED"
+              ]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "LATEST"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageJobPostingListResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "채용 공고 등록",
+        "description": "기업 사용자가 새로운 채용 공고를 등록합니다.",
+        "operationId": "createJobPosting",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobPostingReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringLong"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/job-postings/{jobPostingId}/bookmarks": {
+      "post": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "채용 공고 북마크",
+        "description": "특정 채용 공고에 대한 북마크 상태를 토글합니다.",
+        "operationId": "toggleBookmark",
+        "parameters": [
+          {
+            "name": "jobPostingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/company-profiles": {
+      "post": {
+        "tags": [
+          "Company Profile"
+        ],
+        "summary": "기업 프로필 등록 API",
+        "description": "현재 로그인한 기업 회원의 기업 프로필을 등록합니다.",
+        "operationId": "createCompanyProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyProfileReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCompanyProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat-rooms": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "채팅방 목록(받은함) 조회",
+        "description": "통합 검색(keyword) — 상대 이름 / 연결된 포폴·공고 제목 / 마지막 메시지 내용 중 하나라도 겹치면 매칭. 내가 삭제(숨김)한 방은 목록에서 제외된다.",
+        "operationId": "getRoomList",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageChatRoomListResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "채팅방 시작(get-or-create)",
+        "description": "포트폴리오 또는 채용 공고 상세의 '문의하기'에서 호출. PORTFOLIO 기준은 기업 사용자만, JOB_POSTING 기준은 인재 사용자만 시작할 수 있고, 이미 같은 상대·origin으로 만든 방이 있으면 그 방을 그대로 반환한다.",
+        "operationId": "getOrCreateRoom",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRoomCreateReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseChatRoomResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/activities/{activityId}/views": {
       "post": {
         "tags": [
@@ -1588,6 +2150,356 @@
         }
       }
     },
+    "/api/v1/talent-profiles/me": {
+      "get": {
+        "tags": [
+          "Talent Profile"
+        ],
+        "summary": "내 인재 프로필 조회 API",
+        "description": "현재 로그인한 사용자의 인재 프로필 정보를 상세 조회합니다.",
+        "operationId": "getMyProfile",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Talent Profile"
+        ],
+        "summary": "내 인재 프로필 수정 API",
+        "description": "현재 로그인한 사용자의 인재 프로필 정보를 수정합니다.",
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentProfileUpdateReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/me/educations/{educationId}": {
+      "delete": {
+        "tags": [
+          "Talent Education"
+        ],
+        "summary": "학력 삭제 API",
+        "description": "내 인재 프로필의 학력을 삭제합니다.",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "educationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Talent Education"
+        ],
+        "summary": "학력 수정 API",
+        "description": "내 인재 프로필의 학력을 수정합니다.",
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "educationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentEducationReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentEducationResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/me/certificates/{certificateId}": {
+      "delete": {
+        "tags": [
+          "Talent Certificate"
+        ],
+        "summary": "자격증 삭제 API",
+        "description": "내 인재 프로필의 자격증을 삭제합니다.",
+        "operationId": "delete_1",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "certificateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Talent Certificate"
+        ],
+        "summary": "자격증 수정 API",
+        "description": "내 인재 프로필의 자격증을 수정합니다.",
+        "operationId": "update_1",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "certificateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentCertificateReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentCertificateResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/me/careers/{careerId}": {
+      "delete": {
+        "tags": [
+          "Talent Career"
+        ],
+        "summary": "경력 삭제 API",
+        "description": "내 인재 프로필의 경력을 삭제합니다.",
+        "operationId": "delete_2",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "careerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Talent Career"
+        ],
+        "summary": "경력 수정 API",
+        "description": "내 인재 프로필의 경력을 수정합니다.",
+        "operationId": "update_2",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "careerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TalentCareerReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentCareerResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/portfolios/{portfolioId}": {
       "get": {
         "tags": [
@@ -1647,7 +2559,7 @@
         ],
         "summary": "포트폴리오 삭제",
         "description": "포트폴리오를 삭제합니다. 본인 포트폴리오만 삭제 가능합니다.",
-        "operationId": "delete",
+        "operationId": "delete_3",
         "parameters": [
           {
             "name": "portfolioId",
@@ -1699,7 +2611,7 @@
         ],
         "summary": "포트폴리오 수정",
         "description": "포트폴리오 기본 정보를 수정합니다. 본인 포트폴리오만 수정 가능합니다. techstackIds는 매번 전체 목록으로 교체됩니다.",
-        "operationId": "update",
+        "operationId": "update_3",
         "parameters": [
           {
             "name": "portfolioId",
@@ -1911,7 +2823,7 @@
         ],
         "summary": "프로젝트 삭제",
         "description": "등록된 프로젝트를 삭제합니다. 본인 포트폴리오의 프로젝트만 삭제 가능합니다.",
-        "operationId": "delete_1",
+        "operationId": "delete_4",
         "parameters": [
           {
             "name": "portfolioId",
@@ -1983,7 +2895,7 @@
         ],
         "summary": "프로젝트 수정",
         "description": "등록된 프로젝트 정보를 수정합니다. 본인 포트폴리오의 프로젝트만 수정 가능합니다. techstackIds는 매번 전체 목록으로 교체됩니다.",
-        "operationId": "update_1",
+        "operationId": "update_4",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2235,7 +3147,7 @@
         ],
         "summary": "학력 삭제",
         "description": "등록된 학력을 삭제합니다. 본인 포트폴리오의 학력만 삭제 가능합니다.",
-        "operationId": "delete_2",
+        "operationId": "delete_5",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2307,7 +3219,7 @@
         ],
         "summary": "학력 수정",
         "description": "등록된 학력 정보를 수정합니다. 본인 포트폴리오의 학력만 수정 가능합니다.",
-        "operationId": "update_2",
+        "operationId": "update_5",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2391,7 +3303,7 @@
         ],
         "summary": "자격증 삭제",
         "description": "등록된 자격증을 삭제합니다. 본인 포트폴리오의 자격증만 삭제 가능합니다.",
-        "operationId": "delete_3",
+        "operationId": "delete_6",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2463,7 +3375,7 @@
         ],
         "summary": "자격증 수정",
         "description": "등록된 자격증 정보를 수정합니다. 본인 포트폴리오의 자격증만 수정 가능합니다.",
-        "operationId": "update_3",
+        "operationId": "update_6",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2547,7 +3459,7 @@
         ],
         "summary": "경력 삭제",
         "description": "등록된 경력을 삭제합니다. 본인 포트폴리오의 경력만 삭제 가능합니다.",
-        "operationId": "delete_4",
+        "operationId": "delete_7",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2619,7 +3531,7 @@
         ],
         "summary": "경력 수정",
         "description": "등록된 경력 정보를 수정합니다. 본인 포트폴리오의 경력만 수정 가능합니다.",
-        "operationId": "update_4",
+        "operationId": "update_7",
         "parameters": [
           {
             "name": "portfolioId",
@@ -2836,7 +3748,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2846,7 +3758,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2856,7 +3768,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2866,7 +3778,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2920,7 +3832,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2930,7 +3842,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2940,7 +3852,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2950,7 +3862,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAiFieldResultDTO"
+                  "$ref": "#/components/schemas/ApiResponseAiFieldResDTO"
                 }
               }
             }
@@ -2958,17 +3870,196 @@
         }
       }
     },
-    "/api/companies/{companyProfileId}/verification": {
+    "/api/v1/job-postings/{jobPostingId}": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "채용 공고 상세 조회",
+        "description": "특정 채용 공고의 상세 정보를 조회합니다.",
+        "operationId": "getJobPostingDetail",
+        "parameters": [
+          {
+            "name": "jobPostingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseJobPostingDetailResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "채용 공고 삭제",
+        "description": "특정 채용 공고를 삭제합니다. 지원자가 있을 경우 삭제가 불가능합니다.",
+        "operationId": "deleteJobPosting",
+        "parameters": [
+          {
+            "name": "jobPostingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      },
       "patch": {
         "tags": [
-          "Company API"
+          "Job Posting"
+        ],
+        "summary": "채용 공고 수정",
+        "description": "등록된 채용 공고 정보를 수정합니다.",
+        "operationId": "updateJobPosting",
+        "parameters": [
+          {
+            "name": "jobPostingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobPostingReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/company-profiles/{profileId}": {
+      "get": {
+        "tags": [
+          "Company Profile"
+        ],
+        "summary": "기업 프로필 상세 조회 API",
+        "description": "특정 기업 프로필의 상세 정보를 조회합니다.",
+        "operationId": "getCompanyProfile",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCompanyProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Company Profile"
+        ],
+        "summary": "기업 프로필 수정 API",
+        "description": "현재 로그인한 기업 회원이 자신의 기업 프로필 정보를 수정합니다.",
+        "operationId": "updateCompanyProfile",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyProfileReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCompanyProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/company-profiles/{profileId}/verification": {
+      "patch": {
+        "tags": [
+          "Company Profile"
         ],
         "summary": "기업 사업자 인증 상태 변경(관리자용)",
         "description": "관리자가 사업자번호 확인 후 기업 프로필의 인증 상태를 VERIFIED/REJECTED로 변경합니다.",
         "operationId": "updateVerification",
         "parameters": [
           {
-            "name": "companyProfileId",
+            "name": "profileId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2994,6 +4085,39 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseCompanyProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/talent-profiles/signup-info": {
+      "get": {
+        "tags": [
+          "Talent Profile"
+        ],
+        "summary": "회원가입 정보 조회 API",
+        "description": "프로필 작성 화면에서 프리필할 회원가입 시 입력값(이름/휴대폰/나이)을 조회합니다.",
+        "operationId": "getSignupInfo",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTalentProfileSignupInfoResDTO"
                 }
               }
             }
@@ -3042,7 +4166,7 @@
         ],
         "summary": "포트폴리오 필드 목록 조회",
         "description": "포트폴리오에 포함된 템플릿 필드 목록과 현재 작성된 내용을 displayOrder 순으로 조회합니다.",
-        "operationId": "getList_5",
+        "operationId": "getList_8",
         "parameters": [
           {
             "name": "portfolioId",
@@ -3456,9 +4580,28 @@
           "Portfolio"
         ],
         "summary": "공개 포트폴리오 탐색 목록 조회",
-        "description": "공개(PUBLIC) + 게시(PUBLISHED) 상태인 포트폴리오 전체를 페이지 단위 조회합니다. (3×3, 기본 9개/페이지)\n\n- `sort`: LATEST(최신순, 기본값) / POPULAR(북마크 순) / MOST_VIEWED(조회순)\n- **비로그인 시**: 상위 3개만 반환 (`totalElements`는 실제 전체 개수 — 프론트에서 회원가입 유도 UI 표시)\n- 포트폴리오 제목, 작성자 프로필 사진/이름/지역, 경력 연차(careerLevel), 직군(jobRole), 보유 기술스택, 북마크수, 조회수를 반환합니다.",
+        "description": "공개(PUBLIC) + 게시(PUBLISHED) 상태인 포트폴리오 전체를 페이지 단위 조회합니다. (3×3, 기본 9개/페이지)\n\n- `sort`: LATEST(최신순, 기본값) / POPULAR(북마크 순) / MOST_VIEWED(조회순)\n- **비로그인 시**: 상위 3개만 반환 (`totalElements`는 실제 전체 개수 — 프론트에서 회원가입 유도 UI 표시)\n- 포트폴리오 제목, 작성자 프로필 사진/이름/지역, 경력 연차(careerYears), 직군(jobRole), 보유 기술스택, 북마크수, 조회수를 반환합니다.\n- `keyword`: 검색창 1개 — 제목 / 작성자 이름 / 요구 기술스택 중 하나라도 겹치면 매칭(OR) (선택)\n- `regionId`: 지역 필터 (선택)\n- `career`: 경력 버킷(없음/1년미만/1~3년/.../10년이상)으로 필터링 (선택)\n- `category`: 직군 카테고리(FRONTEND/BACKEND/FULLSTACK/MOBILE/DATA/DEVOPS/EMBEDDED)로 필터링, 미지정 시 전체 (선택). 예: MOBILE은 MOBILE/ANDROID/IOS jobRole을 모두 포함, DATA는 DATA_ENGINEER/DATA_ANALYST/DATA_SCIENTIST를 포함",
         "operationId": "getPublicList",
         "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "통합 검색어 — 제목/작성자/기술스택 (선택)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "regionId",
+            "in": "query",
+            "description": "지역 ID 필터 (선택)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
           {
             "name": "sort",
             "in": "query",
@@ -3494,6 +4637,42 @@
               "format": "int32",
               "default": 9
             }
+          },
+          {
+            "name": "career",
+            "in": "query",
+            "description": "경력 버킷 필터 (선택)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NONE",
+                "UNDER_ONE_YEAR",
+                "ONE_TO_THREE_YEARS",
+                "THREE_TO_FIVE_YEARS",
+                "FIVE_TO_SEVEN_YEARS",
+                "SEVEN_TO_TEN_YEARS",
+                "OVER_TEN_YEARS"
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "직군 카테고리 필터, 전체=미지정 (선택)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FRONTEND",
+                "BACKEND",
+                "FULLSTACK",
+                "MOBILE",
+                "DATA",
+                "DEVOPS",
+                "EMBEDDED"
+              ]
+            }
           }
         ],
         "responses": {
@@ -3510,6 +4689,28 @@
         }
       }
     },
+    "/api/v1/portfolios/job-categories": {
+      "get": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "포트폴리오 직군 카테고리 목록 조회",
+        "description": "포트폴리오 목록 필터에서 클릭형으로 보여줄 직군 카테고리 목록을 반환합니다(검색이 아닌 고정 버튼 목록).\n\n전체/Frontend/Backend/Fullstack/Mobile/Data/DevOps/Embedded — \"전체\"는 이 API 목록에 포함되지 않고, 프론트가 `category` 파라미터 없이 `/public`을 호출하는 것으로 처리합니다.",
+        "operationId": "getJobCategories",
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPortfolioJobCategoryResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/portfolio-templates": {
       "get": {
         "tags": [
@@ -3517,7 +4718,7 @@
         ],
         "summary": "템플릿 목록 조회",
         "description": "사용 가능한 템플릿 목록을 사용 횟수 기준 내림차순으로 페이지 단위 조회합니다. (2×2, 기본 4개/페이지)",
-        "operationId": "getList_6",
+        "operationId": "getList_9",
         "parameters": [
           {
             "name": "page",
@@ -3593,6 +4794,212 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseTemplateDetailResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/parts": {
+      "get": {
+        "tags": [
+          "part-controller"
+        ],
+        "operationId": "search_1",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPartResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/company-profiles/signup-info": {
+      "get": {
+        "tags": [
+          "Company Profile"
+        ],
+        "summary": "회원가입 정보 조회 API",
+        "description": "기업 프로필 등록 화면에서 프리필할 회원가입 시 입력값(담당자 이름/연락처/사업자번호)을 조회합니다.",
+        "operationId": "getSignupInfo_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCompanyProfileSignupInfoResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/company-profiles/me": {
+      "get": {
+        "tags": [
+          "Company Profile"
+        ],
+        "summary": "내 기업 프로필 조회 API",
+        "description": "현재 로그인한 기업 회원의 기업 프로필 정보를 조회합니다.",
+        "operationId": "getMyCompanyProfile",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCompanyProfileResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat-rooms/{roomId}": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "채팅방 상세 조회",
+        "description": "채팅 화면 상단(상대 정보, 연결된 포폴/공고)에 표시할 정보를 조회한다.",
+        "operationId": "getRoomDetail",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseChatRoomResDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "채팅방 삭제(나가기)",
+        "description": "나에게만 목록에서 숨긴다. 상대가 새 메시지를 보내면 다시 노출된다.",
+        "operationId": "hideRoom",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat-rooms/{roomId}/messages": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "채팅 메시지 목록 조회",
+        "description": "메시지 히스토리를 최신순으로 페이징 조회하고, 조회한 사용자의 안읽음 카운트를 0으로 초기화한다.",
+        "operationId": "getMessages",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageChatMessageResDTO"
                 }
               }
             }
@@ -3865,6 +5272,406 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "TalentCareerReqDTO": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "position": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "description": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "companyName",
+          "startedAt"
+        ]
+      },
+      "TalentCertificateReqDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0
+          },
+          "issuer": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "credentialId": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "TalentEducationReqDTO": {
+        "type": "object",
+        "properties": {
+          "schoolName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "major": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "degree": {
+            "type": "string",
+            "enum": [
+              "HIGH_SCHOOL",
+              "UNIVERSITY",
+              "BACHELOR",
+              "MASTER",
+              "DOCTOR"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ENROLLED",
+              "ON_LEAVE",
+              "GRADUATED",
+              "DROPPED_OUT",
+              "COMPLETED"
+            ]
+          }
+        },
+        "required": [
+          "schoolName",
+          "status"
+        ]
+      },
+      "TalentProfileCreateReqDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "regionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "FEMALE",
+              "MALE",
+              "NONE"
+            ]
+          },
+          "githubUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "portfolioWebsite": {
+            "type": "string"
+          },
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "minItems": 1
+          },
+          "careerYears": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "techStackIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "oneLiner": {
+            "type": "string"
+          },
+          "careers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentCareerReqDTO"
+            }
+          },
+          "educations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentEducationReqDTO"
+            }
+          },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentCertificateReqDTO"
+            }
+          }
+        },
+        "required": [
+          "careerYears",
+          "contactEmail",
+          "githubUrl",
+          "name",
+          "partIds",
+          "regionId"
+        ]
+      },
+      "ApiResponseMapStringLong": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseTalentEducationResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TalentEducationResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TalentEducationResDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "talentProfileId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "schoolName": {
+            "type": "string"
+          },
+          "major": {
+            "type": "string"
+          },
+          "degree": {
+            "type": "string",
+            "enum": [
+              "HIGH_SCHOOL",
+              "UNIVERSITY",
+              "BACHELOR",
+              "MASTER",
+              "DOCTOR"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ENROLLED",
+              "ON_LEAVE",
+              "GRADUATED",
+              "DROPPED_OUT",
+              "COMPLETED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseTalentCertificateResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TalentCertificateResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TalentCertificateResDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "talentProfileId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "credentialId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseTalentCareerResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TalentCareerResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TalentCareerResDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "talentProfileId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -4470,7 +6277,7 @@
           }
         }
       },
-      "AiFieldResultDTO": {
+      "AiFieldResDTO": {
         "type": "object",
         "properties": {
           "id": {
@@ -4577,8 +6384,428 @@
           "fields": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AiFieldResultDTO"
+              "$ref": "#/components/schemas/AiFieldResDTO"
             }
+          }
+        }
+      },
+      "HiringProcessStepDto": {
+        "type": "object",
+        "properties": {
+          "stepOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stepName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "JobPostingReqDTO": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "positionName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "jobRole": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "MOBILE",
+              "ANDROID",
+              "IOS",
+              "DATA_ENGINEER",
+              "DATA_ANALYST",
+              "DATA_SCIENTIST",
+              "DEVOPS",
+              "CLOUD",
+              "AI_ENGINEER",
+              "ML_ENGINEER",
+              "QA",
+              "SECURITY",
+              "GAME",
+              "EMBEDDED",
+              "PM",
+              "PO"
+            ]
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "CONTRACT",
+              "INTERN",
+              "FREELANCER",
+              "PART_TIME",
+              "REMOTE",
+              "HYBRID"
+            ]
+          },
+          "careerLevel": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "UNDER_ONE_YEAR",
+              "ONE_TO_THREE_YEARS",
+              "THREE_TO_FIVE_YEARS",
+              "FIVE_TO_SEVEN_YEARS",
+              "SEVEN_TO_TEN_YEARS",
+              "OVER_TEN_YEARS"
+            ]
+          },
+          "minCareerYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxCareerYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "regionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "workLocation": {
+            "type": "string"
+          },
+          "minSalary": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSalary": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fieldDescription": {
+            "type": "string"
+          },
+          "responsibilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredQualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredConditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredTalents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 0
+          },
+          "hiringProcess": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HiringProcessStepDto"
+            }
+          },
+          "additionalNotes": {
+            "type": "string"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "CLOSING_SOON",
+              "CLOSED"
+            ]
+          },
+          "techStacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechStackReqDto"
+            }
+          }
+        },
+        "required": [
+          "employmentType",
+          "jobRole",
+          "positionName",
+          "regionId",
+          "title"
+        ]
+      },
+      "TechStackReqDto": {
+        "type": "object",
+        "properties": {
+          "techStackId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stackType": {
+            "type": "string",
+            "enum": [
+              "REQUIRED",
+              "PREFERRED"
+            ]
+          }
+        }
+      },
+      "ApiResponseMapStringObject": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CompanyProfileReqDTO": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "industry": {
+            "type": "string",
+            "enum": [
+              "AI_ML",
+              "ECOMMERCE",
+              "COLLABORATION_TOOL",
+              "HEALTHCARE",
+              "EDUTECH",
+              "MEDIA",
+              "IOT",
+              "INFRASTRUCTURE"
+            ]
+          },
+          "websiteUrl": {
+            "type": "string"
+          },
+          "companyIntro": {
+            "type": "string"
+          },
+          "regionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "employeeSize": {
+            "type": "string"
+          },
+          "contactName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "contactPhone": {
+            "type": "string"
+          },
+          "techStackIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "required": [
+          "companyName",
+          "contactName",
+          "industry",
+          "regionId"
+        ]
+      },
+      "ApiResponseCompanyProfileResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CompanyProfileResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CompanyProfileResDTO": {
+        "type": "object",
+        "properties": {
+          "companyProfileId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "businessNumber": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string",
+            "enum": [
+              "AI_ML",
+              "ECOMMERCE",
+              "COLLABORATION_TOOL",
+              "HEALTHCARE",
+              "EDUTECH",
+              "MEDIA",
+              "IOT",
+              "INFRASTRUCTURE"
+            ]
+          },
+          "websiteUrl": {
+            "type": "string"
+          },
+          "companyIntro": {
+            "type": "string"
+          },
+          "employeeSize": {
+            "type": "string"
+          },
+          "regionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contactName": {
+            "type": "string"
+          },
+          "contactEmail": {
+            "type": "string"
+          },
+          "contactPhone": {
+            "type": "string"
+          },
+          "techStacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechstackResDTO"
+            }
+          },
+          "verificationStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "VERIFIED",
+              "REJECTED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChatRoomCreateReqDTO": {
+        "type": "object",
+        "properties": {
+          "originType": {
+            "type": "string",
+            "enum": [
+              "PORTFOLIO",
+              "JOB_POSTING"
+            ]
+          },
+          "originId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "originId",
+          "originType"
+        ]
+      },
+      "ApiResponseChatRoomResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ChatRoomResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ChatRoomResDTO": {
+        "type": "object",
+        "properties": {
+          "chatRoomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "counterpartName": {
+            "type": "string"
+          },
+          "counterpartType": {
+            "type": "string",
+            "enum": [
+              "TALENT",
+              "COMPANY"
+            ]
+          },
+          "originType": {
+            "type": "string",
+            "enum": [
+              "PORTFOLIO",
+              "JOB_POSTING"
+            ]
+          },
+          "originId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "originTitle": {
+            "type": "string"
           }
         }
       },
@@ -4799,6 +7026,201 @@
           }
         }
       },
+      "TalentProfileUpdateReqDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "regionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "FEMALE",
+              "MALE",
+              "NONE"
+            ]
+          },
+          "githubUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "portfolioWebsite": {
+            "type": "string"
+          },
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "minItems": 1
+          },
+          "careerYears": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "techStackIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "oneLiner": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "careerYears",
+          "contactEmail",
+          "githubUrl",
+          "name",
+          "partIds",
+          "regionId"
+        ]
+      },
+      "ApiResponseTalentProfileResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/TalentProfileResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PartResDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "TalentProfileResDTO": {
+        "type": "object",
+        "properties": {
+          "talentProfileId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "regionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contactEmail": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "FEMALE",
+              "MALE",
+              "NONE"
+            ]
+          },
+          "githubUrl": {
+            "type": "string"
+          },
+          "portfolioWebsite": {
+            "type": "string"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartResDTO"
+            }
+          },
+          "careerYears": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "oneLiner": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "techStacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentTechStackResDTO"
+            }
+          },
+          "careers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentCareerResDTO"
+            }
+          },
+          "educations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentEducationResDTO"
+            }
+          },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentCertificateResDTO"
+            }
+          }
+        }
+      },
+      "TalentTechStackResDTO": {
+        "type": "object",
+        "properties": {
+          "techStackId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "PortfolioUpdateReqDTO": {
         "type": "object",
         "properties": {
@@ -4986,7 +7408,7 @@
           "chosen"
         ]
       },
-      "ApiResponseAiFieldResultDTO": {
+      "ApiResponseAiFieldResDTO": {
         "type": "object",
         "properties": {
           "code": {
@@ -4996,7 +7418,7 @@
             "type": "string"
           },
           "result": {
-            "$ref": "#/components/schemas/AiFieldResultDTO"
+            "$ref": "#/components/schemas/AiFieldResDTO"
           },
           "success": {
             "type": "boolean"
@@ -5027,7 +7449,7 @@
           }
         }
       },
-      "ApiResponseCompanyProfileResDTO": {
+      "ApiResponseTalentProfileSignupInfoResDTO": {
         "type": "object",
         "properties": {
           "code": {
@@ -5037,37 +7459,85 @@
             "type": "string"
           },
           "result": {
-            "$ref": "#/components/schemas/CompanyProfileResDTO"
+            "$ref": "#/components/schemas/TalentProfileSignupInfoResDTO"
           },
           "success": {
             "type": "boolean"
           }
         }
       },
-      "CompanyProfileResDTO": {
+      "TalentProfileSignupInfoResDTO": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "memberId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "companyName": {
+          "name": {
             "type": "string"
           },
-          "businessNumber": {
+          "phone": {
             "type": "string"
           },
-          "verificationStatus": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "VERIFIED",
-              "REJECTED"
-            ]
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListTalentEducationResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentEducationResDTO"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseListTalentCertificateResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentCertificateResDTO"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseListTalentCareerResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TalentCareerResDTO"
+            }
+          },
+          "success": {
+            "type": "boolean"
           }
         }
       },
@@ -5602,26 +8072,15 @@
           "title": {
             "type": "string"
           },
-          "authorProfileImageUrl": {
-            "type": "string"
-          },
           "authorName": {
             "type": "string"
           },
           "authorRegion": {
             "$ref": "#/components/schemas/RegionResDTO"
           },
-          "careerLevel": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "UNDER_ONE_YEAR",
-              "ONE_TO_THREE_YEARS",
-              "THREE_TO_FIVE_YEARS",
-              "FIVE_TO_SEVEN_YEARS",
-              "SEVEN_TO_TEN_YEARS",
-              "OVER_TEN_YEARS"
-            ]
+          "careerYears": {
+            "type": "integer",
+            "format": "int32"
           },
           "jobRole": {
             "type": "string",
@@ -5660,6 +8119,37 @@
           "viewCount": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "ApiResponseListPortfolioJobCategoryResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioJobCategoryResDTO"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PortfolioJobCategoryResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
           }
         }
       },
@@ -5820,6 +8310,661 @@
             "format": "int32"
           },
           "required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseListPartResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartResDTO"
+            }
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ApiResponsePageJobPostingListResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/PageJobPostingListResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "JobPostingListResDTO": {
+        "type": "object",
+        "properties": {
+          "jobPostingId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "careerLevel": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "UNDER_ONE_YEAR",
+              "ONE_TO_THREE_YEARS",
+              "THREE_TO_FIVE_YEARS",
+              "FIVE_TO_SEVEN_YEARS",
+              "SEVEN_TO_TEN_YEARS",
+              "OVER_TEN_YEARS"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "CLOSING_SOON",
+              "CLOSED"
+            ]
+          },
+          "jobRole": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "MOBILE",
+              "ANDROID",
+              "IOS",
+              "DATA_ENGINEER",
+              "DATA_ANALYST",
+              "DATA_SCIENTIST",
+              "DEVOPS",
+              "CLOUD",
+              "AI_ENGINEER",
+              "ML_ENGINEER",
+              "QA",
+              "SECURITY",
+              "GAME",
+              "EMBEDDED",
+              "PM",
+              "PO"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "positionName": {
+            "type": "string"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "locationName": {
+            "type": "string"
+          },
+          "techStacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechStackDto"
+            }
+          }
+        }
+      },
+      "PageJobPostingListResDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobPostingListResDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "unpaged": {
+            "type": "boolean"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "unsorted": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TechStackDto": {
+        "type": "object",
+        "properties": {
+          "techStackId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseJobPostingDetailResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/JobPostingDetailResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CompanyProfileDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string",
+            "enum": [
+              "AI_ML",
+              "ECOMMERCE",
+              "COLLABORATION_TOOL",
+              "HEALTHCARE",
+              "EDUTECH",
+              "MEDIA",
+              "IOT",
+              "INFRASTRUCTURE"
+            ]
+          },
+          "employeeSize": {
+            "type": "string"
+          },
+          "websiteUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "HeaderInfoDto": {
+        "type": "object",
+        "properties": {
+          "dDay": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "CONTRACT",
+              "INTERN",
+              "FREELANCER",
+              "PART_TIME",
+              "REMOTE",
+              "HYBRID"
+            ]
+          },
+          "careerLevel": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "UNDER_ONE_YEAR",
+              "ONE_TO_THREE_YEARS",
+              "THREE_TO_FIVE_YEARS",
+              "FIVE_TO_SEVEN_YEARS",
+              "SEVEN_TO_TEN_YEARS",
+              "OVER_TEN_YEARS"
+            ]
+          },
+          "jobRole": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "MOBILE",
+              "ANDROID",
+              "IOS",
+              "DATA_ENGINEER",
+              "DATA_ANALYST",
+              "DATA_SCIENTIST",
+              "DEVOPS",
+              "CLOUD",
+              "AI_ENGINEER",
+              "ML_ENGINEER",
+              "QA",
+              "SECURITY",
+              "GAME",
+              "EMBEDDED",
+              "PM",
+              "PO"
+            ]
+          }
+        }
+      },
+      "JobPostingDetailResDTO": {
+        "type": "object",
+        "properties": {
+          "jobPostingId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyProfile": {
+            "$ref": "#/components/schemas/CompanyProfileDto"
+          },
+          "headerInfo": {
+            "$ref": "#/components/schemas/HeaderInfoDto"
+          },
+          "title": {
+            "type": "string"
+          },
+          "positionName": {
+            "type": "string"
+          },
+          "workLocation": {
+            "type": "string"
+          },
+          "salaryString": {
+            "type": "string"
+          },
+          "viewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bookmarkCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isBookmarked": {
+            "type": "boolean"
+          },
+          "fieldDescription": {
+            "type": "string"
+          },
+          "responsibilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredQualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredConditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredTalents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hiringProcess": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HiringProcessStepDto"
+            }
+          },
+          "additionalNotes": {
+            "type": "string"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "CLOSING_SOON",
+              "CLOSED"
+            ]
+          },
+          "techStacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechStackDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponseCompanyProfileSignupInfoResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CompanyProfileSignupInfoResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CompanyProfileSignupInfoResDTO": {
+        "type": "object",
+        "properties": {
+          "contactName": {
+            "type": "string"
+          },
+          "contactPhone": {
+            "type": "string"
+          },
+          "businessNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponsePageChatRoomListResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/PageChatRoomListResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ChatRoomListResDTO": {
+        "type": "object",
+        "properties": {
+          "chatRoomId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "counterpartName": {
+            "type": "string"
+          },
+          "counterpartType": {
+            "type": "string",
+            "enum": [
+              "TALENT",
+              "COMPANY"
+            ]
+          },
+          "lastMessage": {
+            "type": "string"
+          },
+          "lastMessageAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PageChatRoomListResDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatRoomListResDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponsePageChatMessageResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/PageChatMessageResDTO"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ChatMessageResDTO": {
+        "type": "object",
+        "properties": {
+          "chatMessageId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "senderId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "senderType": {
+            "type": "string",
+            "enum": [
+              "TALENT",
+              "COMPANY"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PageChatMessageResDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatMessageResDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "empty": {
             "type": "boolean"
           }
         }

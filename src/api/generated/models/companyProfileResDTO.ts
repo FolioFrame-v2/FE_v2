@@ -5,12 +5,24 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
+import type { CompanyProfileResDTOIndustry } from './companyProfileResDTOIndustry.ts';
 import type { CompanyProfileResDTOVerificationStatus } from './companyProfileResDTOVerificationStatus.ts';
+import type { TechstackResDTO } from './techstackResDTO.ts';
 
 export interface CompanyProfileResDTO {
-  id?: number;
-  memberId?: number;
+  companyProfileId?: number;
   companyName?: string;
   businessNumber?: string;
+  industry?: CompanyProfileResDTOIndustry;
+  websiteUrl?: string;
+  companyIntro?: string;
+  employeeSize?: string;
+  regionId?: number;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  techStacks?: TechstackResDTO[];
   verificationStatus?: CompanyProfileResDTOVerificationStatus;
+  createdAt?: string;
+  updatedAt?: string;
 }

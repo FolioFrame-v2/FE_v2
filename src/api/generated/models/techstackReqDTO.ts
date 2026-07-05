@@ -5,6 +5,7 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
+import type { TechStackReqDtoStackType } from './techStackReqDtoStackType.ts';
 
 export interface TechstackReqDTO {
   /**
@@ -12,4 +13,9 @@ export interface TechstackReqDTO {
      * @maxLength 50
      */
   name: string;
+}
+
+export interface TechStackReqDto {
+  techStackId?: number;
+  stackType?: TechStackReqDtoStackType;
 }

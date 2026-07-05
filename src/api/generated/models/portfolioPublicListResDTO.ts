@@ -5,7 +5,6 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import type { PortfolioPublicListResDTOCareerLevel } from './portfolioPublicListResDTOCareerLevel.ts';
 import type { PortfolioPublicListResDTOJobRole } from './portfolioPublicListResDTOJobRole.ts';
 import type { RegionResDTO } from './regionResDTO.ts';
 import type { TechstackResDTO } from './techstackResDTO.ts';
@@ -13,10 +12,9 @@ import type { TechstackResDTO } from './techstackResDTO.ts';
 export interface PortfolioPublicListResDTO {
   id?: number;
   title?: string;
-  authorProfileImageUrl?: string;
   authorName?: string;
   authorRegion?: RegionResDTO;
-  careerLevel?: PortfolioPublicListResDTOCareerLevel;
+  careerYears?: number;
   jobRole?: PortfolioPublicListResDTOJobRole;
   techstacks?: TechstackResDTO[];
   bookmarkCount?: number;

@@ -5,8 +5,8 @@ import CreatePortfolioTemplate from "@/components/CreatePortfolioPage/CreatePort
 // removed domain/features import
 // removed domain/features import
 import { Navigate, useNavigate } from "@tanstack/react-router";
-import { useCreate } from "@/api/generated/portfolio/portfolio";
-import { useGetList6 } from "@/api/generated/template/template";
+import { useCreate3 as useCreate } from "@/api/generated/portfolio/portfolio";
+import { useGetList9 } from "@/api/generated/template/template";
 
 const CreatePortfolioPage = () => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const CreatePortfolioPage = () => {
     console.log("Selected templateId:", templateId);
   };
 
-  const { data: templateData } = useGetList6();
+  const { data: templateData } = useGetList9();
   const templateInfo = (templateData?.data?.result?.content || []).map((t: any) => ({
     templateId: t.id,
     templateName: t.name,

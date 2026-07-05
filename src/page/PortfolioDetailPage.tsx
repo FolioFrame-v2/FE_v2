@@ -22,7 +22,7 @@ import heart_fill from "@/assets/images/PortfolioDetailPage3/heart-fill.svg";
 // removed domain/features import
 
 const PortfolioDetailPage = () => {
-  const { portfolioId } = useParams({ strict: false });
+  const { id: portfolioId } = useParams({ strict: false });
   const navigate = useNavigate();
 
   const { data: detailData, isLoading } = useGetDetail(Number(portfolioId), {
@@ -31,7 +31,7 @@ const PortfolioDetailPage = () => {
     }
   });
 
-  const apiPortfolio = detailData?.data;
+  const apiPortfolio = detailData?.data?.result;
   const [comments, setComments] = useState<any[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [showModal, setShowModal] = useState(false); // "연락" 버튼 눌렀을 때 true
@@ -75,8 +75,8 @@ const PortfolioDetailPage = () => {
     if (currentUser.recruiter && showContactInfo) {
       return (
         <>
-          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.name || "이름 없음"}</div>
-          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.email || "이메일 없음"}</div>
+          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{(apiPortfolio?.talentProfile as any)?.name || "이름 없음"}</div>
+          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.contactEmail || "이메일 없음"}</div>
         </>
       );
     } else if (currentUser.recruiter) {
@@ -96,7 +96,7 @@ const PortfolioDetailPage = () => {
     } else {
       return (
         <>
-          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{apiPortfolio?.talentProfile?.name || "익명"}</div>
+          <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">{(apiPortfolio?.talentProfile as any)?.name || "익명"}</div>
           <div className="bg-[#f0f0f0] m-[0.8vw] p-[0.4vw] border border-[#ccc] rounded-[4px] w-[80%]">example@example.com</div>
         </>
       );
@@ -170,21 +170,21 @@ const PortfolioDetailPage = () => {
           <div className="flex flex-col mb-[3vh] [grid-area:participationPeriod]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">참여 기간</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {apiPortfolio?.projects?.[0]?.startDate || ""} - {apiPortfolio?.projects?.[0]?.endDate || ""}
+              {apiPortfolio?.projects?.[0]?.startedAt || ""} - {apiPortfolio?.projects?.[0]?.endedAt || ""}
             </div>
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:education]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">학력</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {apiPortfolio?.educations?.map(e => `${e.schoolName} ${e.major} (${e.admissionDate} - ${e.graduationDate})`).join(", ") || "학력 정보 없음"}
+              {apiPortfolio?.educations?.map(e => `${e.schoolName} ${e.major} (${e.startedAt} - ${e.endedAt})`).join(", ") || "학력 정보 없음"}
             </div>
           </div>
 
           <div className="flex flex-col mb-[3vh] [grid-area:certifications]">
             <label className="font-bolder text-[1.6vw] mb-[8px]">자격증</label>
             <div className="bg-white p-[0.4vw] border border-[#ccc] rounded-[4px]">
-              {apiPortfolio?.certificates?.map(c => `${c.name} (${c.acquisitionDate})`).join(", ") || "자격증 정보 없음"}
+              {apiPortfolio?.certificates?.map(c => `${c.name} (${c.issuedAt})`).join(", ") || "자격증 정보 없음"}
             </div>
           </div>
 

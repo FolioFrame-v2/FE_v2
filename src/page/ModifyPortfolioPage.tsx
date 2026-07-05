@@ -6,13 +6,13 @@ import ModifyPortfolioTemplate from "@/components/ModifyPortfolioPage/ModifyPort
 // removed domain/features import
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
-import { useUpdate } from "@/api/generated/portfolio/portfolio";
+import { useUpdate3 as useUpdate } from "@/api/generated/portfolio/portfolio";
 
 const templateInfo = [{ id: 1, name: "Mock Template" }];
 
 const ModifyPortfolioPage = () => {
   const navigate = useNavigate();
-  const { portfolioId } = useParams({ strict: false });
+  const { id: portfolioId } = useParams({ strict: false });
 
   const [formData, setFormData] = useState({
     projectId: Number(portfolioId) || "",

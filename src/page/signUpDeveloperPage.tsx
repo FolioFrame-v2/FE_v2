@@ -78,11 +78,16 @@ const signUpDeveloperPage = () => {
       return;
     }
     try {
-      await checkIdMutate({ data: { loginId: idInput } });
-      alert("사용 가능한 아이디입니다.");
-      setIdChecked(true);
+      const res = await checkIdMutate({ data: { loginId: idInput } });
+      if (res?.data?.result?.available) {
+        alert("사용 가능한 아이디입니다.");
+        setIdChecked(true);
+      } else {
+        alert("이미 사용 중인 아이디입니다.");
+        setIdChecked(false);
+      }
     } catch (error: any) {
-      alert(error?.response?.data?.message || "이미 사용 중인 아이디입니다.");
+      alert(error?.response?.data?.message || "아이디 중복 확인에 실패했습니다.");
       setIdChecked(false);
     }
   };
@@ -102,11 +107,16 @@ const signUpDeveloperPage = () => {
       return;
     }
     try {
-      await checkPhoneMutate({ data: { phone: phone } });
-      alert("사용 가능한 전화번호입니다.");
-      setPhoneChecked(true);
+      const res = await checkPhoneMutate({ data: { phone: phone } });
+      if (res?.data?.result?.available) {
+        alert("사용 가능한 전화번호입니다.");
+        setPhoneChecked(true);
+      } else {
+        alert("이미 사용 중인 휴대폰번호입니다.");
+        setPhoneChecked(false);
+      }
     } catch (error: any) {
-      alert(error?.response?.data?.message || "이미 사용 중인 휴대폰번호입니다.");
+      alert(error?.response?.data?.message || "전화번호 중복 확인에 실패했습니다.");
       setPhoneChecked(false);
     }
   };
@@ -126,7 +136,11 @@ const signUpDeveloperPage = () => {
   };
 
   const passwordCheck = () => {
-    alert("비밀번호가 인증되었습니다.");
+    if (password === repassword) {
+      alert("비밀번호가 일치합니다.");
+    } else {
+      alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+    }
   };
 
   const handlePassinputChange = (e: any) => {
@@ -233,7 +247,6 @@ const signUpDeveloperPage = () => {
             placeholder="비밀번호 확인"
             value={repassword}
             onChange={(e) => setrePassword(e.target.value)}
-            onBlur={passwordCheck}
             onKeyDown={(e) => e.key === "Enter" && passwordCheck()}
             disabled={!isRePasswordEnabled}
           />

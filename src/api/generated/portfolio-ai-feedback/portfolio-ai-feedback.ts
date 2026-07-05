@@ -35,7 +35,7 @@ import type {
   AiFeedbackRenameReqDTO,
   AiFieldChooseReqDTO,
   AiFieldEditReqDTO,
-  ApiResponseAiFieldResultDTO,
+  ApiResponseAiFieldResDTO,
   ApiResponseListPortfolioAiFeedbackVersionResDTO,
   ApiResponsePortfolioAiFeedbackResDTO,
   ApiResponseVoid,
@@ -405,7 +405,7 @@ export const chooseField = (
     portfolioId: number,
     aiFieldId: number,
     aiFieldChooseReqDTO: AiFieldChooseReqDTO, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<ApiResponseAiFieldResultDTO>> => {
+ ): Promise<AxiosResponse<ApiResponseAiFieldResDTO>> => {
 
 
     return axios.patch(
@@ -417,7 +417,7 @@ export const chooseField = (
 
 
 
-export const getChooseFieldMutationOptions = <TError = AxiosError<ApiResponseAiFieldResultDTO>,
+export const getChooseFieldMutationOptions = <TError = AxiosError<ApiResponseAiFieldResDTO>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chooseField>>, TError,{portfolioId: number;aiFieldId: number;data: AiFieldChooseReqDTO}, TContext>, axios?: AxiosRequestConfig}
 ): UseMutationOptions<Awaited<ReturnType<typeof chooseField>>, TError,{portfolioId: number;aiFieldId: number;data: AiFieldChooseReqDTO}, TContext> => {
 
@@ -446,12 +446,12 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
     export type ChooseFieldMutationResult = NonNullable<Awaited<ReturnType<typeof chooseField>>>
     export type ChooseFieldMutationBody = AiFieldChooseReqDTO
-    export type ChooseFieldMutationError = AxiosError<ApiResponseAiFieldResultDTO>
+    export type ChooseFieldMutationError = AxiosError<ApiResponseAiFieldResDTO>
 
     /**
  * @summary AI 첨삭 필드 선택 반영
  */
-export const useChooseField = <TError = AxiosError<ApiResponseAiFieldResultDTO>,
+export const useChooseField = <TError = AxiosError<ApiResponseAiFieldResDTO>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chooseField>>, TError,{portfolioId: number;aiFieldId: number;data: AiFieldChooseReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof chooseField>>,
@@ -469,7 +469,7 @@ export const editField = (
     portfolioId: number,
     aiFieldId: number,
     aiFieldEditReqDTO: AiFieldEditReqDTO, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<ApiResponseAiFieldResultDTO>> => {
+ ): Promise<AxiosResponse<ApiResponseAiFieldResDTO>> => {
 
 
     return axios.patch(
@@ -481,7 +481,7 @@ export const editField = (
 
 
 
-export const getEditFieldMutationOptions = <TError = AxiosError<ApiResponseAiFieldResultDTO>,
+export const getEditFieldMutationOptions = <TError = AxiosError<ApiResponseAiFieldResDTO>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof editField>>, TError,{portfolioId: number;aiFieldId: number;data: AiFieldEditReqDTO}, TContext>, axios?: AxiosRequestConfig}
 ): UseMutationOptions<Awaited<ReturnType<typeof editField>>, TError,{portfolioId: number;aiFieldId: number;data: AiFieldEditReqDTO}, TContext> => {
 
@@ -510,12 +510,12 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
     export type EditFieldMutationResult = NonNullable<Awaited<ReturnType<typeof editField>>>
     export type EditFieldMutationBody = AiFieldEditReqDTO
-    export type EditFieldMutationError = AxiosError<ApiResponseAiFieldResultDTO>
+    export type EditFieldMutationError = AxiosError<ApiResponseAiFieldResDTO>
 
     /**
  * @summary AI 첨삭 필드 직접 수정
  */
-export const useEditField = <TError = AxiosError<ApiResponseAiFieldResultDTO>,
+export const useEditField = <TError = AxiosError<ApiResponseAiFieldResDTO>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof editField>>, TError,{portfolioId: number;aiFieldId: number;data: AiFieldEditReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof editField>>,

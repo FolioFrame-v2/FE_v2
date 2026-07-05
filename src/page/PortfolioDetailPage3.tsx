@@ -185,7 +185,7 @@ const PortfolioDetailPage3 = () => {
           <div className="flex flex-col items-center mb-[2vh] font-[Impact]">
             <div className="text-[2vw] font-bold">참여 기간</div>
             <div className="rounded-[0.3125em] bg-white p-[1vw] m-[1vw] min-w-[80%]">
-              {portfolioData.startDate} - {portfolioData.endDate}
+              {portfolioData.startedAt} - {portfolioData.endedAt}
             </div>
           </div>
           <div className="flex flex-col items-center mb-[2vh] font-[Impact]">

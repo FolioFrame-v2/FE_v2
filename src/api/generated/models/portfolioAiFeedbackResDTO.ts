@@ -5,7 +5,7 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import type { AiFieldResultDTO } from './aiFieldResultDTO.ts';
+import type { AiFieldResDTO } from './aiFieldResDTO.ts';
 import type { PortfolioAiFeedbackResDTOStatus } from './portfolioAiFeedbackResDTOStatus.ts';
 
 export interface PortfolioAiFeedbackResDTO {
@@ -19,5 +19,5 @@ export interface PortfolioAiFeedbackResDTO {
   finalized?: boolean;
   published?: boolean;
   createdAt?: string;
-  fields?: AiFieldResultDTO[];
+  fields?: AiFieldResDTO[];
 }

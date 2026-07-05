@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft,
   Check,
@@ -11,23 +11,9 @@ import {
   Pencil,
   Plus,
   Save,
-  SpellCheck,
-  Sparkles,
   Trash2,
-  Users,
   Wand2,
   X,
-  Share2,
-  ChevronDown,
-  Unlock,
-  CheckCircle2,
-  Copy,
-  AlertCircle,
-  Menu,
-  User,
-  Briefcase,
-  FileText,
-  Layout,
   Upload,
   MoreVertical,
 } from "lucide-react";
@@ -38,15 +24,17 @@ import { Label } from "@/components/ui/label";
 import { useSearch, useBlocker, useNavigate } from "@tanstack/react-router";
 import {
   useGetDetail,
-  useUpdate,
+  useUpdate3 as useUpdate,
   useConfirmSave,
-  useCreate
+  useCreate3 as useCreate
 } from "@/api/generated/portfolio/portfolio";
-import { useGetList1, useCreate1, useUpdate1, useDelete1 } from "@/api/generated/portfolio-project/portfolio-project";
-import { useGetList2, useCreate2, useUpdate2, useDelete2 } from "@/api/generated/portfolio-education/portfolio-education";
-import { useGetList3, useCreate3, useUpdate3, useDelete3 } from "@/api/generated/portfolio-certificate/portfolio-certificate";
-import { useGetList4, useCreate4, useUpdate4, useDelete4 } from "@/api/generated/portfolio-career/portfolio-career";
-import { useGetList6 } from "@/api/generated/template/template";
+import { useGetList4 as useGetList1, useCreate4 as useCreate1, useUpdate4 as useUpdate1, useDelete4 as useDelete1 } from "@/api/generated/portfolio-project/portfolio-project";
+import { useGetList5 as useGetList2, useCreate5 as useCreate2, useUpdate5 as useUpdate2, useDelete5 as useDelete2 } from "@/api/generated/portfolio-education/portfolio-education";
+import { useGetList6 as useGetList3, useCreate6 as useCreate3, useUpdate6 as useUpdate3, useDelete6 as useDelete3 } from "@/api/generated/portfolio-certificate/portfolio-certificate";
+import { useGetList7 as useGetList4, useCreate7 as useCreate4, useUpdate7 as useUpdate4, useDelete7 as useDelete4 } from "@/api/generated/portfolio-career/portfolio-career";
+import { useGetList9 as useGetList6 } from "@/api/generated/template/template";
+import { useGetMyProfile } from "@/api/generated/talent-profile/talent-profile";
+import { useGetRegions } from "@/api/generated/region/region";
 import { TEMPLATES } from "@/lib/portfolio-data";
 import {
   DropdownMenu,
@@ -170,6 +158,8 @@ function EditorPage() {
   const { data: educationsData } = useGetList2(portfolioId || -1, { query: { enabled: !!portfolioId } });
   const { data: certsData } = useGetList3(portfolioId || -1, { query: { enabled: !!portfolioId } });
   const { data: careersData } = useGetList4(portfolioId || -1, { query: { enabled: !!portfolioId } });
+  const { data: myProfileRes } = useGetMyProfile({ memberId: 0 }, { query: { enabled: !portfolioId, retry: false } });
+  const { data: regionsRes } = useGetRegions({}, { query: { enabled: !portfolioId } });
 
   // Phase 2 Mutation Hooks
   const { mutateAsync: createProjApi } = useCreate1();
@@ -206,7 +196,7 @@ function EditorPage() {
 
   const addCertRow = () => setCertifications([...certifications, { name: "", organization: "", issueDate: "", expiryDate: "", id: "" }]);
   const removeCert = (idx: number) => setCertifications(certifications.filter((_, i) => i !== idx));
-  const updateCert = (idx: number, field: keyof Certificate, value: string) => {
+  const updateCert = (idx: number, field: keyof Omit<Certificate, '_id'>, value: string) => {
     const newCerts = [...certifications];
     newCerts[idx][field] = value;
     setCertifications(newCerts);
@@ -216,7 +206,7 @@ function EditorPage() {
   const [educations, setEducations] = useState<Education[]>([]);
   const addEduRow = () => setEducations([...educations, { schoolName: "", major: "", degree: "", admissionDate: "", graduationDate: "", status: "" }]);
   const removeEdu = (idx: number) => setEducations(educations.filter((_, i) => i !== idx));
-  const updateEdu = (idx: number, field: keyof Education, value: string) => {
+  const updateEdu = (idx: number, field: keyof Omit<Education, '_id'>, value: string) => {
     const next = [...educations];
     next[idx][field] = value;
     setEducations(next);
@@ -226,7 +216,7 @@ function EditorPage() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const addExpRow = () => setExperiences([...experiences, { companyName: "", position: "", description: "", startDate: "", endDate: "" }]);
   const removeExp = (idx: number) => setExperiences(experiences.filter((_, i) => i !== idx));
-  const updateExp = (idx: number, field: keyof Experience, value: string) => {
+  const updateExp = (idx: number, field: keyof Omit<Experience, '_id'>, value: string) => {
     const next = [...experiences];
     next[idx][field] = value;
     setExperiences(next);
@@ -253,16 +243,16 @@ function EditorPage() {
     if (portfolioData?.data?.result) {
       const p = portfolioData.data.result;
       setTitle(p.title || "");
-      setOneLiner(p.description || "");
-      setDetail(p.solving || ""); 
+      setOneLiner(p.oneLiner || "");
+      setDetail(p.description || "");
       setJobRole(p.jobRole || "");
-      
+
       if (p.talentProfile) {
-         setEmail(p.talentProfile.contactEmail || "");
-         setGithub(p.talentProfile.githubUrl || "");
-         setWebsite(p.talentProfile.portfolioWebsite || "");
-         setLocation(p.talentProfile.region?.name || "");
-         setIntro(p.talentProfile.oneLiner || "");
+        setEmail(p.talentProfile.contactEmail || "");
+        setGithub(p.talentProfile.githubUrl || "");
+        setWebsite(p.talentProfile.portfolioWebsite || "");
+        setLocation(p.talentProfile.region?.name || "");
+        setIntro(p.talentProfile.oneLiner || "");
       }
     }
   }, [portfolioData]);
@@ -294,16 +284,73 @@ function EditorPage() {
     }
   }, [careersData]);
 
+  const hasPrefilled = useRef(false);
+
+  useEffect(() => {
+    console.log("portfolioId:", portfolioId, "myProfileRes:", myProfileRes?.data?.result, "hasPrefilled:", hasPrefilled.current);
+    if (!portfolioId && myProfileRes?.data?.result && regionsRes?.data?.result && !hasPrefilled.current) {
+      hasPrefilled.current = true;
+      const p = myProfileRes.data.result;
+      const r = regionsRes.data.result;
+      console.log("Setting default fields from profile:", p);
+
+      setEmail(p.contactEmail || "");
+      setGithub(p.githubUrl || "");
+      setWebsite(p.portfolioWebsite || "");
+      if (p.oneLiner) setIntro(p.oneLiner);
+      if (p.regionId) {
+        const targetRegion = r.find((region: any) => region.id === p.regionId);
+        const mappedRegion = targetRegion ? (targetRegion.parentName ? `${targetRegion.parentName} ${targetRegion.name}` : (targetRegion.fullName || targetRegion.name || "")) : "";
+        setLocation(mappedRegion);
+      }
+
+      if (p.techStacks && stack.length === 0) {
+        setStack(p.techStacks.map((t: any) => t.name));
+      }
+
+      if (p.educations && educations.length === 0) {
+        setEducations(p.educations.map((e: any) => ({
+          schoolName: e.schoolName || "",
+          major: e.major || "",
+          degree: e.degree === "MASTER" ? "석사" : e.degree === "DOCTOR" ? "박사" : "학사",
+          admissionDate: e.startedAt || "",
+          graduationDate: e.endedAt || "",
+          status: e.status === "LEAVE_OF_ABSENCE" ? "휴학" : e.status === "GRADUATED" ? "졸업" : e.status === "DROPOUT" ? "중퇴" : "재학중"
+        })));
+      }
+
+      if (p.careers && experiences.length === 0) {
+        setExperiences(p.careers.map((c: any) => ({
+          companyName: c.companyName || "",
+          position: c.position || "",
+          startDate: c.startedAt || "",
+          endDate: c.endedAt || "",
+          description: c.description || ""
+        })));
+      }
+
+      if (p.certificates && certifications.length === 0) {
+        setCertifications(p.certificates.map((c: any) => ({
+          name: c.name || "",
+          organization: c.issuer || "",
+          issueDate: c.issuedAt || "",
+          expiryDate: c.expiresAt || "",
+          id: c.credentialId || ""
+        })));
+      }
+    }
+  }, [portfolioId, myProfileRes]);
+
   useEffect(() => {
     if (projectsData?.data?.result) {
       setProjects(projectsData.data.result.map((p: any) => ({
         _id: p.id,
         id: `p_${p.id}`,
         name: p.name || "",
-        role: "", 
+        role: "",
         period: `${p.startedAt || ""} ~ ${p.endedAt || ""}`,
         summary: p.description || "",
-        stack: [], 
+        stack: [],
         link: p.githubUrl || p.projectUrl || ""
       })));
     }
@@ -312,12 +359,12 @@ function EditorPage() {
   useEffect(() => {
     if (certsData?.data?.result) {
       setCertifications(certsData.data.result.map((c: any) => ({
-        _id: c.id, 
+        _id: c.id,
         id: c.credentialId || "",
         name: c.name || "",
         organization: c.issuer || "",
         issueDate: c.issuedAt || "",
-        expiryDate: c.expiresAt || "" 
+        expiryDate: c.expiresAt || ""
       })));
     }
   }, [certsData]);
@@ -334,11 +381,14 @@ function EditorPage() {
     }
   }, [templateId]);
 
+  const isSaving = useRef(false);
+
   useBlocker({
     shouldBlockFn: () => {
+      if (isSaving.current) return false;
       return !window.confirm("저장하지 않은 변경사항이 있습니다. 정말 나가시겠습니까?");
     },
-    enableBeforeUnload: () => true,
+    enableBeforeUnload: () => !isSaving.current,
   });
 
   const [addOpen, setAddOpen] = useState(false);
@@ -450,9 +500,9 @@ function EditorPage() {
     // --- Educations ---
     const origEduIds = educationsData?.data?.result?.map((e: any) => e.id) || [];
     const curEduIds = educations.map(e => e._id).filter(Boolean) as number[];
-    const eduDeletes = origEduIds.filter(id => !curEduIds.includes(id));
-    
-    await Promise.all(eduDeletes.map(id => deleteEduApi({ portfolioId: targetPortfolioId, educationId: id })));
+    const eduDeletes = origEduIds.filter((id: number) => !curEduIds.includes(id));
+
+    await Promise.all(eduDeletes.map((id: number) => deleteEduApi({ portfolioId: targetPortfolioId, educationId: id })));
     await Promise.all(educations.map(e => {
       const payload = {
         schoolName: e.schoolName,
@@ -472,9 +522,9 @@ function EditorPage() {
     // --- Careers ---
     const origCarIds = careersData?.data?.result?.map((c: any) => c.id) || [];
     const curCarIds = experiences.map(e => e._id).filter(Boolean) as number[];
-    const carDeletes = origCarIds.filter(id => !curCarIds.includes(id));
+    const carDeletes = origCarIds.filter((id: number) => !curCarIds.includes(id));
 
-    await Promise.all(carDeletes.map(id => deleteCareerApi({ portfolioId: targetPortfolioId, careerId: id })));
+    await Promise.all(carDeletes.map((id: number) => deleteCareerApi({ portfolioId: targetPortfolioId, careerId: id })));
     await Promise.all(experiences.map(e => {
       const payload = {
         companyName: e.companyName,
@@ -493,9 +543,9 @@ function EditorPage() {
     // --- Projects ---
     const origProjIds = projectsData?.data?.result?.map((p: any) => p.id) || [];
     const curProjIds = projects.map(p => p._id).filter(Boolean) as number[];
-    const projDeletes = origProjIds.filter(id => !curProjIds.includes(id));
+    const projDeletes = origProjIds.filter((id: number) => !curProjIds.includes(id));
 
-    await Promise.all(projDeletes.map(id => deleteProjApi({ portfolioId: targetPortfolioId, projectId: id })));
+    await Promise.all(projDeletes.map((id: number) => deleteProjApi({ portfolioId: targetPortfolioId, projectId: id })));
     await Promise.all(projects.map(p => {
       const [start, end] = p.period.split('~').map(s => s.trim());
       const payload = {
@@ -516,9 +566,9 @@ function EditorPage() {
     // --- Certificates ---
     const origCertIds = certsData?.data?.result?.map((c: any) => c.id) || [];
     const curCertIds = certifications.map(c => c._id).filter(Boolean) as number[];
-    const certDeletes = origCertIds.filter(id => !curCertIds.includes(id));
+    const certDeletes = origCertIds.filter((id: number) => !curCertIds.includes(id));
 
-    await Promise.all(certDeletes.map(id => deleteCertApi({ portfolioId: targetPortfolioId, certificateId: id })));
+    await Promise.all(certDeletes.map((id: number) => deleteCertApi({ portfolioId: targetPortfolioId, certificateId: id })));
     await Promise.all(certifications.map(c => {
       const payload = {
         name: c.name,
@@ -563,7 +613,7 @@ function EditorPage() {
         else if (templateId === "editorial") tid = 2;
         else if (templateId === "terminal") tid = 3;
         else if (templateId === "playful") tid = 4;
-        
+
         const res = await createPortfolioApi({
           data: {
             title: title || "제목 없는 포트폴리오",
@@ -572,15 +622,15 @@ function EditorPage() {
             jobRole: jobRole as any || "BACKEND"
           }
         });
-        activePortfolioId = res.data?.result?.id;
-        
+        activePortfolioId = res.data?.result?.id || null;
+
         if (!activePortfolioId) {
           throw new Error("포트폴리오 생성 결과에 ID가 없습니다.");
         }
       }
 
       await syncEntities(activePortfolioId);
-      
+
       await updatePortfolioApi({
         portfolioId: activePortfolioId,
         data: {
@@ -594,7 +644,16 @@ function EditorPage() {
 
       await confirmSavePortfolioApi({ portfolioId: activePortfolioId });
       alert("포트폴리오가 성공적으로 저장되었습니다!");
-      navigate({ to: "/mypage" });
+
+      if (!portfolioId && activePortfolioId) {
+        isSaving.current = true;
+        navigate({
+          to: "/portfoliopageeditor",
+          search: { portfolioId: String(activePortfolioId), templateId: undefined },
+          replace: true
+        });
+        setTimeout(() => { isSaving.current = false; }, 500);
+      }
     } catch (err: any) {
       alert("포트폴리오 저장 중 오류가 발생했습니다: " + (err.message || "알 수 없는 오류"));
     }
@@ -792,9 +851,6 @@ function EditorPage() {
             >
               <Wand2 className="size-4" />
               {diagnosing ? "AI 분석 중…" : "AI 진단받기"}
-            </Button>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Eye className="size-4" /> 미리보기
             </Button>
             <Button variant="outline" size="sm" className="gap-2" onClick={handleSave}>
               <Save className="size-4" /> 저장하기
@@ -1257,18 +1313,6 @@ function EditorPage() {
               )}
             </Section>
           )}
-
-          {/* Bottom action */}
-          <div className="flex flex-col-reverse items-stretch justify-between gap-3 border-t border-line pt-6 sm:flex-row sm:items-center">
-            <div className="flex gap-2">
-              <Button variant="outline" className="gap-2" onClick={handleSave}><Save className="size-4" />저장하기</Button>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" className="gap-2"><Eye className="size-4" />미리보기</Button>
-              <Button variant="outline" className="gap-2"><Share2 className="size-4" />공유하기</Button>
-              <Button className="gap-2" onClick={handlePublish}><Upload className="size-4" />게시하기</Button>
-            </div>
-          </div>
         </main>
 
         {/* Right Sidebar for Version History */}
