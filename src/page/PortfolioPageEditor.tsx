@@ -35,6 +35,7 @@ import { useGetList7 as useGetList4, useCreate7 as useCreate4, useUpdate7 as use
 import { useGetList9 as useGetList6 } from "@/api/generated/template/template";
 import { useGetMyProfile } from "@/api/generated/talent-profile/talent-profile";
 import { useGetRegions } from "@/api/generated/region/region";
+import { useGenerate } from "@/api/generated/portfolio-ai-feedback/portfolio-ai-feedback";
 import { TEMPLATES } from "@/lib/portfolio-data";
 import {
   DropdownMenu,
@@ -115,28 +116,6 @@ const BASE_SECTIONS = [
   { id: "stack", label: "기술 스택" },
 ];
 
-// Mock AI improvement — wraps text into a more polished STAR-style version.
-function improve(text: string, kind: "oneLiner" | "detail" | "intro" | "career" | "project" | "custom" = "custom"): string {
-  const t = text.trim();
-  if (!t) return "";
-  switch (kind) {
-    case "oneLiner":
-      return `${t} — 측정 가능한 임팩트와 협업 경험을 한 줄로 압축`;
-    case "detail":
-      return `${t}\n\n특히 최근 1년간은 성능·신뢰성 지표(p99 응답, 에러율) 개선과 팀 온보딩 문서화를 주도하며 조직 차원의 임팩트를 만들어 왔습니다.`;
-    case "intro":
-      return `${t} 사용자 가치를 빠르게 검증하고, 데이터로 의사결정하는 것을 좋아합니다.`;
-    case "career":
-      return t
-        .split("\n")
-        .map((line) => (line.trim() ? `${line} — 핵심 성과 1줄 추가 추천` : line))
-        .join("\n");
-    case "project":
-      return `${t}\n→ 문제(Problem)·접근(Approach)·결과(Result) 구조로 재배열하고, 정량 지표(예: 응답 38%↓, 비용 22%↓)를 강조해 보세요.`;
-    default:
-      return `${t}\n\n[AI 추천] 더 구체적인 사례·수치·기간을 덧붙이면 신뢰도가 올라갑니다.`;
-  }
-}
 
 function EditorPage() {
   const searchParams = useSearch({ from: '/portfoliopageeditor' }) as { templateId?: string, portfolioId?: string };
@@ -177,6 +156,8 @@ function EditorPage() {
   const { mutateAsync: createCareerApi } = useCreate4();
   const { mutateAsync: updateCareerApi } = useUpdate4();
   const { mutateAsync: deleteCareerApi } = useDelete4();
+
+  const { mutateAsync: generateAiFeedback } = useGenerate();
 
   // ✨ 기본 정보
   const [title, setTitle] = useState("");
@@ -404,29 +385,13 @@ function EditorPage() {
   const [activeVersionId, setActiveVersionId] = useState<number | null>(null);
   const [publishedVersionId, setPublishedVersionId] = useState<number | null>(null);
 
-  // 최초 로드 시 원본이 없으면 자동 생성
-  useEffect(() => {
-    if (versions.length === 0) {
-      const snapshot = {
-        title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
-      };
-      const newId = Date.now();
-      setVersions([{
-        id: newId,
-        timestamp: new Date().toISOString(),
-        type: "original",
-        title: "원본",
-        snapshot,
-        revisions: []
-      }]);
-      setActiveVersionId(newId);
-    }
-  }, []);
 
   const saveVersion = (type: "diagnose", currentSuggestions?: Record<string, string>) => {
     const snapshot = {
       title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
+
+    const newId = Date.now();
 
     setVersions(prev => {
       // 진단은 최대 3개까지만 가능
@@ -436,7 +401,7 @@ function EditorPage() {
       }
 
       const newVersion: Version = {
-        id: Date.now(),
+        id: newId,
         timestamp: new Date().toISOString(),
         type,
         title: `AI 진단 ${prev.filter(v => v.type === "diagnose").length + 1}`,
@@ -445,8 +410,22 @@ function EditorPage() {
         revisions: []
       };
 
-      return [newVersion, ...prev];
+      if (prev.length === 0) {
+        const originalVersion: Version = {
+          id: newId - 1000,
+          timestamp: new Date().toISOString(),
+          type: "original",
+          title: "원본",
+          snapshot,
+          revisions: []
+        };
+        return [originalVersion, newVersion];
+      }
+
+      return [...prev, newVersion];
     });
+
+    return newId;
   };
 
   const addRevision = (parentId: number) => {
@@ -718,7 +697,7 @@ function EditorPage() {
       setProjects(v.snapshot.projects);
       setStack(v.snapshot.stack);
       setCustomFields(v.snapshot.customFields);
-      if (v.suggestions) setSuggestions(v.suggestions);
+      setSuggestions(v.suggestions || {}); // 버전을 불러올 때 해당 버전의 AI 추천/총평 텍스트 복원
       setActiveVersionId(v.id);
     }
   };
@@ -768,27 +747,79 @@ function EditorPage() {
 
   // --- AI 진단 ---
   const runDiagnose = async () => {
+    if (!portfolioId) {
+      alert("AI 진단을 받으려면 먼저 포트폴리오를 우측 상단의 [저장하기] 버튼으로 저장해주세요.");
+      return;
+    }
+
     setDiagnosing(true);
-    await new Promise((r) => setTimeout(r, 700)); // 가짜 호출 딜레이
-    const next: Record<string, string> = {};
-    if (oneLiner.trim()) next["oneLiner"] = improve(oneLiner, "oneLiner");
-    if (detail.trim()) next["detail"] = improve(detail, "detail");
-    if (intro.trim()) next["intro"] = improve(intro, "intro");
-    projects.forEach((p) => {
-      if (p.summary.trim()) next[`project:${p.id}`] = improve(p.summary, "project");
-    });
-    customFields.forEach((f) => {
-      if (f.value.trim()) next[`custom:${f.id}`] = improve(f.value, "custom");
-    });
+    try {
+      const res = await generateAiFeedback({ portfolioId });
+      // 백엔드 응답 구조가 wrapper 유무에 따라 다를 수 있으므로 유연하게 추출
+      const feedbackData = (res.data as any)?.result || res.data;
 
-    // AI 진단 총평 추가
-    next["summary"] = "작성하신 포트폴리오는 직무 역량이 잘 드러나지만, 구체적인 성과 지표(%)를 추가하면 더 설득력 있는 포트폴리오가 될 수 있습니다. 기술 스택 섹션에 활용 수준을 함께 명시하는 것을 추천합니다.";
+      const next: Record<string, string> = {};
 
-    setTimeout(() => {
+      if (feedbackData?.fields && Array.isArray(feedbackData.fields)) {
+        let projectSummaryIndex = 0; // 프로젝트 식별자가 없을 경우 순서대로 매핑하기 위한 인덱스
+
+        feedbackData.fields.forEach((field: any) => {
+          // camelCase와 snake_case 모두 지원
+          const revisedText = field.aiRevisedText || field.ai_revised_text;
+          const targetType = field.targetType || field.field_type;
+          
+          if (!revisedText) return;
+
+          switch (targetType) {
+            case 'PORTFOLIO_ONE_LINER':
+              next["oneLiner"] = revisedText;
+              break;
+            case 'PORTFOLIO_DESCRIPTION':
+              next["detail"] = revisedText;
+              break;
+            case 'PROFILE_ONE_LINER':
+              next["intro"] = revisedText;
+              break;
+            case 'PROJECT_SUMMARY':
+              if (field.portfolioProjectId) {
+                const localProj = projects.find(p => p._id === field.portfolioProjectId);
+                if (localProj) {
+                  next[`project:${localProj.id}`] = revisedText;
+                }
+              } else {
+                // 백엔드에서 projectId를 안 보내줄 경우 화면에 있는 순서대로 임시 매핑
+                if (projectSummaryIndex < projects.length) {
+                  const localProj = projects[projectSummaryIndex];
+                  next[`project:${localProj.id}`] = revisedText;
+                  projectSummaryIndex++;
+                }
+              }
+              break;
+            case 'CUSTOM_FIELD':
+              // 커스텀 필드는 DB 매핑 이슈로 임시 보류
+              break;
+          }
+        });
+      }
+
+      if (feedbackData?.comment) {
+        next["summary"] = feedbackData.comment;
+        if (feedbackData.score !== undefined) {
+          next["score"] = String(feedbackData.score);
+        }
+      } else {
+        next["summary"] = "AI 진단이 완료되었습니다. 각 항목의 추천 결과를 확인해보세요.";
+      }
+
       setSuggestions(next);
+      const newId = saveVersion("diagnose", next);
+      if (newId) setActiveVersionId(newId);
+    } catch (e: any) {
+      console.error(e);
+      alert("AI 진단 중 오류가 발생했습니다: " + (e.response?.data?.message || e.message));
+    } finally {
       setDiagnosing(false);
-      saveVersion("diagnose", next);
-    }, 1500);
+    }
   };
 
   // 적용(체크) / 거절(닫기)
@@ -1307,6 +1338,11 @@ function EditorPage() {
                       <Wand2 className="size-3" />
                     </span>
                     <span className="font-semibold">종합 분석 및 조언</span>
+                    {suggestions["score"] && (
+                      <span className="ml-2 rounded-full bg-surface-2 px-2.5 py-0.5 font-display text-xs font-bold text-ink">
+                        총점: {suggestions["score"]}점
+                      </span>
+                    )}
                   </div>
                   {suggestions["summary"]}
                 </div>
@@ -1362,6 +1398,7 @@ function EditorPage() {
                       )}
                     </div>
                   </div>
+
                   <button onClick={() => loadVersion(v)} className="w-full text-center py-1.5 bg-surface-2 hover:bg-line transition text-ink rounded text-xs mb-1.5">
                     불러오기
                   </button>
