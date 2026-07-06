@@ -49,9 +49,9 @@ const SignUpRecruiterPage = () => {
     });
 
     //팝업 창 
-    const handleCheckBoxClick = (value: any) => {
+    const handleCheckBoxClick = (e: React.MouseEvent) => {
+        e.preventDefault();
         setIsModalOpen(true);
-        setAgree(value);
     };
     const closeModal = (value: any) => {
         setIsModalOpen(false);

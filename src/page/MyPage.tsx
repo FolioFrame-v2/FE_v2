@@ -1,13 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetList3, useDelete3 } from "@/api/generated/portfolio/portfolio";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetMyProfile, useGetSignupInfo } from "@/api/generated/talent-profile/talent-profile";
 import { useGetRegions } from "@/api/generated/region/region";
 import { toast } from "sonner";
 
+import { useGetJobPostings } from "@/api/generated/job-posting/job-posting";
+import { useGetPublicList } from "@/api/generated/portfolio/portfolio";
+import { useBookmarks } from "@/hooks/useBookmarks";
+import { useJobBookmarks } from "@/hooks/useJobBookmarks";
 
-// 목업 데이터 제거 (MY_PORTFOLIOS)
+import { BookmarkCheck, Bookmark, Briefcase } from "lucide-react";
 
 const INITIAL_SAVED_COMPANIES = [
   { id: "co1", name: "Kakao", part: "Backend", region: "판교", stage: "지원완료", logo: "K", color: "var(--color-mint)", submittedPortfolio: "실시간 협업 화이트보드" },
@@ -16,10 +20,41 @@ const INITIAL_SAVED_COMPANIES = [
   { id: "co4", name: "네이버", part: "Data", region: "분당", stage: "", logo: "N", color: "var(--color-coral)" },
 ];
 
+type JobPosting = {
+  id: number;
+  company: string;
+  title: string;
+  experience: string;
+  region: string;
+  status: string;
+  skills: string[];
+  intro: string;
+  accent: string;
+  views: number;
+  likes: number;
+  createdAt: string;
+};
+
+const INITIAL_JOB_POSTINGS: JobPosting[] = [
+  { id: 1, company: "Toss", title: "Frontend Developer", experience: "신입/경력", region: "서울 강남구", status: "채용 중", skills: ["React", "TypeScript", "Next.js"], intro: "토스에서 사용자 중심의 프론트엔드를 개발할 분을 모십니다.", accent: "var(--color-mint)", views: 1540, likes: 320, createdAt: "2026-06-25" },
+  { id: 2, company: "Kakao", title: "Backend Engineer", experience: "3년 이상", region: "판교", status: "채용 중", skills: ["Java", "Spring Boot", "MySQL"], intro: "카카오톡 메시징 서버 성능 최적화를 함께할 전문가를 찾습니다.", accent: "var(--color-coral)", views: 890, likes: 150, createdAt: "2026-06-20" },
+  { id: 3, company: "Naver", title: "iOS Engineer", experience: "5년 이상", region: "분당", status: "마감 임박", skills: ["Swift", "RxSwift", "iOS"], intro: "네이버 앱의 새로운 사용자 경험을 설계하고 구현합니다.", accent: "var(--color-mint)", views: 2100, likes: 450, createdAt: "2026-06-28" },
+  { id: 4, company: "Line", title: "Data Scientist", experience: "경력 무관", region: "원격", status: "채용 중", skills: ["Python", "PyTorch", "SQL"], intro: "글로벌 메신저 라인의 대규모 데이터를 분석하고 모델을 개발합니다.", accent: "var(--color-coral)", views: 1200, likes: 280, createdAt: "2026-06-22" },
+  { id: 5, company: "Daangn", title: "DevOps Engineer", experience: "5년 이상", region: "서울 서초구", status: "채용 중", skills: ["Kubernetes", "AWS", "Terraform"], intro: "당근마켓의 글로벌 인프라를 구축하고 안정적으로 운영합니다.", accent: "var(--color-mint)", views: 650, likes: 90, createdAt: "2026-06-18" },
+  { id: 6, company: "Woowa Bros", title: "Fullstack Engineer", experience: "1~3년", region: "서울 송파구", status: "채용 중", skills: ["Node.js", "React", "TypeScript"], intro: "배달의민족 서비스의 신규 피처를 개발합니다.", accent: "var(--color-coral)", views: 420, likes: 50, createdAt: "2026-06-15" },
+];
+
 export default function MyPage() {
+  const [isRecruiter, setIsRecruiter] = useState(false);
+
+  useEffect(() => {
+    const type = localStorage.getItem("userType");
+    setIsRecruiter(type === "recruiter");
+  }, []);
+
   const { data: portfoliosData, isLoading: portfoliosLoading } = useGetList3({ page: 0, size: 10 });
   const myPortfolios = portfoliosData?.data?.result?.content || [];
-  
+
   const { data: profileRes, isLoading: isProfileLoading } = useGetMyProfile({ memberId: 0 });
   const { data: signupRes } = useGetSignupInfo({ memberId: 0 }, { query: { enabled: !profileRes?.data?.result } });
   const { data: regionsRes } = useGetRegions();
@@ -33,7 +68,27 @@ export default function MyPage() {
   const displayPhone = p?.phoneNumber || s?.phone || "-";
 
   const [tab, setTab] = useState<"portfolios" | "companies">("portfolios");
+  const [subTab, setSubTab] = useState<"bookmarks" | "proposals">("bookmarks");
   const [previewCompany, setPreviewCompany] = useState<any>(null);
+
+  const { bookmarks: localBookmarks } = useBookmarks();
+  const { jobBookmarks } = useJobBookmarks();
+
+  const { data: jobPostingsData, isLoading: jobsLoading } = useGetJobPostings(
+    { keyword: (p as any)?.companyName || "", pageable: { page: 0, size: 10 } },
+    { query: { enabled: isRecruiter && tab === "portfolios" && !!(p as any)?.companyName } }
+  );
+  const myJobPostings = jobPostingsData?.data?.result?.content || [];
+
+  const { data: publicListData, isLoading: publicListLoading } = useGetPublicList(
+    { sort: "LATEST" as any, page: 0, size: 50 },
+    { query: { enabled: isRecruiter && tab === "companies" } }
+  );
+  const publicPortfolios = publicListData?.data?.result?.content || [];
+
+  const bookmarkedPortfolios = publicPortfolios.filter(port => port.id && localBookmarks[port.id]);
+  const bookmarkedJobs = INITIAL_JOB_POSTINGS.filter(job => jobBookmarks[String(job.id)]);
+
   const [companies, setCompanies] = useState(INITIAL_SAVED_COMPANIES);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
   const queryClient = useQueryClient();
@@ -117,13 +172,32 @@ export default function MyPage() {
         {/* Content column */}
         <section className="lg:col-span-8 space-y-6">
           <div className="flex items-center gap-2 surface-card p-1.5 w-fit">
-            <TabBtn active={tab === "portfolios"} onClick={() => setTab("portfolios")}>내 포트폴리오</TabBtn>
-            <TabBtn active={tab === "companies"} onClick={() => setTab("companies")}>관심 공고</TabBtn>
+            <TabBtn active={tab === "portfolios"} onClick={() => setTab("portfolios")}>
+              {isRecruiter ? "기업 공고" : "내 포트폴리오"}
+            </TabBtn>
+            <TabBtn active={tab === "companies"} onClick={() => setTab("companies")}>
+              {isRecruiter ? "관심 인재" : "관심 공고"}
+            </TabBtn>
           </div>
 
           {tab === "portfolios" && (
             <div className="grid gap-4 sm:grid-cols-2">
-              {portfoliosLoading ? (
+              {isRecruiter ? (
+                jobsLoading ? (
+                  <div className="text-sm text-ink-soft">공고 불러오는 중...</div>
+                ) : myJobPostings.length > 0 ? myJobPostings.map((job: any) => (
+                  <article key={job.id} className="surface-card p-5 hover:-translate-y-0.5 transition flex flex-col">
+                    <h3 className="font-display text-base font-semibold tracking-tight">{job.title}</h3>
+                    <div className="text-sm text-ink-soft mb-4">{job.positionName}</div>
+                    <div className="text-xs text-ink-soft mt-auto border-t border-line pt-3 flex justify-between">
+                      <span>{job.jobRole}</span>
+                      <span>{job.employmentType}</span>
+                    </div>
+                  </article>
+                )) : (
+                  <div className="col-span-2 text-center text-ink-soft py-10">등록된 공고가 없습니다.</div>
+                )
+              ) : portfoliosLoading ? (
                 <div className="text-sm text-ink-soft">포트폴리오 불러오는 중...</div>
               ) : (
                 [...myPortfolios].sort((a, b) => new Date(b.lastSavedAt || "").getTime() - new Date(a.lastSavedAt || "").getTime()).map((p) => (
@@ -136,10 +210,6 @@ export default function MyPage() {
                     <div className="mt-4 flex items-center justify-between pt-4 border-t border-line">
                       <span className="text-xs text-ink-soft">{(p.viewCount || 0).toLocaleString()} views</span>
                       <div className="flex gap-2">
-                        <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition" onClick={() => {
-                          navigator.clipboard.writeText(window.location.origin + "/portfolio/" + p.id);
-                          toast.success("링크가 복사되었습니다.");
-                        }}>공유</button>
                         <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: String(p.id) }} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
                         <button onClick={() => p.id && handleDeletePortfolio(p.id)} className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
                       </div>
@@ -147,69 +217,141 @@ export default function MyPage() {
                   </article>
                 ))
               )}
-              <Link to="/templates" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
-                <div className="text-center">
-                  <div className="text-3xl font-display">＋</div>
-                  <div className="mt-1 text-sm">새 포트폴리오</div>
-                </div>
-              </Link>
+              {isRecruiter ? (
+                <Link to="/jobs/new" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
+                  <div className="text-center">
+                    <div className="text-3xl font-display">＋</div>
+                    <div className="mt-1 text-sm">새 공고 작성</div>
+                  </div>
+                </Link>
+              ) : (
+                <Link to="/templates" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
+                  <div className="text-center">
+                    <div className="text-3xl font-display">＋</div>
+                    <div className="mt-1 text-sm">새 포트폴리오</div>
+                  </div>
+                </Link>
+              )}
             </div>
           )}
 
           {tab === "companies" && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {companies.map((c) => (
-                <article key={c.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl grid place-items-center font-display font-bold text-lg" style={{ background: `color-mix(in oklch, ${c.color} 30%, var(--color-surface))` }}>
-                      {c.logo}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-display text-base font-semibold tracking-tight">{c.name}</h3>
-                      <div className="text-xs text-ink-soft">{c.part} · {c.region}</div>
-                    </div>
-                    {c.stage && <StatusChip status={c.stage} />}
-                  </div>
-                  <div className="mt-4 flex items-center justify-end gap-2 pt-4 border-t border-line">
-                    {/* <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">메모</button> */}
-                    {c.stage === "지원완료" ? (
-                      <>
-                        <button
-                          onClick={() => setPreviewCompany(c)}
-                          className="h-8 px-3 rounded-md bg-surface-2 text-ink border border-line text-xs hover:bg-line/30 transition"
-                        >
-                          제출 포폴 보기
-                        </button>
-                        <button
-                          onClick={() => setCancelTarget(c)}
-                          className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition"
-                        >
-                          지원 취소
-                        </button>
-                      </>
-                    ) : c.stage === "제안받음" ? (
-                      <>
-                        <button
-                          onClick={() => setCancelTarget(c)}
-                          className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition"
-                        >
-                          거절
-                        </button>
-                        <button
-                          onClick={() => handleAcceptProposal(c.id)}
-                          className="h-8 px-3 rounded-md bg-mint text-ink text-xs hover:opacity-90 transition font-medium"
-                        >
-                          수락
-                        </button>
-                      </>
-                    ) : c.stage === "수락완료" ? (
-                      <span className="text-xs text-ink-soft">채용 담당자가 연락할 예정입니다.</span>
+            <div className="space-y-6">
+              <div className="flex items-center gap-6 border-b border-line mb-6">
+                <button
+                  onClick={() => setSubTab("bookmarks")}
+                  className={`pb-3 text-sm font-medium transition relative ${subTab === "bookmarks" ? "text-ink" : "text-ink-soft hover:text-ink"}`}
+                >
+                  북마크
+                  {subTab === "bookmarks" && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-ink rounded-t-full" />}
+                </button>
+                <button
+                  onClick={() => setSubTab("proposals")}
+                  className={`pb-3 text-sm font-medium transition relative ${subTab === "proposals" ? "text-ink" : "text-ink-soft hover:text-ink"}`}
+                >
+                  {isRecruiter ? "제안 내역" : "받은 제안"}
+                  {subTab === "proposals" && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-ink rounded-t-full" />}
+                </button>
+              </div>
+
+              {subTab === "bookmarks" ? (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {isRecruiter ? (
+                    publicListLoading ? (
+                      <div className="text-sm text-ink-soft py-10 text-center col-span-2">북마크한 인재를 불러오는 중...</div>
+                    ) : bookmarkedPortfolios.length > 0 ? (
+                      bookmarkedPortfolios.map(p => (
+                        <Link to="/portfolio/$id" params={{ id: String(p.id) }} key={p.id} className="surface-card p-5 hover:-translate-y-0.5 transition block">
+                          <h3 className="font-display text-lg font-semibold tracking-tight">{p.title}</h3>
+                          <div className="mt-1 text-sm text-ink-soft">{p.authorName}</div>
+                          <div className="mt-4 flex items-center justify-between pt-4 border-t border-line">
+                            <span className="text-xs text-ink-soft">{(p.viewCount || 0).toLocaleString()} views</span>
+                            <BookmarkCheck className="size-4 text-coral" />
+                          </div>
+                        </Link>
+                      ))
                     ) : (
-                      <button className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs hover:opacity-90 transition">지원하기</button>
-                    )}
-                  </div>
-                </article>
-              ))}
+                      <div className="text-sm text-ink-soft py-10 text-center col-span-2 bg-surface rounded-xl">북마크한 인재가 없습니다.</div>
+                    )
+                  ) : (
+                    bookmarkedJobs.length > 0 ? (
+                      bookmarkedJobs.map(job => (
+                        <Link to="/jobs/$id" params={{ id: String(job.id) }} key={job.id} className="surface-card p-5 hover:-translate-y-0.5 transition block flex flex-col h-full">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{job.company} · {job.experience}</div>
+                              <h3 className="mt-1 font-display text-lg font-semibold tracking-tight">{job.title}</h3>
+                            </div>
+                            <svg className="size-5 text-coral" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                          </div>
+                          <div className="text-xs text-ink-soft mt-auto border-t border-line pt-3 flex justify-between">
+                            <span>{job.region}</span>
+                            <span>{job.status}</span>
+                          </div>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="text-sm text-ink-soft py-10 text-center col-span-2 bg-surface rounded-xl">북마크한 공고가 없습니다.</div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {isRecruiter ? (
+                    // 기업 회원: 제안한 인재 (Mock)
+                    <div className="col-span-2 surface-card p-10 text-center text-ink-soft">
+                      <div className="mx-auto w-12 h-12 bg-surface-2 rounded-full grid place-items-center mb-3">
+                        <Briefcase className="size-5" />
+                      </div>
+                      <h4 className="font-display font-medium text-ink mb-1">제안 내역이 없습니다</h4>
+                      <p className="text-sm">마음에 드는 인재에게 채용 제안을 보내보세요.</p>
+                      <Link to="/" className="mt-4 inline-flex h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium items-center transition hover:opacity-90">
+                        인재 탐색하기
+                      </Link>
+                    </div>
+                  ) : (
+                    // 인재 회원: 제안 받은 회사 (Mock - INITIAL_SAVED_COMPANIES 활용)
+                    companies.filter(c => c.stage === "제안받음").length > 0 ? (
+                      companies.filter(c => c.stage === "제안받음").map((c) => (
+                        <article key={c.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
+                          <div className="flex items-center gap-3">
+                            <div className="h-12 w-12 rounded-xl grid place-items-center font-display font-bold text-lg" style={{ background: `color-mix(in oklch, ${c.color} 30%, var(--color-surface))` }}>
+                              {c.logo}
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-display text-base font-semibold tracking-tight">{c.name}</h3>
+                              <div className="text-xs text-ink-soft">{c.part} 포지션 제안</div>
+                            </div>
+                            <StatusChip status={c.stage} />
+                          </div>
+                          <div className="mt-4 flex items-center justify-end gap-2 pt-4 border-t border-line">
+                            <button
+                              onClick={() => setCancelTarget(c)}
+                              className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition"
+                            >
+                              거절
+                            </button>
+                            <button
+                              onClick={() => handleAcceptProposal(c.id)}
+                              className="h-8 px-3 rounded-md bg-mint text-ink text-xs hover:opacity-90 transition font-medium"
+                            >
+                              수락
+                            </button>
+                          </div>
+                        </article>
+                      ))
+                    ) : (
+                      <div className="col-span-2 surface-card p-10 text-center text-ink-soft">
+                        <div className="mx-auto w-12 h-12 bg-surface-2 rounded-full grid place-items-center mb-3">
+                          <Briefcase className="size-5" />
+                        </div>
+                        <h4 className="font-display font-medium text-ink mb-1">아직 제안받은 회사가 없습니다</h4>
+                        <p className="text-sm">포트폴리오를 업데이트하고 새로운 기회를 기다려보세요.</p>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </section>

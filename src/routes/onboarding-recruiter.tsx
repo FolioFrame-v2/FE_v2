@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Check } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { REGIONS } from "@/lib/regions";
+import { useGetSignupInfo1 } from "@/api/generated/company-profile/company-profile";
 
 export const Route = createFileRoute("/onboarding-recruiter")({
   head: () => ({
@@ -34,6 +35,7 @@ type Form = {
   field: string;
   techStacks: string[];
   region: string;
+  companySize: string;
   bio: string;
   agree: boolean;
 };
@@ -48,6 +50,7 @@ const INIT: Form = {
   field: "",
   techStacks: [],
   region: "",
+  companySize: "",
   bio: "",
   agree: false,
 };
@@ -55,6 +58,21 @@ const INIT: Form = {
 function OnboardingRecruiterPage() {
   const navigate = useNavigate();
   const [f, setF] = useState<Form>(INIT);
+  const { data: signupRes } = useGetSignupInfo1();
+
+  useEffect(() => {
+    if (signupRes?.data?.result) {
+      const s = signupRes.data.result;
+      setF(prev => ({
+        ...prev,
+        contactName: s.name || prev.contactName,
+        email: s.loginId || s.email || prev.email,
+        phone: s.phone || prev.phone,
+        businessNumber: (s as any).businessNumber || prev.businessNumber // Assuming businessNumber might be in signup info
+      }));
+    }
+  }, [signupRes?.data?.result]);
+
   const [submitted, setSubmitted] = useState(false);
   const [techInput, setTechInput] = useState("");
   const [fieldInput, setFieldInput] = useState("");
@@ -156,6 +174,9 @@ function OnboardingRecruiterPage() {
               </Field>
               <Field label="회사 웹사이트">
                 <input value={f.website} onChange={(e) => set("website", e.target.value)} placeholder="https://company.com" className={inp} />
+              </Field>
+              <Field label="산업 규모(직원 수 등)">
+                <input value={f.companySize} onChange={(e) => set("companySize", e.target.value)} placeholder="예: 50~100명, 스타트업 등" className={inp} />
               </Field>
               <Field label="회사 위치">
                 <div className="flex flex-wrap gap-3">

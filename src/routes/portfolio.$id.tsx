@@ -12,7 +12,7 @@ import type { PortfolioData } from "@/lib/portfolio-data";
 import { useBookmarks } from "@/hooks/useBookmarks";
 
 const searchSchema = z.object({
-  template: z.string().optional().default("minimal"),
+  template: z.string().optional(),
   role: z.string().optional(),
 });
 
@@ -30,12 +30,14 @@ export const Route = createFileRoute("/portfolio/$id")({
 function PortfolioPage() {
   const { template, role } = Route.useSearch();
   const { id } = Route.useParams();
-  const navigate = useNavigate();
-  const activeTemplate = TEMPLATES.find((t) => t.id === template) ?? TEMPLATES[0];
 
   const { data: myProfileRes } = useGetMyProfile({ memberId: 0 }, { query: { retry: false } });
   const { data: portfolioRes } = useGetDetail(Number(id));
   const portfolioData = portfolioRes?.data?.result;
+
+  const navigate = useNavigate();
+  const actualTemplateId = template || portfolioData?.templateLayoutKey || "minimal";
+  const activeTemplate = TEMPLATES.find((t) => t.id === actualTemplateId) ?? TEMPLATES[0];
 
   const isOwner = myProfileRes?.data?.result?.talentProfileId && portfolioData?.talentProfileId 
     ? myProfileRes.data.result.talentProfileId === portfolioData.talentProfileId 
