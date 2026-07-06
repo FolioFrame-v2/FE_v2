@@ -124,7 +124,7 @@ export const useUpdateContent = <TError = AxiosError<ApiResponsePortfolioFieldRe
  * 포트폴리오에 포함된 템플릿 필드 목록과 현재 작성된 내용을 displayOrder 순으로 조회합니다.
  * @summary 포트폴리오 필드 목록 조회
  */
-export const getList5 = (
+export const getList8 = (
     portfolioId: number, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponseListPortfolioFieldResDTO>> => {
 
@@ -137,69 +137,69 @@ export const getList5 = (
 
 
 
-export const getGetList5QueryKey = (portfolioId: number,) => {
+export const getGetList8QueryKey = (portfolioId: number,) => {
     return [
     `/api/v1/portfolios/${portfolioId}/fields`
     ] as const;
     }
 
 
-export const getGetList5QueryOptions = <TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetList8QueryOptions = <TData = Awaited<ReturnType<typeof getList8>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList8>>, TError, TData>>, axios?: AxiosRequestConfig}
 ) => {
 
 const {query: queryOptions, axios: axiosOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetList5QueryKey(portfolioId);
+  const queryKey =  queryOptions?.queryKey ?? getGetList8QueryKey(portfolioId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList5>>> = ({ signal }) => getList5(portfolioId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList8>>> = ({ signal }) => getList8(portfolioId, { signal, ...axiosOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: portfolioId !== null && portfolioId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: portfolioId !== null && portfolioId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList8>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetList5QueryResult = NonNullable<Awaited<ReturnType<typeof getList5>>>
-export type GetList5QueryError = AxiosError<ApiResponseListPortfolioFieldResDTO>
+export type GetList8QueryResult = NonNullable<Awaited<ReturnType<typeof getList8>>>
+export type GetList8QueryError = AxiosError<ApiResponseListPortfolioFieldResDTO>
 
 
-export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
- portfolioId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>> & Pick<
+export function useGetList8<TData = Awaited<ReturnType<typeof getList8>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
+ portfolioId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList8>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList5>>,
+          Awaited<ReturnType<typeof getList8>>,
           TError,
-          Awaited<ReturnType<typeof getList5>>
+          Awaited<ReturnType<typeof getList8>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
- portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>> & Pick<
+export function useGetList8<TData = Awaited<ReturnType<typeof getList8>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
+ portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList8>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList5>>,
+          Awaited<ReturnType<typeof getList8>>,
           TError,
-          Awaited<ReturnType<typeof getList5>>
+          Awaited<ReturnType<typeof getList8>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
- portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList8<TData = Awaited<ReturnType<typeof getList8>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
+ portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList8>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 포트폴리오 필드 목록 조회
  */
 
-export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
- portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList8<TData = Awaited<ReturnType<typeof getList8>>, TError = AxiosError<ApiResponseListPortfolioFieldResDTO>>(
+ portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList8>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetList5QueryOptions(portfolioId,options)
+  const queryOptions = getGetList8QueryOptions(portfolioId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

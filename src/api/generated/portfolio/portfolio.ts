@@ -32,15 +32,19 @@ import type {
 } from 'axios';
 
 import type {
-  ApiResponsePageResponsePortfolioSummaryResDTO,
+  ApiResponseListPortfolioJobCategoryResDTO,
+  ApiResponseListTechstackResDTO,
+  ApiResponsePageResponsePortfolioMyListResDTO,
+  ApiResponsePageResponsePortfolioPublicListResDTO,
   ApiResponsePortfolioDetailResDTO,
   ApiResponsePortfolioResDTO,
   ApiResponseVoid,
-  GetListParams,
+  GetList3Params,
   GetPublicListParams,
   PortfolioCreateReqDTO,
   PortfolioUpdateReqDTO,
-  PortfolioVisibilityReqDTO
+  PortfolioVisibilityReqDTO,
+  TechstackIdsReqDTO
 } from '../models';
 
 
@@ -64,11 +68,13 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 
 /**
  * 본인이 작성한 포트폴리오 목록을 최근 수정순으로 페이지 단위 조회합니다. (2×2, 기본 4개/페이지)
+ *
+ * 제목, 마지막 저장일(lastSavedAt), 조회수, 공개/비공개 여부만 반환합니다. AI 첨삭 버전과 무관하게 라이브 콘텐츠가 실제로 마지막 저장된 시각입니다.
  * @summary 내 포트폴리오 목록 조회 (마이페이지)
  */
-export const getList = (
-    params?: GetListParams, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<ApiResponsePageResponsePortfolioSummaryResDTO>> => {
+export const getList3 = (
+    params?: GetList3Params, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ApiResponsePageResponsePortfolioMyListResDTO>> => {
 
 
     return axios.get(
@@ -81,69 +87,69 @@ export const getList = (
 
 
 
-export const getGetListQueryKey = (params?: GetListParams,) => {
+export const getGetList3QueryKey = (params?: GetList3Params,) => {
     return [
     `/api/v1/portfolios`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetListQueryOptions = <TData = Awaited<ReturnType<typeof getList>>, TError = AxiosError<ApiResponsePageResponsePortfolioSummaryResDTO>>(params?: GetListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetList3QueryOptions = <TData = Awaited<ReturnType<typeof getList3>>, TError = AxiosError<ApiResponsePageResponsePortfolioMyListResDTO>>(params?: GetList3Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList3>>, TError, TData>>, axios?: AxiosRequestConfig}
 ) => {
 
 const {query: queryOptions, axios: axiosOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetListQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetList3QueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList>>> = ({ signal }) => getList(params, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList3>>> = ({ signal }) => getList3(params, { signal, ...axiosOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList3>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetListQueryResult = NonNullable<Awaited<ReturnType<typeof getList>>>
-export type GetListQueryError = AxiosError<ApiResponsePageResponsePortfolioSummaryResDTO>
+export type GetList3QueryResult = NonNullable<Awaited<ReturnType<typeof getList3>>>
+export type GetList3QueryError = AxiosError<ApiResponsePageResponsePortfolioMyListResDTO>
 
 
-export function useGetList<TData = Awaited<ReturnType<typeof getList>>, TError = AxiosError<ApiResponsePageResponsePortfolioSummaryResDTO>>(
- params: undefined |  GetListParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList>>, TError, TData>> & Pick<
+export function useGetList3<TData = Awaited<ReturnType<typeof getList3>>, TError = AxiosError<ApiResponsePageResponsePortfolioMyListResDTO>>(
+ params: undefined |  GetList3Params, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList3>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList>>,
+          Awaited<ReturnType<typeof getList3>>,
           TError,
-          Awaited<ReturnType<typeof getList>>
+          Awaited<ReturnType<typeof getList3>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList<TData = Awaited<ReturnType<typeof getList>>, TError = AxiosError<ApiResponsePageResponsePortfolioSummaryResDTO>>(
- params?: GetListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList>>, TError, TData>> & Pick<
+export function useGetList3<TData = Awaited<ReturnType<typeof getList3>>, TError = AxiosError<ApiResponsePageResponsePortfolioMyListResDTO>>(
+ params?: GetList3Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList3>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList>>,
+          Awaited<ReturnType<typeof getList3>>,
           TError,
-          Awaited<ReturnType<typeof getList>>
+          Awaited<ReturnType<typeof getList3>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList<TData = Awaited<ReturnType<typeof getList>>, TError = AxiosError<ApiResponsePageResponsePortfolioSummaryResDTO>>(
- params?: GetListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList3<TData = Awaited<ReturnType<typeof getList3>>, TError = AxiosError<ApiResponsePageResponsePortfolioMyListResDTO>>(
+ params?: GetList3Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList3>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 내 포트폴리오 목록 조회 (마이페이지)
  */
 
-export function useGetList<TData = Awaited<ReturnType<typeof getList>>, TError = AxiosError<ApiResponsePageResponsePortfolioSummaryResDTO>>(
- params?: GetListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList3<TData = Awaited<ReturnType<typeof getList3>>, TError = AxiosError<ApiResponsePageResponsePortfolioMyListResDTO>>(
+ params?: GetList3Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList3>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetListQueryOptions(params,options)
+  const queryOptions = getGetList3QueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -156,10 +162,10 @@ export function useGetList<TData = Awaited<ReturnType<typeof getList>>, TError =
 
 
 /**
- * 새 포트폴리오를 생성합니다. templateId는 필수이며 해당 템플릿의 필드가 자동으로 복사됩니다. 생성 시 공유용 publicSlug가 자동 발급됩니다. visibility를 지정하지 않으면 기본값 PRIVATE으로 생성됩니다.
+ * 새 포트폴리오를 생성합니다. templateId는 필수이며 해당 템플릿의 필드가 자동으로 복사됩니다. 생성 시 공유용 publicSlug가 자동 발급됩니다. visibility를 지정하지 않으면 기본값 PRIVATE으로 생성됩니다. techstackIds로 포트폴리오 전체에서 사용해본 기술스택을 함께 등록할 수 있습니다.
  * @summary 포트폴리오 생성
  */
-export const create = (
+export const create3 = (
     portfolioCreateReqDTO: PortfolioCreateReqDTO, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponsePortfolioResDTO>> => {
 
@@ -173,11 +179,11 @@ export const create = (
 
 
 
-export const getCreateMutationOptions = <TError = AxiosError<ApiResponsePortfolioResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: PortfolioCreateReqDTO}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: PortfolioCreateReqDTO}, TContext> => {
+export const getCreate3MutationOptions = <TError = AxiosError<ApiResponsePortfolioResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create3>>, TError,{data: PortfolioCreateReqDTO}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof create3>>, TError,{data: PortfolioCreateReqDTO}, TContext> => {
 
-const mutationKey = ['create'];
+const mutationKey = ['create3'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -187,10 +193,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof create>>, {data: PortfolioCreateReqDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof create3>>, {data: PortfolioCreateReqDTO}> = (props) => {
           const {data} = props ?? {};
 
-          return  create(data,axiosOptions)
+          return  create3(data,axiosOptions)
         }
 
 
@@ -200,25 +206,87 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type CreateMutationResult = NonNullable<Awaited<ReturnType<typeof create>>>
-    export type CreateMutationBody = PortfolioCreateReqDTO
-    export type CreateMutationError = AxiosError<ApiResponsePortfolioResDTO>
+    export type Create3MutationResult = NonNullable<Awaited<ReturnType<typeof create3>>>
+    export type Create3MutationBody = PortfolioCreateReqDTO
+    export type Create3MutationError = AxiosError<ApiResponsePortfolioResDTO>
 
     /**
  * @summary 포트폴리오 생성
  */
-export const useCreate = <TError = AxiosError<ApiResponsePortfolioResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create>>, TError,{data: PortfolioCreateReqDTO}, TContext>, axios?: AxiosRequestConfig}
+export const useCreate3 = <TError = AxiosError<ApiResponsePortfolioResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create3>>, TError,{data: PortfolioCreateReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof create>>,
+        Awaited<ReturnType<typeof create3>>,
         TError,
         {data: PortfolioCreateReqDTO},
         TContext
       > => {
-      return useMutation(getCreateMutationOptions(options), queryClient);
+      return useMutation(getCreate3MutationOptions(options), queryClient);
     }
     /**
- * 포트폴리오 ID로 상세 정보를 조회합니다. PUBLIC만 누구나 접근 가능하며, PRIVATE·LINK_ONLY는 본인만 접근 가능합니다.
+ * 편집 화면의 '저장' 버튼이 호출합니다. 아직 확정된 적 없는 초안을 확정 상태로 전환하고, 원본(v0) 스냅샷이 없으면 지금 라이브 콘텐츠 기준으로 함께 생성합니다. 확정되지 않은 포트폴리오는 마이페이지 목록에 노출되지 않고, 일정 시간이 지나면 서버가 자동으로 정리합니다 — 이 API를 호출해야 그 대상에서 제외됩니다. 이미 확정된 포트폴리오(또는 AI 첨삭을 먼저 요청했거나 게시한 적이 있는 포트폴리오)에 다시 호출해도 상태 변화 없이 그대로 응답합니다(멱등).
+ * @summary 포트폴리오 저장 확정
+ */
+export const confirmSave = (
+    portfolioId: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ApiResponsePortfolioResDTO>> => {
+
+
+    return axios.post(
+      `/api/v1/portfolios/${portfolioId}/save`,
+      undefined,options
+    );
+  }
+
+
+
+
+export const getConfirmSaveMutationOptions = <TError = AxiosError<ApiResponsePortfolioResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmSave>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof confirmSave>>, TError,{portfolioId: number}, TContext> => {
+
+const mutationKey = ['confirmSave'];
+const {mutation: mutationOptions, axios: axiosOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, axios: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof confirmSave>>, {portfolioId: number}> = (props) => {
+          const {portfolioId} = props ?? {};
+
+          return  confirmSave(portfolioId,axiosOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ConfirmSaveMutationResult = NonNullable<Awaited<ReturnType<typeof confirmSave>>>
+
+    export type ConfirmSaveMutationError = AxiosError<ApiResponsePortfolioResDTO>
+
+    /**
+ * @summary 포트폴리오 저장 확정
+ */
+export const useConfirmSave = <TError = AxiosError<ApiResponsePortfolioResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmSave>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof confirmSave>>,
+        TError,
+        {portfolioId: number},
+        TContext
+      > => {
+      return useMutation(getConfirmSaveMutationOptions(options), queryClient);
+    }
+    /**
+ * 포트폴리오 ID로 상세 정보를 조회합니다. PUBLIC만 누구나 접근 가능하며, PRIVATE는 본인만 접근 가능합니다.
  * @summary 포트폴리오 상세 조회 (ID)
  */
 export const getDetail = (
@@ -312,7 +380,7 @@ export function useGetDetail<TData = Awaited<ReturnType<typeof getDetail>>, TErr
  * 포트폴리오를 삭제합니다. 본인 포트폴리오만 삭제 가능합니다.
  * @summary 포트폴리오 삭제
  */
-export const _delete = (
+export const delete3 = (
     portfolioId: number, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponseVoid>> => {
 
@@ -325,11 +393,11 @@ export const _delete = (
 
 
 
-export const getDeleteMutationOptions = <TError = AxiosError<ApiResponseVoid>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{portfolioId: number}, TContext> => {
+export const getDelete3MutationOptions = <TError = AxiosError<ApiResponseVoid>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete3>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof delete3>>, TError,{portfolioId: number}, TContext> => {
 
-const mutationKey = ['_delete'];
+const mutationKey = ['delete3'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -339,10 +407,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof _delete>>, {portfolioId: number}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof delete3>>, {portfolioId: number}> = (props) => {
           const {portfolioId} = props ?? {};
 
-          return  _delete(portfolioId,axiosOptions)
+          return  delete3(portfolioId,axiosOptions)
         }
 
 
@@ -352,28 +420,28 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type _DeleteMutationResult = NonNullable<Awaited<ReturnType<typeof _delete>>>
+    export type Delete3MutationResult = NonNullable<Awaited<ReturnType<typeof delete3>>>
 
-    export type _DeleteMutationError = AxiosError<ApiResponseVoid>
+    export type Delete3MutationError = AxiosError<ApiResponseVoid>
 
     /**
  * @summary 포트폴리오 삭제
  */
-export const useDelete = <TError = AxiosError<ApiResponseVoid>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof _delete>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
+export const useDelete3 = <TError = AxiosError<ApiResponseVoid>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete3>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof _delete>>,
+        Awaited<ReturnType<typeof delete3>>,
         TError,
         {portfolioId: number},
         TContext
       > => {
-      return useMutation(getDeleteMutationOptions(options), queryClient);
+      return useMutation(getDelete3MutationOptions(options), queryClient);
     }
     /**
- * 포트폴리오 기본 정보를 수정합니다. 본인 포트폴리오만 수정 가능합니다.
+ * 포트폴리오 기본 정보를 수정합니다. 본인 포트폴리오만 수정 가능합니다. techstackIds는 매번 전체 목록으로 교체됩니다.
  * @summary 포트폴리오 수정
  */
-export const update = (
+export const update3 = (
     portfolioId: number,
     portfolioUpdateReqDTO: PortfolioUpdateReqDTO, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponsePortfolioResDTO>> => {
@@ -388,11 +456,11 @@ export const update = (
 
 
 
-export const getUpdateMutationOptions = <TError = AxiosError<ApiResponsePortfolioResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update>>, TError,{portfolioId: number;data: PortfolioUpdateReqDTO}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof update>>, TError,{portfolioId: number;data: PortfolioUpdateReqDTO}, TContext> => {
+export const getUpdate3MutationOptions = <TError = AxiosError<ApiResponsePortfolioResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update3>>, TError,{portfolioId: number;data: PortfolioUpdateReqDTO}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof update3>>, TError,{portfolioId: number;data: PortfolioUpdateReqDTO}, TContext> => {
 
-const mutationKey = ['update'];
+const mutationKey = ['update3'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -402,10 +470,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof update>>, {portfolioId: number;data: PortfolioUpdateReqDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof update3>>, {portfolioId: number;data: PortfolioUpdateReqDTO}> = (props) => {
           const {portfolioId,data} = props ?? {};
 
-          return  update(portfolioId,data,axiosOptions)
+          return  update3(portfolioId,data,axiosOptions)
         }
 
 
@@ -415,27 +483,26 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type UpdateMutationResult = NonNullable<Awaited<ReturnType<typeof update>>>
-    export type UpdateMutationBody = PortfolioUpdateReqDTO
-    export type UpdateMutationError = AxiosError<ApiResponsePortfolioResDTO>
+    export type Update3MutationResult = NonNullable<Awaited<ReturnType<typeof update3>>>
+    export type Update3MutationBody = PortfolioUpdateReqDTO
+    export type Update3MutationError = AxiosError<ApiResponsePortfolioResDTO>
 
     /**
  * @summary 포트폴리오 수정
  */
-export const useUpdate = <TError = AxiosError<ApiResponsePortfolioResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update>>, TError,{portfolioId: number;data: PortfolioUpdateReqDTO}, TContext>, axios?: AxiosRequestConfig}
+export const useUpdate3 = <TError = AxiosError<ApiResponsePortfolioResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update3>>, TError,{portfolioId: number;data: PortfolioUpdateReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof update>>,
+        Awaited<ReturnType<typeof update3>>,
         TError,
         {portfolioId: number;data: PortfolioUpdateReqDTO},
         TContext
       > => {
-      return useMutation(getUpdateMutationOptions(options), queryClient);
+      return useMutation(getUpdate3MutationOptions(options), queryClient);
     }
     /**
  * 포트폴리오 공개 범위를 변경합니다. 본인 포트폴리오만 변경 가능합니다.
  * - PUBLIC: 전체 공개 — 누구나 접근 가능
- * - LINK_ONLY: 링크 공개 — publicSlug 링크를 가진 사람만 접근 가능
  * - PRIVATE: 비공개 — 본인만 접근 가능
  * @summary 포트폴리오 공개 설정 변경
  */
@@ -499,28 +566,29 @@ export const useChangeVisibility = <TError = AxiosError<ApiResponsePortfolioResD
       return useMutation(getChangeVisibilityMutationOptions(options), queryClient);
     }
     /**
- * 작성 완료된 포트폴리오를 저장합니다. EditStatus가 PUBLISHED로 변경되고 선택한 템플릿의 useCount가 1 증가합니다.
- * @summary 포트폴리오 저장(발행)
+ * 포트폴리오 전체에서 사용해본 기술스택만 가볍게 교체합니다. techstackIds에 남길 항목만 담아 보내면 되며(예: 태그 하나 제거), 다른 필드는 건드리지 않습니다.
+ * @summary 포트폴리오 기술스택 수정
  */
-export const publish = (
-    portfolioId: number, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<ApiResponsePortfolioResDTO>> => {
+export const updateTechstacks = (
+    portfolioId: number,
+    techstackIdsReqDTO: TechstackIdsReqDTO, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ApiResponseListTechstackResDTO>> => {
 
 
     return axios.patch(
-      `/api/v1/portfolios/${portfolioId}/publish`,
-      undefined,options
+      `/api/v1/portfolios/${portfolioId}/techstacks`,
+      techstackIdsReqDTO,options
     );
   }
 
 
 
 
-export const getPublishMutationOptions = <TError = AxiosError<ApiResponsePortfolioResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publish>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof publish>>, TError,{portfolioId: number}, TContext> => {
+export const getUpdateTechstacksMutationOptions = <TError = AxiosError<ApiResponseListTechstackResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTechstacks>>, TError,{portfolioId: number;data: TechstackIdsReqDTO}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTechstacks>>, TError,{portfolioId: number;data: TechstackIdsReqDTO}, TContext> => {
 
-const mutationKey = ['publish'];
+const mutationKey = ['updateTechstacks'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -530,10 +598,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof publish>>, {portfolioId: number}> = (props) => {
-          const {portfolioId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTechstacks>>, {portfolioId: number;data: TechstackIdsReqDTO}> = (props) => {
+          const {portfolioId,data} = props ?? {};
 
-          return  publish(portfolioId,axiosOptions)
+          return  updateTechstacks(portfolioId,data,axiosOptions)
         }
 
 
@@ -543,25 +611,25 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PublishMutationResult = NonNullable<Awaited<ReturnType<typeof publish>>>
-
-    export type PublishMutationError = AxiosError<ApiResponsePortfolioResDTO>
+    export type UpdateTechstacksMutationResult = NonNullable<Awaited<ReturnType<typeof updateTechstacks>>>
+    export type UpdateTechstacksMutationBody = TechstackIdsReqDTO
+    export type UpdateTechstacksMutationError = AxiosError<ApiResponseListTechstackResDTO>
 
     /**
- * @summary 포트폴리오 저장(발행)
+ * @summary 포트폴리오 기술스택 수정
  */
-export const usePublish = <TError = AxiosError<ApiResponsePortfolioResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publish>>, TError,{portfolioId: number}, TContext>, axios?: AxiosRequestConfig}
+export const useUpdateTechstacks = <TError = AxiosError<ApiResponseListTechstackResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTechstacks>>, TError,{portfolioId: number;data: TechstackIdsReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof publish>>,
+        Awaited<ReturnType<typeof updateTechstacks>>,
         TError,
-        {portfolioId: number},
+        {portfolioId: number;data: TechstackIdsReqDTO},
         TContext
       > => {
-      return useMutation(getPublishMutationOptions(options), queryClient);
+      return useMutation(getUpdateTechstacksMutationOptions(options), queryClient);
     }
     /**
- * 공유 링크(publicSlug)로 포트폴리오를 조회합니다. PUBLIC·LINK_ONLY 포트폴리오만 접근 가능합니다. 비로그인 사용자도 접근할 수 있습니다.
+ * 공유 링크(publicSlug)로 포트폴리오를 조회합니다. PUBLIC 포트폴리오만 접근 가능합니다. 비로그인 사용자도 접근할 수 있습니다.
  * @summary 포트폴리오 링크 공유 조회 (Slug)
  */
 export const getBySlug = (
@@ -656,11 +724,16 @@ export function useGetBySlug<TData = Awaited<ReturnType<typeof getBySlug>>, TErr
  *
  * - `sort`: LATEST(최신순, 기본값) / POPULAR(북마크 순) / MOST_VIEWED(조회순)
  * - **비로그인 시**: 상위 3개만 반환 (`totalElements`는 실제 전체 개수 — 프론트에서 회원가입 유도 UI 표시)
+ * - 포트폴리오 제목, 작성자 프로필 사진/이름/지역, 경력 연차(careerYears), 직군(jobRole), 보유 기술스택, 북마크수, 조회수를 반환합니다.
+ * - `keyword`: 검색창 1개 — 제목 / 작성자 이름 / 요구 기술스택 중 하나라도 겹치면 매칭(OR) (선택)
+ * - `regionId`: 지역 필터 (선택)
+ * - `career`: 경력 버킷(없음/1년미만/1~3년/.../10년이상)으로 필터링 (선택)
+ * - `category`: 직군 카테고리(FRONTEND/BACKEND/FULLSTACK/MOBILE/DATA/DEVOPS/EMBEDDED)로 필터링, 미지정 시 전체 (선택). 예: MOBILE은 MOBILE/ANDROID/IOS jobRole을 모두 포함, DATA는 DATA_ENGINEER/DATA_ANALYST/DATA_SCIENTIST를 포함
  * @summary 공개 포트폴리오 탐색 목록 조회
  */
 export const getPublicList = (
     params?: GetPublicListParams, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<ApiResponsePageResponsePortfolioSummaryResDTO>> => {
+ ): Promise<AxiosResponse<ApiResponsePageResponsePortfolioPublicListResDTO>> => {
 
 
     return axios.get(
@@ -736,6 +809,99 @@ export function useGetPublicList<TData = Awaited<ReturnType<typeof getPublicList
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetPublicListQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * 포트폴리오 목록 필터에서 클릭형으로 보여줄 직군 카테고리 목록을 반환합니다(검색이 아닌 고정 버튼 목록).
+ *
+ * 전체/Frontend/Backend/Fullstack/Mobile/Data/DevOps/Embedded — "전체"는 이 API 목록에 포함되지 않고, 프론트가 `category` 파라미터 없이 `/public`을 호출하는 것으로 처리합니다.
+ * @summary 포트폴리오 직군 카테고리 목록 조회
+ */
+export const getJobCategories = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ApiResponseListPortfolioJobCategoryResDTO>> => {
+
+
+    return axios.get(
+      `/api/v1/portfolios/job-categories`,options
+    );
+  }
+
+
+
+
+export const getGetJobCategoriesQueryKey = () => {
+    return [
+    `/api/v1/portfolios/job-categories`
+    ] as const;
+    }
+
+
+export const getGetJobCategoriesQueryOptions = <TData = Awaited<ReturnType<typeof getJobCategories>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobCategories>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetJobCategoriesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobCategories>>> = ({ signal }) => getJobCategories({ signal, ...axiosOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getJobCategories>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetJobCategoriesQueryResult = NonNullable<Awaited<ReturnType<typeof getJobCategories>>>
+export type GetJobCategoriesQueryError = AxiosError<unknown>
+
+
+export function useGetJobCategories<TData = Awaited<ReturnType<typeof getJobCategories>>, TError = AxiosError<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobCategories>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobCategories>>,
+          TError,
+          Awaited<ReturnType<typeof getJobCategories>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetJobCategories<TData = Awaited<ReturnType<typeof getJobCategories>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobCategories>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobCategories>>,
+          TError,
+          Awaited<ReturnType<typeof getJobCategories>>
+        > , 'initialData'
+      >, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetJobCategories<TData = Awaited<ReturnType<typeof getJobCategories>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobCategories>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary 포트폴리오 직군 카테고리 목록 조회
+ */
+
+export function useGetJobCategories<TData = Awaited<ReturnType<typeof getJobCategories>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobCategories>>, TError, TData>>, axios?: AxiosRequestConfig}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetJobCategoriesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

@@ -61,7 +61,7 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
  * 포트폴리오에 등록된 학력 목록을 입학일 기준 최신순으로 조회합니다.
  * @summary 학력 목록 조회
  */
-export const getList2 = (
+export const getList5 = (
     portfolioId: number, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponseListEducationResDTO>> => {
 
@@ -74,69 +74,69 @@ export const getList2 = (
 
 
 
-export const getGetList2QueryKey = (portfolioId: number,) => {
+export const getGetList5QueryKey = (portfolioId: number,) => {
     return [
     `/api/v1/portfolios/${portfolioId}/educations`
     ] as const;
     }
 
 
-export const getGetList2QueryOptions = <TData = Awaited<ReturnType<typeof getList2>>, TError = AxiosError<ApiResponseListEducationResDTO>>(portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList2>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetList5QueryOptions = <TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListEducationResDTO>>(portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>>, axios?: AxiosRequestConfig}
 ) => {
 
 const {query: queryOptions, axios: axiosOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetList2QueryKey(portfolioId);
+  const queryKey =  queryOptions?.queryKey ?? getGetList5QueryKey(portfolioId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList2>>> = ({ signal }) => getList2(portfolioId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList5>>> = ({ signal }) => getList5(portfolioId, { signal, ...axiosOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: portfolioId !== null && portfolioId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList2>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: portfolioId !== null && portfolioId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetList2QueryResult = NonNullable<Awaited<ReturnType<typeof getList2>>>
-export type GetList2QueryError = AxiosError<ApiResponseListEducationResDTO>
+export type GetList5QueryResult = NonNullable<Awaited<ReturnType<typeof getList5>>>
+export type GetList5QueryError = AxiosError<ApiResponseListEducationResDTO>
 
 
-export function useGetList2<TData = Awaited<ReturnType<typeof getList2>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
- portfolioId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList2>>, TError, TData>> & Pick<
+export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
+ portfolioId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList2>>,
+          Awaited<ReturnType<typeof getList5>>,
           TError,
-          Awaited<ReturnType<typeof getList2>>
+          Awaited<ReturnType<typeof getList5>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList2<TData = Awaited<ReturnType<typeof getList2>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
- portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList2>>, TError, TData>> & Pick<
+export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
+ portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList2>>,
+          Awaited<ReturnType<typeof getList5>>,
           TError,
-          Awaited<ReturnType<typeof getList2>>
+          Awaited<ReturnType<typeof getList5>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList2<TData = Awaited<ReturnType<typeof getList2>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
- portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList2>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
+ portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 학력 목록 조회
  */
 
-export function useGetList2<TData = Awaited<ReturnType<typeof getList2>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
- portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList2>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList5<TData = Awaited<ReturnType<typeof getList5>>, TError = AxiosError<ApiResponseListEducationResDTO>>(
+ portfolioId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList5>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetList2QueryOptions(portfolioId,options)
+  const queryOptions = getGetList5QueryOptions(portfolioId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -149,10 +149,10 @@ export function useGetList2<TData = Awaited<ReturnType<typeof getList2>>, TError
 
 
 /**
- * 포트폴리오에 학력을 등록합니다. endedAt이 null이면 재학 중으로 처리됩니다.
+ * 포트폴리오에 학력을 등록합니다. status는 ENROLLED(재학중), ON_LEAVE(휴학), GRADUATED(졸업), DROPPED_OUT(중퇴), COMPLETED(수료) 중 하나입니다.
  * @summary 학력 등록
  */
-export const create2 = (
+export const create5 = (
     portfolioId: number,
     educationReqDTO: EducationReqDTO, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponseEducationResDTO>> => {
@@ -167,11 +167,11 @@ export const create2 = (
 
 
 
-export const getCreate2MutationOptions = <TError = AxiosError<ApiResponseEducationResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create2>>, TError,{portfolioId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof create2>>, TError,{portfolioId: number;data: EducationReqDTO}, TContext> => {
+export const getCreate5MutationOptions = <TError = AxiosError<ApiResponseEducationResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create5>>, TError,{portfolioId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof create5>>, TError,{portfolioId: number;data: EducationReqDTO}, TContext> => {
 
-const mutationKey = ['create2'];
+const mutationKey = ['create5'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -181,10 +181,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof create2>>, {portfolioId: number;data: EducationReqDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof create5>>, {portfolioId: number;data: EducationReqDTO}> = (props) => {
           const {portfolioId,data} = props ?? {};
 
-          return  create2(portfolioId,data,axiosOptions)
+          return  create5(portfolioId,data,axiosOptions)
         }
 
 
@@ -194,28 +194,28 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type Create2MutationResult = NonNullable<Awaited<ReturnType<typeof create2>>>
-    export type Create2MutationBody = EducationReqDTO
-    export type Create2MutationError = AxiosError<ApiResponseEducationResDTO>
+    export type Create5MutationResult = NonNullable<Awaited<ReturnType<typeof create5>>>
+    export type Create5MutationBody = EducationReqDTO
+    export type Create5MutationError = AxiosError<ApiResponseEducationResDTO>
 
     /**
  * @summary 학력 등록
  */
-export const useCreate2 = <TError = AxiosError<ApiResponseEducationResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create2>>, TError,{portfolioId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
+export const useCreate5 = <TError = AxiosError<ApiResponseEducationResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof create5>>, TError,{portfolioId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof create2>>,
+        Awaited<ReturnType<typeof create5>>,
         TError,
         {portfolioId: number;data: EducationReqDTO},
         TContext
       > => {
-      return useMutation(getCreate2MutationOptions(options), queryClient);
+      return useMutation(getCreate5MutationOptions(options), queryClient);
     }
     /**
  * 등록된 학력을 삭제합니다. 본인 포트폴리오의 학력만 삭제 가능합니다.
  * @summary 학력 삭제
  */
-export const delete2 = (
+export const delete5 = (
     portfolioId: number,
     educationId: number, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponseVoid>> => {
@@ -229,11 +229,11 @@ export const delete2 = (
 
 
 
-export const getDelete2MutationOptions = <TError = AxiosError<ApiResponseVoid>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete2>>, TError,{portfolioId: number;educationId: number}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof delete2>>, TError,{portfolioId: number;educationId: number}, TContext> => {
+export const getDelete5MutationOptions = <TError = AxiosError<ApiResponseVoid>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete5>>, TError,{portfolioId: number;educationId: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof delete5>>, TError,{portfolioId: number;educationId: number}, TContext> => {
 
-const mutationKey = ['delete2'];
+const mutationKey = ['delete5'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -243,10 +243,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof delete2>>, {portfolioId: number;educationId: number}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof delete5>>, {portfolioId: number;educationId: number}> = (props) => {
           const {portfolioId,educationId} = props ?? {};
 
-          return  delete2(portfolioId,educationId,axiosOptions)
+          return  delete5(portfolioId,educationId,axiosOptions)
         }
 
 
@@ -256,28 +256,28 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type Delete2MutationResult = NonNullable<Awaited<ReturnType<typeof delete2>>>
+    export type Delete5MutationResult = NonNullable<Awaited<ReturnType<typeof delete5>>>
 
-    export type Delete2MutationError = AxiosError<ApiResponseVoid>
+    export type Delete5MutationError = AxiosError<ApiResponseVoid>
 
     /**
  * @summary 학력 삭제
  */
-export const useDelete2 = <TError = AxiosError<ApiResponseVoid>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete2>>, TError,{portfolioId: number;educationId: number}, TContext>, axios?: AxiosRequestConfig}
+export const useDelete5 = <TError = AxiosError<ApiResponseVoid>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof delete5>>, TError,{portfolioId: number;educationId: number}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof delete2>>,
+        Awaited<ReturnType<typeof delete5>>,
         TError,
         {portfolioId: number;educationId: number},
         TContext
       > => {
-      return useMutation(getDelete2MutationOptions(options), queryClient);
+      return useMutation(getDelete5MutationOptions(options), queryClient);
     }
     /**
  * 등록된 학력 정보를 수정합니다. 본인 포트폴리오의 학력만 수정 가능합니다.
  * @summary 학력 수정
  */
-export const update2 = (
+export const update5 = (
     portfolioId: number,
     educationId: number,
     educationReqDTO: EducationReqDTO, options?: AxiosRequestConfig
@@ -293,11 +293,11 @@ export const update2 = (
 
 
 
-export const getUpdate2MutationOptions = <TError = AxiosError<ApiResponseEducationResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update2>>, TError,{portfolioId: number;educationId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
-): UseMutationOptions<Awaited<ReturnType<typeof update2>>, TError,{portfolioId: number;educationId: number;data: EducationReqDTO}, TContext> => {
+export const getUpdate5MutationOptions = <TError = AxiosError<ApiResponseEducationResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update5>>, TError,{portfolioId: number;educationId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof update5>>, TError,{portfolioId: number;educationId: number;data: EducationReqDTO}, TContext> => {
 
-const mutationKey = ['update2'];
+const mutationKey = ['update5'];
 const {mutation: mutationOptions, axios: axiosOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -307,10 +307,10 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof update2>>, {portfolioId: number;educationId: number;data: EducationReqDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof update5>>, {portfolioId: number;educationId: number;data: EducationReqDTO}> = (props) => {
           const {portfolioId,educationId,data} = props ?? {};
 
-          return  update2(portfolioId,educationId,data,axiosOptions)
+          return  update5(portfolioId,educationId,data,axiosOptions)
         }
 
 
@@ -320,20 +320,20 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type Update2MutationResult = NonNullable<Awaited<ReturnType<typeof update2>>>
-    export type Update2MutationBody = EducationReqDTO
-    export type Update2MutationError = AxiosError<ApiResponseEducationResDTO>
+    export type Update5MutationResult = NonNullable<Awaited<ReturnType<typeof update5>>>
+    export type Update5MutationBody = EducationReqDTO
+    export type Update5MutationError = AxiosError<ApiResponseEducationResDTO>
 
     /**
  * @summary 학력 수정
  */
-export const useUpdate2 = <TError = AxiosError<ApiResponseEducationResDTO>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update2>>, TError,{portfolioId: number;educationId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
+export const useUpdate5 = <TError = AxiosError<ApiResponseEducationResDTO>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof update5>>, TError,{portfolioId: number;educationId: number;data: EducationReqDTO}, TContext>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof update2>>,
+        Awaited<ReturnType<typeof update5>>,
         TError,
         {portfolioId: number;educationId: number;data: EducationReqDTO},
         TContext
       > => {
-      return useMutation(getUpdate2MutationOptions(options), queryClient);
+      return useMutation(getUpdate5MutationOptions(options), queryClient);
     }

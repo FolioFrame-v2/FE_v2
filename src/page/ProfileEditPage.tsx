@@ -2,6 +2,10 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Check } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { REGIONS } from "@/lib/regions";
+import { useGetMyProfile, useGetSignupInfo, useCreateProfile, useUpdateProfile } from "@/api/generated/talent-profile/talent-profile";
+import { useGetRegions } from "@/api/generated/region/region";
+import { useSearch1 as useSearchParts } from "@/api/generated/part-controller/part-controller";
+import { useFindOrCreate as useFindOrCreateTechStack } from "@/api/generated/techstack/techstack";
 
 export default ProfileEditPage;
 
@@ -109,6 +113,14 @@ const CURRENT: Form = {
 
 function ProfileEditPage() {
   const navigate = useNavigate();
+
+  const { data: profileRes, isLoading: isProfileLoading } = useGetMyProfile({ memberId: 0 });
+  const { data: signupRes } = useGetSignupInfo({ memberId: 0 }, { query: { enabled: !profileRes?.data?.result } });
+  const { data: regionsRes } = useGetRegions();
+  const { data: partsRes } = useSearchParts({});
+  const { mutateAsync: createProfile } = useCreateProfile();
+  const { mutateAsync: updateProfile } = useUpdateProfile();
+  const { mutateAsync: findOrCreateTechStack } = useFindOrCreateTechStack();
   const [baseForm, setBaseForm] = useState<Form>(CURRENT);
   const [f, setF] = useState<Form>(CURRENT);
   const [saved, setSaved] = useState<null | "saving" | "done">(null);
@@ -118,6 +130,67 @@ function ProfileEditPage() {
 
   const [province, setProvince] = useState(f.region.split(" ")[0] || "");
   const [district, setDistrict] = useState(f.region.split(" ").slice(1).join(" ") || "");
+
+  useEffect(() => {
+    if (profileRes?.data?.result) {
+      const p = profileRes.data.result;
+      const mappedParts = p.parts?.map((x: any) => x.name).filter(Boolean) as string[] || [];
+      const mappedTechs = p.techStacks?.map((x: any) => x.name).filter(Boolean) as string[] || [];
+      const targetRegion = regionsRes?.data?.result?.find((r: any) => r.id === p.regionId);
+      const mappedRegion = targetRegion ? (targetRegion.parentName ? `${targetRegion.parentName} ${targetRegion.name}` : (targetRegion.fullName || targetRegion.name || "")) : "";
+      
+      const newForm: Form = {
+        ...CURRENT,
+        name: p.name || "",
+        handle: p.contactEmail?.split('@')[0] || "",
+        email: p.contactEmail || "",
+        phone: p.phoneNumber || "",
+        age: p.age?.toString() || "",
+        gender: p.gender === 'MALE' ? 'male' : p.gender === 'FEMALE' ? 'female' : 'none',
+        github: p.githubUrl || "",
+        website: p.portfolioWebsite || "",
+        parts: mappedParts,
+        career: p.careerYears === 0 ? "없음" : p.careerYears === 1 ? "1~3년" : p.careerYears === 3 ? "3~5년" : p.careerYears === 5 ? "5~7년" : p.careerYears === 7 ? "7~10년" : p.careerYears! >= 10 ? "10년 이상" : "없음",
+        region: mappedRegion,
+        headline: p.oneLiner || "",
+        techStacks: mappedTechs,
+        certifications: p.certificates?.map((c: any) => ({
+          name: c.name || "",
+          organization: c.issuer || "",
+          issueDate: c.issuedAt ? c.issuedAt.split('T')[0] : "",
+          expiryDate: c.expiresAt ? c.expiresAt.split('T')[0] : "",
+          id: c.credentialId || ""
+        })) || [],
+        experiences: p.careers?.map((c: any) => ({
+          companyName: c.companyName || "",
+          position: c.position || "",
+          description: c.description || "",
+          startDate: c.startedAt ? c.startedAt.split('T')[0] : "",
+          endDate: c.endedAt ? c.endedAt.split('T')[0] : ""
+        })) || [],
+        educations: p.educations?.map((e: any) => ({
+          schoolName: e.schoolName || "",
+          major: e.major || "",
+          degree: e.degree === 'HIGH_SCHOOL' ? '고졸' : e.degree === 'BACHELOR' ? '학사' : e.degree === 'MASTER' ? '석사' : e.degree === 'DOCTOR' ? '박사' : '기타',
+          admissionDate: e.startedAt ? e.startedAt.split('T')[0] : "",
+          graduationDate: e.endedAt ? e.endedAt.split('T')[0] : "",
+          status: e.status === 'ENROLLED' ? '재학' : e.status === 'ON_LEAVE' ? '휴학' : e.status === 'GRADUATED' ? '졸업' : e.status === 'DROPPED_OUT' ? '중퇴' : '수료'
+        })) || []
+      };
+      setF(newForm);
+      setBaseForm(newForm);
+      setProvince(mappedRegion.split(' ')[0] || '');
+      setDistrict(mappedRegion.split(' ').slice(1).join(' ') || '');
+    } else if (signupRes?.data?.result) {
+      const s = signupRes.data.result;
+      setF(prev => ({
+        ...prev,
+        name: s.name || prev.name,
+        phone: s.phone || prev.phone,
+        age: s.age?.toString() || prev.age
+      }));
+    }
+  }, [profileRes?.data?.result, signupRes?.data?.result, regionsRes?.data?.result]);
 
   useEffect(() => {
     if (province) {
@@ -221,16 +294,91 @@ function ProfileEditPage() {
 
   const dirty = JSON.stringify(f) !== JSON.stringify(baseForm);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaved("saving");
-    setTimeout(() => {
+    try {
+      const regionId = regionsRes?.data?.result?.find((r: any) => r.fullName === f.region || r.name === f.region || r.name === province)?.id || 1;
+      const partIds = f.parts.map(p => partsRes?.data?.result?.find((pr: any) => pr.name === p)?.id).filter(Boolean) as number[];
+      const techStackIds = await Promise.all(
+        f.techStacks.map(async (name) => {
+          try {
+            const res = await findOrCreateTechStack({ data: { name } });
+            return (res.data?.result as any)?.id || (res.data?.result as any)?.techStackId;
+          } catch(e) { return null; }
+        })
+      ).then(ids => ids.filter(Boolean) as number[]);
+
+      const careerYearsMapping: Record<string, number> = {
+        "없음": 0, "1년 미만": 0, "1~3년": 1, "3~5년": 3, "5~7년": 5, "7~10년": 7, "10년 이상": 10
+      };
+
+      const mapDegree = (d: string) => {
+        if(d.includes('고')) return 'HIGH_SCHOOL';
+        if(d.includes('학')) return 'BACHELOR';
+        if(d.includes('석')) return 'MASTER';
+        if(d.includes('박')) return 'DOCTOR';
+        return 'UNIVERSITY';
+      };
+
+      const mapStatus = (s: string) => {
+        if(s.includes('재')) return 'ENROLLED';
+        if(s.includes('휴')) return 'ON_LEAVE';
+        if(s.includes('중')) return 'DROPPED_OUT';
+        if(s.includes('수')) return 'COMPLETED';
+        return 'GRADUATED';
+      };
+
+      const payload = {
+        name: f.name,
+        regionId,
+        contactEmail: f.email,
+        phoneNumber: f.phone,
+        age: parseInt(f.age) || undefined,
+        gender: f.gender === "female" ? "FEMALE" : f.gender === "male" ? "MALE" : "NONE",
+        githubUrl: f.github,
+        portfolioWebsite: f.website,
+        partIds: partIds.length ? partIds : [1],
+        careerYears: careerYearsMapping[f.career] ?? 0,
+        techStackIds,
+        oneLiner: f.headline,
+        certificates: f.certifications.filter(c => c.name).map(c => ({
+          name: c.name,
+          issuer: c.organization,
+          issuedAt: c.issueDate ? new Date(c.issueDate).toISOString() : undefined,
+          expiresAt: c.expiryDate ? new Date(c.expiryDate).toISOString() : undefined,
+          credentialId: c.id
+        })),
+        careers: f.experiences.filter(x => x.companyName).map(x => ({
+          companyName: x.companyName,
+          position: x.position,
+          description: x.description,
+          startedAt: x.startDate ? new Date(x.startDate).toISOString() : new Date().toISOString(),
+          endedAt: x.endDate ? new Date(x.endDate).toISOString() : undefined
+        })),
+        educations: f.educations.filter(x => x.schoolName).map(x => ({
+          schoolName: x.schoolName,
+          major: x.major,
+          degree: mapDegree(x.degree) as any,
+          startedAt: x.admissionDate ? new Date(x.admissionDate).toISOString() : undefined,
+          endedAt: x.graduationDate ? new Date(x.graduationDate).toISOString() : undefined,
+          status: mapStatus(x.status) as any
+        }))
+      };
+
+      if (profileRes?.data?.result) {
+        await updateProfile({ data: payload as any, params: { memberId: 0 } });
+      } else {
+        await createProfile({ data: payload as any, params: { memberId: 0 } });
+      }
       setSaved("done");
       setBaseForm(f);
-      setTimeout(() => {
-        setSaved(null);
-      }, 2000);
-    }, 700);
+      setTimeout(() => setSaved(null), 2000);
+    } catch (err) {
+      console.error(err);
+      alert("프로필 저장에 실패했습니다.");
+      setSaved(null);
+    }
   };
 
   const onReset = () => {
@@ -387,7 +535,22 @@ function ProfileEditPage() {
                   <input type="email" value={f.email} onChange={(e) => set("email", e.target.value)} className={inp} />
                 </Field>
                 <Field label="휴대폰">
-                  <input value={f.phone} onChange={(e) => set("phone", e.target.value)} className={inp} />
+                  <input
+                    value={f.phone}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/[^0-9]/g, "");
+                      if (val.length > 11) val = val.substring(0, 11);
+                      let formatted = val;
+                      if (val.length > 3 && val.length <= 7) {
+                        formatted = `${val.slice(0, 3)}-${val.slice(3)}`;
+                      } else if (val.length > 7) {
+                        formatted = `${val.slice(0, 3)}-${val.slice(3, 7)}-${val.slice(7)}`;
+                      }
+                      set("phone", formatted);
+                    }}
+                    className={inp}
+                    placeholder="010-0000-0000"
+                  />
                 </Field>
                 <Field label="나이">
                   <input type="number" min={14} max={99} value={f.age} onChange={(e) => set("age", e.target.value)} className={inp} />

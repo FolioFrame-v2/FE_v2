@@ -8,30 +8,28 @@
 import type { CareerResDTO } from './careerResDTO.ts';
 import type { CertificateResDTO } from './certificateResDTO.ts';
 import type { EducationResDTO } from './educationResDTO.ts';
-import type { PortfolioDetailResDTOEditStatus } from './portfolioDetailResDTOEditStatus.ts';
 import type { PortfolioDetailResDTOJobRole } from './portfolioDetailResDTOJobRole.ts';
+import type { PortfolioDetailResDTOTemplateLayoutKey } from './portfolioDetailResDTOTemplateLayoutKey.ts';
 import type { PortfolioDetailResDTOVisibility } from './portfolioDetailResDTOVisibility.ts';
 import type { PortfolioFieldResDTO } from './portfolioFieldResDTO.ts';
 import type { ProjectResDTO } from './projectResDTO.ts';
+import type { TalentProfileSummaryResDTO } from './talentProfileSummaryResDTO.ts';
+import type { TechstackResDTO } from './techstackResDTO.ts';
 
 export interface PortfolioDetailResDTO {
   id?: number;
   talentProfileId?: number;
   templateId?: number;
   templateName?: string;
+  templateLayoutKey?: PortfolioDetailResDTOTemplateLayoutKey;
   title?: string;
   jobRole?: PortfolioDetailResDTOJobRole;
-  careerSummary?: string;
-  contactEmail?: string;
-  githubUrl?: string;
-  personalWebsite?: string;
   oneLiner?: string;
   description?: string;
   visibility?: PortfolioDetailResDTOVisibility;
   publicSlug?: string;
   viewCount?: number;
   bookmarkCount?: number;
-  editStatus?: PortfolioDetailResDTOEditStatus;
   lastSavedAt?: string;
   publishedAt?: string;
   createdAt?: string;
@@ -41,4 +39,6 @@ export interface PortfolioDetailResDTO {
   careers?: CareerResDTO[];
   certificates?: CertificateResDTO[];
   projects?: ProjectResDTO[];
+  techstacks?: TechstackResDTO[];
+  talentProfile?: TalentProfileSummaryResDTO;
 }

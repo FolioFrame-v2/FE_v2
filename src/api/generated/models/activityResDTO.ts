@@ -5,13 +5,14 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
+import type { RegionResDTO } from './regionResDTO.ts';
 
 export interface ActivityResDTO {
   activityId?: number;
   title?: string;
   category?: string;
   organizer?: string;
-  region?: string;
+  region?: RegionResDTO;
   part?: string;
   field?: string;
   teamSize?: string;

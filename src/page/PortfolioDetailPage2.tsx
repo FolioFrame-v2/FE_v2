@@ -134,7 +134,7 @@ const PortfolioDetailPage2 = () => {
               <p className="absolute top-0 text-[1em] font-bold text-white ml-[3.6em] mt-[1.8em] font-['OTF_R']">참여기간</p>
               <img className="w-[10em] h-auto mr-[1em] mt-[0.2em]" src={Notepad3} alt="Notepad3" />
               <p className="relative text-[1em] m-0 mt-[2.5em] font-['OTF_R'] after:content-[''] after:block after:w-[10em] after:h-[0.08em] after:bg-[#000] after:absolute after:left-0">
-                {portfolioData.startDate} - {portfolioData.endDate}
+                {portfolioData.startedAt} - {portfolioData.endedAt}
               </p>
             </div>
             {/* 사용한 언어 */}

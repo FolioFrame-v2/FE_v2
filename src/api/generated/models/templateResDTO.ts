@@ -5,11 +5,12 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
+import type { TemplateResDTOLayoutKey } from './templateResDTOLayoutKey.ts';
 
 export interface TemplateResDTO {
   id?: number;
   name?: string;
   description?: string;
-  thumbnailUrl?: string;
+  layoutKey?: TemplateResDTOLayoutKey;
   useCount?: number;
 }

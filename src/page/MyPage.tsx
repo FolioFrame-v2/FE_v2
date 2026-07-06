@@ -1,14 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useGetList3, useDelete3 } from "@/api/generated/portfolio/portfolio";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetMyProfile, useGetSignupInfo } from "@/api/generated/talent-profile/talent-profile";
+import { useGetRegions } from "@/api/generated/region/region";
+import { toast } from "sonner";
 
 
-export default MyPage;
-
-const MY_PORTFOLIOS = [
-  { id: "mp1", title: "실시간 협업 화이트보드", status: "공개", updated: "2026-06-20", views: 1240 },
-  { id: "mp2", title: "사이드 프로젝트 모음", status: "비공개", updated: "2026-06-12", views: 0 },
-  { id: "mp3", title: "졸업작품: AI 일정 추천", status: "비공개", updated: "2026-05-30", views: 312 },
-];
+// 목업 데이터 제거 (MY_PORTFOLIOS)
 
 const INITIAL_SAVED_COMPANIES = [
   { id: "co1", name: "Kakao", part: "Backend", region: "판교", stage: "지원완료", logo: "K", color: "var(--color-mint)", submittedPortfolio: "실시간 협업 화이트보드" },
@@ -17,11 +16,45 @@ const INITIAL_SAVED_COMPANIES = [
   { id: "co4", name: "네이버", part: "Data", region: "분당", stage: "", logo: "N", color: "var(--color-coral)" },
 ];
 
-function MyPage() {
+export default function MyPage() {
+  const { data: portfoliosData, isLoading: portfoliosLoading } = useGetList3({ page: 0, size: 10 });
+  const myPortfolios = portfoliosData?.data?.result?.content || [];
+  
+  const { data: profileRes, isLoading: isProfileLoading } = useGetMyProfile({ memberId: 0 });
+  const { data: signupRes } = useGetSignupInfo({ memberId: 0 }, { query: { enabled: !profileRes?.data?.result } });
+  const { data: regionsRes } = useGetRegions();
+  const p = profileRes?.data?.result;
+  const s = signupRes?.data?.result;
+  const targetRegion = regionsRes?.data?.result?.find((r: any) => r.id === p?.regionId);
+  const mappedRegion = targetRegion ? (targetRegion.parentName ? `${targetRegion.parentName} ${targetRegion.name}` : (targetRegion.fullName || targetRegion.name || "")) : "";
+
+  const displayName = p?.name || s?.name || "이름 없음";
+  const displayEmail = p?.contactEmail || "-";
+  const displayPhone = p?.phoneNumber || s?.phone || "-";
+
   const [tab, setTab] = useState<"portfolios" | "companies">("portfolios");
   const [previewCompany, setPreviewCompany] = useState<any>(null);
   const [companies, setCompanies] = useState(INITIAL_SAVED_COMPANIES);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
+  const queryClient = useQueryClient();
+
+  const { mutate: deletePortfolio } = useDelete3({
+    mutation: {
+      onSuccess: () => {
+        alert("포트폴리오가 삭제되었습니다.");
+        queryClient.invalidateQueries({ queryKey: ['/api/v1/portfolios'] });
+      },
+      onError: (err: any) => {
+        alert("삭제 실패: " + err.message);
+      }
+    }
+  });
+
+  const handleDeletePortfolio = (id: number) => {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      deletePortfolio({ portfolioId: id });
+    }
+  };
 
   const handleCancelConfirm = () => {
     if (cancelTarget) {
@@ -43,15 +76,15 @@ function MyPage() {
         <aside className="lg:col-span-4 space-y-5">
           <div className="surface-card p-6">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground grid place-items-center font-display font-bold text-2xl">D</div>
+              <div className="h-16 w-16 rounded-full bg-primary text-primary-foreground grid place-items-center font-display font-bold text-2xl">{displayName ? displayName.slice(0, 1) : "U"}</div>
               <div>
-                <h2 className="font-display text-xl font-semibold tracking-tight">김도현</h2>
+                <h2 className="font-display text-xl font-semibold tracking-tight">{isProfileLoading ? "로딩중..." : displayName}</h2>
               </div>
             </div>
             <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-              <Stat label="포폴" value="3" />
-              <Stat label="관심" value="4" />
-              <Stat label="조회" value="1.5k" />
+              <Stat label="포폴" value={myPortfolios.length.toString()} />
+              <Stat label="관심" value="0" />
+              <Stat label="조회" value="0" />
             </div>
             <Link to="/profileedit" className="mt-5 flex items-center justify-center h-9 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition">
               기본 정보 수정
@@ -60,20 +93,22 @@ function MyPage() {
 
           <div className="surface-card p-6 space-y-3">
             <h3 className="font-display font-semibold tracking-tight">기본 정보</h3>
-            <InfoRow label="직군" value="Frontend Engineer" />
-            <InfoRow label="지역" value="서울 · 강남구" />
-            <InfoRow label="경력" value="2년차" />
-            <InfoRow label="이메일" value="dohyun@devfolio.io" />
-            <InfoRow label="GitHub" value="github.com/dohyun" />
-            <InfoRow label="웹사이트" value="dohyun.dev" />
+            <InfoRow label="직군" value={p?.parts?.map((x: any) => x.name).join(", ") || "-"} />
+            <InfoRow label="지역" value={mappedRegion || "-"} />
+            <InfoRow label="경력" value={p?.careerYears === 0 ? "신입" : p?.careerYears ? `${p.careerYears}년차` : "-"} />
+            <InfoRow label="이메일" value={displayEmail} />
+            <InfoRow label="전화번호" value={displayPhone} />
+            <InfoRow label="GitHub" value={p?.githubUrl?.replace(/^https?:\/\//i, "") || "-"} />
+            <InfoRow label="웹사이트" value={p?.portfolioWebsite?.replace(/^https?:\/\//i, "") || "-"} />
           </div>
 
           <div className="surface-card p-6 space-y-3">
             <h3 className="font-display font-semibold tracking-tight">관심 기술 스택</h3>
             <div className="flex flex-wrap gap-2 pt-1">
-              {["React", "TypeScript", "JavaScript"].map(stack => (
-                <span key={stack} className="chip bg-surface border-line text-ink text-xs">{stack}</span>
+              {p?.techStacks?.map((stack: any) => (
+                <span key={stack.name} className="chip bg-surface border-line text-ink text-xs">{stack.name}</span>
               ))}
+              {(!p?.techStacks || p.techStacks.length === 0) && <span className="text-sm text-ink-soft">등록된 기술 스택이 없습니다.</span>}
             </div>
             <p className="text-xs text-ink-soft mt-2">관련 기업 공고 알림 수신 중</p>
           </div>
@@ -88,23 +123,30 @@ function MyPage() {
 
           {tab === "portfolios" && (
             <div className="grid gap-4 sm:grid-cols-2">
-              {[...MY_PORTFOLIOS].sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()).map((p) => (
-                <article key={p.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
-                  <div className="flex items-start justify-between">
-                    <h3 className="font-display text-lg font-semibold tracking-tight">{p.title}</h3>
-                    <StatusChip status={p.status} />
-                  </div>
-                  <div className="mt-3 text-xs font-mono text-ink-soft">최근 수정 · {p.updated}</div>
-                  <div className="mt-4 flex items-center justify-between pt-4 border-t border-line">
-                    <span className="text-xs text-ink-soft">{p.views.toLocaleString()} views</span>
-                    <div className="flex gap-2">
-                      <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition">공유</button>
-                      <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: undefined }} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
-                      <button className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
+              {portfoliosLoading ? (
+                <div className="text-sm text-ink-soft">포트폴리오 불러오는 중...</div>
+              ) : (
+                [...myPortfolios].sort((a, b) => new Date(b.lastSavedAt || "").getTime() - new Date(a.lastSavedAt || "").getTime()).map((p) => (
+                  <article key={p.id} className="surface-card p-5 hover:-translate-y-0.5 transition">
+                    <div className="flex items-start justify-between">
+                      <h3 className="font-display text-lg font-semibold tracking-tight">{p.title}</h3>
+                      <StatusChip status={p.visibility === "PUBLIC" ? "공개" : "비공개"} />
                     </div>
-                  </div>
-                </article>
-              ))}
+                    <div className="mt-3 text-xs font-mono text-ink-soft">최근 수정 · {p.lastSavedAt ? new Date(p.lastSavedAt).toLocaleDateString() : ""}</div>
+                    <div className="mt-4 flex items-center justify-between pt-4 border-t border-line">
+                      <span className="text-xs text-ink-soft">{(p.viewCount || 0).toLocaleString()} views</span>
+                      <div className="flex gap-2">
+                        <button className="h-8 px-3 rounded-md border border-line text-xs hover:bg-surface-2 transition" onClick={() => {
+                          navigator.clipboard.writeText(window.location.origin + "/portfolio/" + p.id);
+                          toast.success("링크가 복사되었습니다.");
+                        }}>공유</button>
+                        <Link to="/portfoliopageeditor" search={{ templateId: undefined, portfolioId: String(p.id) }} className="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs grid place-items-center hover:opacity-90 transition">편집</Link>
+                        <button onClick={() => p.id && handleDeletePortfolio(p.id)} className="h-8 px-3 rounded-md border border-coral text-coral text-xs hover:bg-coral/10 transition">삭제</button>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              )}
               <Link to="/templates" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
                 <div className="text-center">
                   <div className="text-3xl font-display">＋</div>

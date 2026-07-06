@@ -30,7 +30,7 @@ import type {
 import type {
   ApiResponsePageResponseTemplateResDTO,
   ApiResponseTemplateDetailResDTO,
-  GetList6Params
+  GetList9Params
 } from '../models';
 
 
@@ -56,13 +56,13 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
  * 사용 가능한 템플릿 목록을 사용 횟수 기준 내림차순으로 페이지 단위 조회합니다. (2×2, 기본 4개/페이지)
  * @summary 템플릿 목록 조회
  */
-export const getList6 = (
-    params?: GetList6Params, options?: AxiosRequestConfig
+export const getList9 = (
+    params?: GetList9Params, options?: AxiosRequestConfig
  ): Promise<AxiosResponse<ApiResponsePageResponseTemplateResDTO>> => {
 
 
     return axios.get(
-      `/api/portfolio-templates`,{
+      `/api/v1/portfolio-templates`,{
     ...options,
         params: {...params, ...options?.params},}
     );
@@ -71,69 +71,69 @@ export const getList6 = (
 
 
 
-export const getGetList6QueryKey = (params?: GetList6Params,) => {
+export const getGetList9QueryKey = (params?: GetList9Params,) => {
     return [
-    `/api/portfolio-templates`, ...(params ? [params] : [])
+    `/api/v1/portfolio-templates`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetList6QueryOptions = <TData = Awaited<ReturnType<typeof getList6>>, TError = AxiosError<unknown>>(params?: GetList6Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList6>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetList9QueryOptions = <TData = Awaited<ReturnType<typeof getList9>>, TError = AxiosError<unknown>>(params?: GetList9Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList9>>, TError, TData>>, axios?: AxiosRequestConfig}
 ) => {
 
 const {query: queryOptions, axios: axiosOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetList6QueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGetList9QueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList6>>> = ({ signal }) => getList6(params, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getList9>>> = ({ signal }) => getList9(params, { signal, ...axiosOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList6>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getList9>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetList6QueryResult = NonNullable<Awaited<ReturnType<typeof getList6>>>
-export type GetList6QueryError = AxiosError<unknown>
+export type GetList9QueryResult = NonNullable<Awaited<ReturnType<typeof getList9>>>
+export type GetList9QueryError = AxiosError<unknown>
 
 
-export function useGetList6<TData = Awaited<ReturnType<typeof getList6>>, TError = AxiosError<unknown>>(
- params: undefined |  GetList6Params, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList6>>, TError, TData>> & Pick<
+export function useGetList9<TData = Awaited<ReturnType<typeof getList9>>, TError = AxiosError<unknown>>(
+ params: undefined |  GetList9Params, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList9>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList6>>,
+          Awaited<ReturnType<typeof getList9>>,
           TError,
-          Awaited<ReturnType<typeof getList6>>
+          Awaited<ReturnType<typeof getList9>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList6<TData = Awaited<ReturnType<typeof getList6>>, TError = AxiosError<unknown>>(
- params?: GetList6Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList6>>, TError, TData>> & Pick<
+export function useGetList9<TData = Awaited<ReturnType<typeof getList9>>, TError = AxiosError<unknown>>(
+ params?: GetList9Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList9>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getList6>>,
+          Awaited<ReturnType<typeof getList9>>,
           TError,
-          Awaited<ReturnType<typeof getList6>>
+          Awaited<ReturnType<typeof getList9>>
         > , 'initialData'
       >, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetList6<TData = Awaited<ReturnType<typeof getList6>>, TError = AxiosError<unknown>>(
- params?: GetList6Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList6>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList9<TData = Awaited<ReturnType<typeof getList9>>, TError = AxiosError<unknown>>(
+ params?: GetList9Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList9>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 템플릿 목록 조회
  */
 
-export function useGetList6<TData = Awaited<ReturnType<typeof getList6>>, TError = AxiosError<unknown>>(
- params?: GetList6Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList6>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetList9<TData = Awaited<ReturnType<typeof getList9>>, TError = AxiosError<unknown>>(
+ params?: GetList9Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getList9>>, TError, TData>>, axios?: AxiosRequestConfig}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetList6QueryOptions(params,options)
+  const queryOptions = getGetList9QueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -155,7 +155,7 @@ export const getDetail1 = (
 
 
     return axios.get(
-      `/api/portfolio-templates/${templateId}`,options
+      `/api/v1/portfolio-templates/${templateId}`,options
     );
   }
 
@@ -164,7 +164,7 @@ export const getDetail1 = (
 
 export const getGetDetail1QueryKey = (templateId: number,) => {
     return [
-    `/api/portfolio-templates/${templateId}`
+    `/api/v1/portfolio-templates/${templateId}`
     ] as const;
     }
 

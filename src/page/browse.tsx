@@ -1,37 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Check, ChevronDown, X } from "lucide-react";
 
 import { REGIONS } from "@/lib/regions";
 import { FilterBar, type FilterGroup } from "@/components/ui/filter-bar";
+import { useGetPublicList } from "@/api/generated/portfolio/portfolio";
+import { useBookmark, useCancelBookmark } from "@/api/generated/portfolio-bookmark/portfolio-bookmark";
+import { useBookmarks } from "@/hooks/useBookmarks";
+import { toast } from "sonner";
 
 export default BrowsePage;
 
-type Portfolio = {
-  id: string;
-  title: string;
-  author: string;
-  region: string;
-  part: string;
-  field: string;
-  experience: string;
-  stacks: string[];
-  views: number;
-  likes: number;
-  createdAt: string;
-  accent: string;
-};
-
-const PORTFOLIOS: Portfolio[] = [
-  { id: "p1", title: "실시간 협업 화이트보드", author: "김도현", region: "서울", part: "Frontend", field: "협업툴", experience: "신입/경력", stacks: ["React", "WebRTC", "Yjs"], views: 1240, likes: 86, createdAt: "2026-06-25", accent: "var(--color-mint)" },
-  { id: "p2", title: "AI 기반 코드리뷰 봇", author: "이수민", region: "경기", part: "Backend", field: "AI/ML", experience: "1~3년", stacks: ["Node", "OpenAI", "Postgres"], views: 982, likes: 71, createdAt: "2026-06-22", accent: "var(--color-coral)" },
-  { id: "p3", title: "운동 루틴 추천 앱", author: "박지오", region: "부산", part: "Mobile", field: "헬스케어", experience: "3년 이상", stacks: ["Flutter", "Firebase"], views: 654, likes: 44, createdAt: "2026-06-20", accent: "var(--color-mint)" },
-  { id: "p4", title: "쇼핑몰 추천 엔진", author: "정유나", region: "서울", part: "Data", field: "이커머스", experience: "1~3년", stacks: ["Python", "Airflow", "BigQuery"], views: 1532, likes: 121, createdAt: "2026-06-28", accent: "var(--color-coral)" },
-  { id: "p5", title: "DevOps 대시보드", author: "최현우", region: "대구", part: "DevOps", field: "인프라", experience: "신입/경력", stacks: ["Kubernetes", "Grafana"], views: 408, likes: 33, createdAt: "2026-06-18", accent: "var(--color-mint)" },
-  { id: "p6", title: "다국어 학습 SaaS", author: "한지민", region: "원격", part: "Fullstack", field: "에듀테크", experience: "5년 이상", stacks: ["Next", "tRPC", "Stripe"], views: 2210, likes: 198, createdAt: "2026-06-30", accent: "var(--color-coral)" },
-  { id: "p7", title: "음악 큐레이션 플랫폼", author: "오세진", region: "인천", part: "Frontend", field: "미디어", experience: "1~3년", stacks: ["Vue", "Web Audio"], views: 712, likes: 52, createdAt: "2026-06-15", accent: "var(--color-mint)" },
-  { id: "p8", title: "스마트 농장 IoT", author: "장민호", region: "광주", part: "Embedded", field: "IoT", experience: "3년 이상", stacks: ["C", "MQTT", "AWS"], views: 521, likes: 39, createdAt: "2026-06-24", accent: "var(--color-coral)" },
-];
+// 목업 PORTFOLIOS 데이터 및 Portfolio 타입 제거
 
 const GROUPS: FilterGroup[] = [
   { key: "part", label: "파트", options: ["전체", "Frontend", "Backend", "Fullstack", "Mobile", "Data", "DevOps", "Embedded"] },
@@ -70,7 +50,16 @@ function BrowsePage() {
     setDistrict("");
   };
   const [proposalTarget, setProposalTarget] = useState<any>(null);
-  const currentUser = false; // 로그인 상태 (Nav와 다르게 테스트용으로 임시 false 처리. true로 변경하면 전체 열람 가능)
+  const [currentUser, setCurrentUser] = useState(false);
+  const [isRecruiter, setIsRecruiter] = useState(false);
+  
+  // 클라이언트 환경에서 localStorage 확인하여 로그인 상태 설정
+  useEffect(() => {
+    const type = localStorage.getItem("userType");
+    setCurrentUser(!!type);
+    setIsRecruiter(type === "recruiter");
+  }, []);
+
   const isGuest = !currentUser;
 
   const handleProposalSubmit = (e: React.FormEvent) => {
@@ -79,28 +68,79 @@ function BrowsePage() {
     setProposalTarget(null);
   };
 
-  const filtered = useMemo(() => {
-    let result = PORTFOLIOS.filter((p) => {
-      if (selectedRegion && selectedRegion !== "전체") {
-        if (!p.region.includes(selectedRegion)) return false;
+  // API 호출용 sort 매핑
+  const apiSort = sort === "최신순" ? "LATEST" : sort === "인기순" ? "POPULAR" : "MOST_VIEWED";
+  
+  const { data: publicListData, isLoading } = useGetPublicList({
+    sort: apiSort as any,
+    page: 0,
+    size: 20
+  });
+  
+  const apiPortfolios = publicListData?.data?.result?.content || [];
+
+  // 북마크 상태 (전역 상태 공유)
+  const { bookmarks: localBookmarks, setBookmarkState } = useBookmarks();
+  const [localBookmarkCounts, setLocalBookmarkCounts] = useState<Record<number, number>>({});
+
+  const { mutateAsync: addBookmark } = useBookmark();
+  const { mutateAsync: removeBookmark } = useCancelBookmark();
+
+  const handleBookmarkToggle = async (p: any, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isGuest) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    const pid = p.id;
+    const currentlyBookmarked = localBookmarks[pid] || false; // Backend lacks isBookmarked, assume false initially
+    
+    // Optimistic UI
+    setBookmarkState(pid, !currentlyBookmarked);
+    setLocalBookmarkCounts(prev => ({ 
+      ...prev, 
+      [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) + (currentlyBookmarked ? -1 : 1) 
+    }));
+
+    try {
+      if (currentlyBookmarked) {
+        await removeBookmark({ portfolioId: pid });
+        toast("북마크가 취소되었습니다.");
+      } else {
+        await addBookmark({ portfolioId: pid });
+        toast.success("북마크에 추가되었습니다.");
       }
-      if (filters.part !== "전체" && p.part !== filters.part) return false;
-      if (filters.field !== "전체" && p.field !== filters.field) return false;
-      if (filters.experience !== "전체" && p.experience !== filters.experience) return false;
-      if (search && !(p.title + p.author + p.stacks.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
+    } catch (err) {
+      if ((err as any)?.response?.data?.code === 'BOOKMARK409_1') {
+        toast.success("이미 북마크된 포트폴리오입니다.");
+        return;
+      }
+      console.error(err);
+      // Revert Optimistic UI
+      setBookmarkState(pid, currentlyBookmarked);
+      setLocalBookmarkCounts(prev => ({ 
+        ...prev, 
+        [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) 
+      }));
+      toast.error("북마크 처리에 실패했습니다.");
+    }
+  };
+
+  const filtered = useMemo(() => {
+    let result = apiPortfolios.filter((p: any) => {
+      // 프론트엔드 필터링 적용
+      if (selectedRegion && selectedRegion !== "전체") {
+        if (!p.authorRegion?.name?.includes(selectedRegion)) return false;
+      }
+      if (filters.part !== "전체" && p.jobRole !== filters.part) return false;
+      // if (filters.field !== "전체" && p.field !== filters.field) return false; // api에 field 속성이 없을 수 있음
+      if (filters.experience !== "전체" && p.careerLevel !== filters.experience) return false;
+      if (search && !(p.title + p.authorName + (p.techstacks?.map((t:any)=>t.name).join(" "))).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
 
-    if (sort === "조회순") {
-      result.sort((a, b) => b.views - a.views);
-    } else if (sort === "인기순") {
-      result.sort((a, b) => b.likes - a.likes);
-    } else {
-      // 최신순
-      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
     return result;
-  }, [filters, search, sort]);
+  }, [apiPortfolios, filters, search, selectedRegion]);
 
   return (
     <div className="min-h-screen text-foreground">
@@ -117,7 +157,7 @@ function BrowsePage() {
               새 포트폴리오
             </Link>
             <div className="text-xs font-mono text-ink-soft">
-              {isGuest ? Math.min(filtered.length, 3) : filtered.length} / {PORTFOLIOS.length} 결과
+              {isGuest ? Math.min(filtered.length, 3) : filtered.length} / {publicListData?.data?.result?.totalElements || filtered.length} 결과
             </div>
           </div>
         </header>
@@ -229,61 +269,73 @@ function BrowsePage() {
           }
         />
 
-        <section className="relative">
+        <section className="relative min-h-[500px]">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p, i) => {
-              const templateList = ["minimal", "editorial", "terminal", "playful"];
-              const assignedTemplate = templateList[i % 4];
-              const isBlurred = isGuest && i >= 3;
-
-              return (
-                <div key={p.id} className={isBlurred ? "opacity-30 blur-[6px] pointer-events-none select-none transition-all duration-500" : ""}>
-                  <Link to="/portfolio/$id" params={{ id: p.id }} search={{ template: assignedTemplate }} className="surface-card overflow-hidden group hover:-translate-y-0.5 transition block">
-                    <article>
-                      <div className="relative h-36 grid-paper border-b border-line overflow-hidden">
-                        <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 30%, color-mix(in oklch, ${p.accent} 35%, transparent), transparent 60%)` }} />
-                        <div className="absolute left-4 top-4 chip">{p.field}</div>
-                        <div className="absolute right-4 bottom-4 font-mono text-[11px] text-ink-soft">{p.part}</div>
-                      </div>
-                      <div className="p-5 space-y-3">
-                        <h3 className="font-display text-lg font-semibold tracking-tight group-hover:text-primary transition">{p.title}</h3>
-                        <div className="flex items-center gap-2 text-xs text-ink-soft">
-                          <div className="h-5 w-5 rounded-full bg-surface-2 grid place-items-center font-mono">{p.author.slice(0, 1)}</div>
-                          <span>{p.author}</span>
-                          <span>·</span>
-                          <span>{p.region}</span>
-                          <span>·</span>
-                          <span>{p.experience}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          {p.stacks.map((s) => <span key={s} className="chip text-[11px]">{s}</span>)}
-                        </div>
-                        <div className="flex items-center justify-between pt-2 border-t border-line text-xs text-ink-soft font-mono">
-                          <div className="flex items-center gap-3">
-                            <span>♥ {p.likes}</span>
-                            <span>{p.views.toLocaleString()} views</span>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setProposalTarget(p);
-                            }}
-                            className="h-7 px-3 rounded bg-surface-2 text-primary font-medium hover:bg-primary hover:text-white transition-colors"
-                          >
-                            매칭 제안
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                </div>
-              );
-            })}
-            {filtered.length === 0 && (
-              <div className="col-span-full surface-card p-12 text-center text-ink-soft">
-                조건에 맞는 포트폴리오가 없습니다.
+            {isLoading ? (
+              <div className="col-span-full py-12 text-center text-ink-soft text-sm">
+                포트폴리오 불러오는 중...
               </div>
+            ) : filtered.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-ink-soft">
+                <div className="text-4xl mb-3">📭</div>
+                <p className="text-sm">조건에 맞는 포트폴리오가 없습니다.</p>
+              </div>
+            ) : (
+              (isGuest ? filtered.slice(0, 3) : filtered).map((p: any, i: number) => {
+                const accentColor = i % 2 === 0 ? "var(--color-mint)" : "var(--color-coral)";
+                const isBlurred = isGuest && i >= 3;
+                return (
+                  <div key={p.id} className={isBlurred ? "opacity-30 blur-[6px] pointer-events-none select-none transition-all duration-500" : ""}>
+                    <Link 
+                      to="/portfolio/$id" 
+                      params={{ id: String(p.id) }} 
+                      className="surface-card group flex flex-col justify-between overflow-hidden hover:-translate-y-1 transition duration-300 block h-full"
+                    >
+                      <article className="flex flex-col h-full">
+                        <div className="p-5 flex-1">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="h-10 w-10 rounded-full grid place-items-center font-display font-bold text-lg" style={{ background: `color-mix(in oklch, ${accentColor} 30%, var(--color-surface))` }}>
+                              {p.authorName ? p.authorName[0] : "?"}
+                            </div>
+                            <button
+                              onClick={(e) => handleBookmarkToggle(p, e)}
+                              className={`p-2 -mr-2 transition ${localBookmarks[p.id] ? 'text-coral' : 'text-ink-soft hover:text-ink'}`}
+                            >
+                              <svg className="size-5" fill={localBookmarks[p.id] ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            </button>
+                          </div>
+                          <h3 className="font-display text-lg font-semibold tracking-tight leading-tight group-hover:text-primary transition">{p.title}</h3>
+                          <p className="mt-1.5 text-sm text-ink-soft font-medium">{p.authorName}</p>
+
+                          <div className="mt-4 flex flex-wrap gap-1.5">
+                            {(p.techstacks || []).slice(0, 3).map((stack: any) => (
+                              <span key={stack.id} className="chip bg-surface border-line text-[10px] text-ink">{stack.name}</span>
+                            ))}
+                            {(p.techstacks || []).length > 3 && (
+                              <span className="chip bg-surface border-line text-[10px] text-ink-soft">+{p.techstacks.length - 3}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="px-5 py-4 border-t border-line bg-surface-2 flex items-center justify-between mt-auto">
+                          <div className="flex gap-4 text-xs font-mono text-ink-soft">
+                            <span className="flex items-center gap-1.5"><svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>{(p.viewCount || 0).toLocaleString()}</span>
+                            <span className="flex items-center gap-1.5"><svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>{(localBookmarkCounts[p.id] ?? p.bookmarkCount ?? 0).toLocaleString()}</span>
+                          </div>
+                          {isRecruiter && (
+                            <button
+                              onClick={(e) => { e.preventDefault(); setProposalTarget(p); }}
+                              className="text-[11px] font-medium text-primary hover:underline underline-offset-2"
+                            >
+                              매칭 제안
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    </Link>
+                  </div>
+                );
+              })
             )}
           </div>
 

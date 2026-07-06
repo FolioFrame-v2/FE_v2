@@ -5,30 +5,29 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import type { PortfolioResDTOEditStatus } from './portfolioResDTOEditStatus.ts';
 import type { PortfolioResDTOJobRole } from './portfolioResDTOJobRole.ts';
+import type { PortfolioResDTOTemplateLayoutKey } from './portfolioResDTOTemplateLayoutKey.ts';
 import type { PortfolioResDTOVisibility } from './portfolioResDTOVisibility.ts';
+import type { TechstackResDTO } from './techstackResDTO.ts';
 
 export interface PortfolioResDTO {
   id?: number;
   talentProfileId?: number;
   templateId?: number;
   templateName?: string;
+  templateLayoutKey?: PortfolioResDTOTemplateLayoutKey;
   title?: string;
   jobRole?: PortfolioResDTOJobRole;
-  careerSummary?: string;
-  contactEmail?: string;
-  githubUrl?: string;
-  personalWebsite?: string;
   oneLiner?: string;
   description?: string;
   visibility?: PortfolioResDTOVisibility;
   publicSlug?: string;
   viewCount?: number;
   bookmarkCount?: number;
-  editStatus?: PortfolioResDTOEditStatus;
   lastSavedAt?: string;
   publishedAt?: string;
+  confirmedAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  techstacks?: TechstackResDTO[];
 }

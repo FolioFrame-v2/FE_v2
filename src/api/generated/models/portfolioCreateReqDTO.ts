@@ -16,27 +16,16 @@ export interface PortfolioCreateReqDTO {
      */
   title: string;
   jobRole?: PortfolioCreateReqDTOJobRole;
-  careerSummary?: string;
-  /**
-     * @minLength 0
-     * @maxLength 100
-     */
-  contactEmail?: string;
   /**
      * @minLength 0
      * @maxLength 500
-     */
-  githubUrl?: string;
-  /**
-     * @minLength 0
-     * @maxLength 500
-     */
-  personalWebsite?: string;
-  /**
-     * @minLength 0
-     * @maxLength 200
      */
   oneLiner?: string;
+  /**
+     * @minLength 0
+     * @maxLength 500
+     */
   description?: string;
   visibility?: PortfolioCreateReqDTOVisibility;
+  techstackIds?: number[];
 }

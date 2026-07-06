@@ -14,7 +14,6 @@ export interface CareerResDTO {
   description?: string;
   startedAt?: string;
   endedAt?: string;
-  current?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -7,12 +7,5 @@
  */
 
 export type GetListParams = {
-/**
- * 페이지 번호 (1부터 시작, 기본값: 1)
- */
-page?: number;
-/**
- * 페이지 크기 (기본값: 4)
- */
-size?: number;
+memberId: number;
 };

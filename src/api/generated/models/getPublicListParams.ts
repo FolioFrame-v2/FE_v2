@@ -5,9 +5,19 @@
  * FolioFrame 포트폴리오 서비스 API 문서
  * OpenAPI spec version: v1.0.0
  */
+import type { GetPublicListCareer } from './getPublicListCareer.ts';
+import type { GetPublicListCategory } from './getPublicListCategory.ts';
 import type { GetPublicListSort } from './getPublicListSort.ts';
 
 export type GetPublicListParams = {
+/**
+ * 통합 검색어 — 제목/작성자/기술스택 (선택)
+ */
+keyword?: string;
+/**
+ * 지역 ID 필터 (선택)
+ */
+regionId?: number;
 /**
  * 정렬 (LATEST / POPULAR / MOST_VIEWED, 기본값: LATEST)
  */
@@ -20,4 +30,12 @@ page?: number;
  * 페이지 크기 (기본값: 9)
  */
 size?: number;
+/**
+ * 경력 버킷 필터 (선택)
+ */
+career?: GetPublicListCareer;
+/**
+ * 직군 카테고리 필터, 전체=미지정 (선택)
+ */
+category?: GetPublicListCategory;
 };

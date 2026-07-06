@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Eye } from 'lucide-react';
 import { EyeOff } from 'lucide-react';
+import { useLogin } from "@/api/generated/auth-api/auth-api";
 
 const LoginPage = () => {
     const [eyeVisible, setEyeVisible] = useState(false);
@@ -17,19 +18,57 @@ const LoginPage = () => {
         setEyeVisible(!eyeVisible);
     };
 
-    const handleLogin = () => {
-        console.log("Mock handleLogin", emailOrId, password);
-        const isFirstLogin = localStorage.getItem('isFirstLogin');
-        const userType = localStorage.getItem('userType');
-        if (isFirstLogin === 'true') {
-            localStorage.removeItem('isFirstLogin');
-            if (userType === 'recruiter') {
-                 navigate({ to: `/onboarding-recruiter` });
-            } else {
-                 navigate({ to: `/onboarding` });
+    const { mutateAsync: loginMutate } = useLogin();
+
+    const handleLogin = async () => {
+        try {
+            const res = await loginMutate({
+                data: {
+                    loginId: emailOrId,
+                    password: password
+                }
+            });
+            // 백엔드에서 받은 토큰과 유저 타입 저장
+            const token = res.data?.result?.accessToken;
+            const refreshToken = res.data?.result?.refreshToken;
+            const fetchedUserType = res.data?.result?.memberType; // TALENT or COMPANY
+
+            if (token) {
+                localStorage.setItem('accessToken', token);
             }
-        } else {
-            navigate({ to: `/` });
+            if (refreshToken) {
+                localStorage.setItem('refreshToken', refreshToken);
+            }
+            
+            // 기존에 임시로 사용하던 userType 대신 백엔드에서 받은 memberType 활용
+            let userType = fetchedUserType?.toLowerCase();
+            if (fetchedUserType === 'COMPANY') {
+                userType = 'recruiter';
+            } else if (fetchedUserType === 'TALENT') {
+                userType = 'developer';
+            }
+            
+            if (userType) {
+                localStorage.setItem('userType', userType);
+            }
+
+            console.log("Login success:", res);
+
+            // 최초 로그인 여부는 가입 직후 localStorage.setItem('isFirstLogin', 'true')로 저장된다고 가정
+            const isFirstLogin = localStorage.getItem('isFirstLogin');
+            if (isFirstLogin === 'true') {
+                localStorage.removeItem('isFirstLogin');
+                if (userType === 'recruiter') {
+                     navigate({ to: `/onboarding-recruiter` });
+                } else {
+                     navigate({ to: `/onboarding` });
+                }
+            } else {
+                navigate({ to: `/` });
+            }
+        } catch (error) {
+            console.error("Login failed:", error);
+            alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
         }
     };
 

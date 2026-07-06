@@ -11,6 +11,5 @@ export type PortfolioUpdateReqDTOVisibility = typeof PortfolioUpdateReqDTOVisibi
 
 export const PortfolioUpdateReqDTOVisibility = {
   PUBLIC: 'PUBLIC',
-  LINK_ONLY: 'LINK_ONLY',
   PRIVATE: 'PRIVATE',
 } as const;

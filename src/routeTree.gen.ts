@@ -36,6 +36,7 @@ import { Route as HackathonRouteImport } from './routes/hackathon'
 import { Route as CreateportfolioRouteImport } from './routes/createportfolio'
 import { Route as CreatehackathonRouteImport } from './routes/createhackathon'
 import { Route as ContestsRouteImport } from './routes/contests'
+import { Route as CompanymypageRouteImport } from './routes/companymypage'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
@@ -181,6 +182,11 @@ const ContestsRoute = ContestsRouteImport.update({
   path: '/contests',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompanymypageRoute = CompanymypageRouteImport.update({
+  id: '/companymypage',
+  path: '/companymypage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrowseRoute = BrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
@@ -230,6 +236,7 @@ const JobsIdRoute = JobsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/browse': typeof BrowseRoute
+  '/companymypage': typeof CompanymypageRoute
   '/contests': typeof ContestsRoute
   '/createhackathon': typeof CreatehackathonRoute
   '/createportfolio': typeof CreateportfolioRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/browse': typeof BrowseRoute
+  '/companymypage': typeof CompanymypageRoute
   '/contests': typeof ContestsRoute
   '/createhackathon': typeof CreatehackathonRoute
   '/createportfolio': typeof CreateportfolioRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/browse': typeof BrowseRoute
+  '/companymypage': typeof CompanymypageRoute
   '/contests': typeof ContestsRoute
   '/createhackathon': typeof CreatehackathonRoute
   '/createportfolio': typeof CreateportfolioRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/browse'
+    | '/companymypage'
     | '/contests'
     | '/createhackathon'
     | '/createportfolio'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/browse'
+    | '/companymypage'
     | '/contests'
     | '/createhackathon'
     | '/createportfolio'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/browse'
+    | '/companymypage'
     | '/contests'
     | '/createhackathon'
     | '/createportfolio'
@@ -458,6 +470,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BrowseRoute: typeof BrowseRoute
+  CompanymypageRoute: typeof CompanymypageRoute
   ContestsRoute: typeof ContestsRoute
   CreatehackathonRoute: typeof CreatehackathonRoute
   CreateportfolioRoute: typeof CreateportfolioRoute
@@ -679,6 +692,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContestsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/companymypage': {
+      id: '/companymypage'
+      path: '/companymypage'
+      fullPath: '/companymypage'
+      preLoaderRoute: typeof CompanymypageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/browse': {
       id: '/browse'
       path: '/browse'
@@ -790,6 +810,7 @@ const TemplatesRouteWithChildren = TemplatesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BrowseRoute: BrowseRoute,
+  CompanymypageRoute: CompanymypageRoute,
   ContestsRoute: ContestsRoute,
   CreatehackathonRoute: CreatehackathonRoute,
   CreateportfolioRoute: CreateportfolioRoute,

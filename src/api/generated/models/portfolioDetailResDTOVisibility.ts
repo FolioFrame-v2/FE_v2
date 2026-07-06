@@ -11,6 +11,5 @@ export type PortfolioDetailResDTOVisibility = typeof PortfolioDetailResDTOVisibi
 
 export const PortfolioDetailResDTOVisibility = {
   PUBLIC: 'PUBLIC',
-  LINK_ONLY: 'LINK_ONLY',
   PRIVATE: 'PRIVATE',
 } as const;

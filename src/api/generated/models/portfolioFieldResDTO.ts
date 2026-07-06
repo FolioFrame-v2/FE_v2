@@ -10,6 +10,7 @@ export interface PortfolioFieldResDTO {
   id?: number;
   portfolioId?: number;
   title?: string;
+  description?: string;
   content?: string;
   displayOrder?: number;
 }

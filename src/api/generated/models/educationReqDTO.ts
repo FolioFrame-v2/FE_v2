@@ -6,6 +6,7 @@
  * OpenAPI spec version: v1.0.0
  */
 import type { EducationReqDTODegree } from './educationReqDTODegree.ts';
+import type { EducationReqDTOStatus } from './educationReqDTOStatus.ts';
 
 export interface EducationReqDTO {
   /**
@@ -21,5 +22,5 @@ export interface EducationReqDTO {
   degree?: EducationReqDTODegree;
   startedAt?: string;
   endedAt?: string;
-  graduated?: boolean;
+  status: EducationReqDTOStatus;
 }
