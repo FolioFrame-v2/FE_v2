@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  Bookmark,
-  BookmarkCheck,
   Building2,
   CalendarDays,
   Clock,
@@ -15,6 +13,9 @@ import {
   CheckCircle2,
   Users,
 } from "lucide-react";
+import { useToggleBookmark } from "@/api/generated/job-posting/job-posting";
+import { useJobBookmarks } from "@/hooks/useJobBookmarks";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/jobs/$id")({
   component: JobDetailPage,
@@ -125,7 +126,29 @@ function dDay(deadline: string) {
 
 function JobDetailPage() {
   const { id } = Route.useParams();
-  const [bookmarked, setBookmarked] = useState(false);
+  const { jobBookmarks, setJobBookmarkState } = useJobBookmarks();
+  const bookmarked = jobBookmarks[id] || false;
+  const { mutateAsync: toggleBookmark } = useToggleBookmark();
+
+  const handleBookmarkToggle = async () => {
+    // 낙관적 업데이트
+    setJobBookmarkState(id, !bookmarked);
+
+    try {
+      await toggleBookmark({ jobPostingId: Number(id.replace(/\D/g, '')) || 1 }); // Mock ID 처리
+      if (!bookmarked) {
+        toast.success("북마크에 추가되었습니다.");
+      } else {
+        toast("북마크가 취소되었습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      // 에러 시 롤백
+      setJobBookmarkState(id, bookmarked);
+      toast.error("북마크 처리에 실패했습니다.");
+    }
+  };
+
   const job = useMemo<Job>(() => {
     const base = SAMPLE[id] ?? SAMPLE["1"];
     switch (id) {
@@ -182,7 +205,10 @@ function JobDetailPage() {
               <span className="inline-flex items-center gap-1.5"><Wallet className="size-4" /> {won(job.salary.min)} ~ {won(job.salary.max)}</span>
               <span className="inline-flex items-center gap-1.5"><Briefcase className="size-4" /> {job.field}</span>
               <span className="inline-flex items-center gap-1.5"><Eye className="size-4" /> {job.views.toLocaleString()} 조회</span>
-              <span className="inline-flex items-center gap-1.5"><Bookmark className="size-4" /> {job.bookmarks + (bookmarked ? 1 : 0)} 북마크</span>
+              <span className="inline-flex items-center gap-1.5">
+                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                {job.bookmarks + (bookmarked ? 1 : 0)} 북마크
+              </span>
             </div>
           </div>
 
@@ -191,15 +217,12 @@ function JobDetailPage() {
               지원하기
             </button>
             <button
-              onClick={() => setBookmarked((b) => !b)}
+              onClick={handleBookmarkToggle}
               className={`h-11 px-4 rounded-full border transition inline-flex items-center justify-center gap-2 ${bookmarked ? "bg-mint/20 border-mint/40 text-ink" : "border-line hover:bg-surface"
                 }`}
             >
-              {bookmarked ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
+              <svg className="size-4" fill={bookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
               {bookmarked ? "북마크됨" : "북마크"}
-            </button>
-            <button className="h-11 px-4 rounded-full border border-line hover:bg-surface inline-flex items-center justify-center gap-2 text-sm">
-              <Share2 className="size-4" /> 공유
             </button>
           </div>
         </div>
@@ -306,10 +329,6 @@ function JobDetailPage() {
             <Row label="규모" value={job.company.size} />
             <Row label="웹사이트" value={job.company.site} />
           </div>
-
-          <button className="w-full h-11 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
-            지원하기
-          </button>
         </aside>
       </section>
     </div>

@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Check } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { REGIONS } from "@/lib/regions";
+import { useGetSignupInfo } from "@/api/generated/talent-profile/talent-profile";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -99,6 +100,21 @@ const INIT: Form = {
 function OnboardingPage() {
   const navigate = useNavigate();
   const [f, setF] = useState<Form>(INIT);
+  const { data: signupRes } = useGetSignupInfo({ memberId: 0 });
+
+  useEffect(() => {
+    if (signupRes?.data?.result) {
+      const s = signupRes.data.result;
+      setF(prev => ({
+        ...prev,
+        name: s.name || prev.name,
+        email: s.loginId || s.email || prev.email, // Adjust according to actual response field
+        phone: s.phone || prev.phone,
+        age: s.age?.toString() || prev.age
+      }));
+    }
+  }, [signupRes?.data?.result]);
+
   const [submitted, setSubmitted] = useState(false);
   const [techInput, setTechInput] = useState("");
   const [fieldInput, setFieldInput] = useState("");

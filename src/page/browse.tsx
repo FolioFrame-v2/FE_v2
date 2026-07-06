@@ -23,7 +23,8 @@ function BrowsePage() {
   const [filters, setFilters] = useState<Record<string, string>>({ part: "전체", field: "전체", experience: "전체" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("최신순");
-  
+  const [showBookmarked, setShowBookmarked] = useState(false);
+
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [openProvince, setOpenProvince] = useState(false);
@@ -52,7 +53,7 @@ function BrowsePage() {
   const [proposalTarget, setProposalTarget] = useState<any>(null);
   const [currentUser, setCurrentUser] = useState(false);
   const [isRecruiter, setIsRecruiter] = useState(false);
-  
+
   // 클라이언트 환경에서 localStorage 확인하여 로그인 상태 설정
   useEffect(() => {
     const type = localStorage.getItem("userType");
@@ -70,13 +71,13 @@ function BrowsePage() {
 
   // API 호출용 sort 매핑
   const apiSort = sort === "최신순" ? "LATEST" : sort === "인기순" ? "POPULAR" : "MOST_VIEWED";
-  
+
   const { data: publicListData, isLoading } = useGetPublicList({
     sort: apiSort as any,
     page: 0,
     size: 20
   });
-  
+
   const apiPortfolios = publicListData?.data?.result?.content || [];
 
   // 북마크 상태 (전역 상태 공유)
@@ -94,12 +95,12 @@ function BrowsePage() {
     }
     const pid = p.id;
     const currentlyBookmarked = localBookmarks[pid] || false; // Backend lacks isBookmarked, assume false initially
-    
+
     // Optimistic UI
     setBookmarkState(pid, !currentlyBookmarked);
-    setLocalBookmarkCounts(prev => ({ 
-      ...prev, 
-      [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) + (currentlyBookmarked ? -1 : 1) 
+    setLocalBookmarkCounts(prev => ({
+      ...prev,
+      [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) + (currentlyBookmarked ? -1 : 1)
     }));
 
     try {
@@ -118,9 +119,9 @@ function BrowsePage() {
       console.error(err);
       // Revert Optimistic UI
       setBookmarkState(pid, currentlyBookmarked);
-      setLocalBookmarkCounts(prev => ({ 
-        ...prev, 
-        [pid]: (prev[pid] ?? (p.bookmarkCount || 0)) 
+      setLocalBookmarkCounts(prev => ({
+        ...prev,
+        [pid]: (prev[pid] ?? (p.bookmarkCount || 0))
       }));
       toast.error("북마크 처리에 실패했습니다.");
     }
@@ -128,19 +129,20 @@ function BrowsePage() {
 
   const filtered = useMemo(() => {
     let result = apiPortfolios.filter((p: any) => {
+      // 북마크 필터링
+      if (showBookmarked && !localBookmarks[p.id]) return false;
       // 프론트엔드 필터링 적용
       if (selectedRegion && selectedRegion !== "전체") {
         if (!p.authorRegion?.name?.includes(selectedRegion)) return false;
       }
       if (filters.part !== "전체" && p.jobRole !== filters.part) return false;
-      // if (filters.field !== "전체" && p.field !== filters.field) return false; // api에 field 속성이 없을 수 있음
       if (filters.experience !== "전체" && p.careerLevel !== filters.experience) return false;
-      if (search && !(p.title + p.authorName + (p.techstacks?.map((t:any)=>t.name).join(" "))).toLowerCase().includes(search.toLowerCase())) return false;
+      if (search && !(p.title + p.authorName + (p.techstacks?.map((t: any) => t.name).join(" "))).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
 
     return result;
-  }, [apiPortfolios, filters, search, selectedRegion]);
+  }, [apiPortfolios, filters, search, selectedRegion, showBookmarked, localBookmarks]);
 
   return (
     <div className="min-h-screen text-foreground">
@@ -153,9 +155,17 @@ function BrowsePage() {
             <p className="mt-2 text-ink-soft text-sm">다른 개발자들이 만든 포트폴리오를 둘러보세요.</p>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <Link to="/templates" className="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium grid place-items-center hover:opacity-90 transition">
-              새 포트폴리오
-            </Link>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowBookmarked(!showBookmarked)}
+                className={"px-4 py-2 h-10 rounded-lg text-sm font-medium transition " + (showBookmarked ? "bg-primary text-primary-foreground" : "bg-surface border border-line text-ink hover:bg-surface-2")}
+              >
+                북마크한 포트폴리오
+              </button>
+              <Link to="/templates" className="h-10 px-5 rounded-lg bg-[#0A27A6] text-surface text-sm font-medium grid place-items-center hover:opacity-90 transition">
+                새 포트폴리오
+              </Link>
+            </div>
             <div className="text-xs font-mono text-ink-soft">
               {isGuest ? Math.min(filtered.length, 3) : filtered.length} / {publicListData?.data?.result?.totalElements || filtered.length} 결과
             </div>
@@ -186,9 +196,8 @@ function BrowsePage() {
                 <div className="relative">
                   <button
                     onClick={() => { setOpenProvince(!openProvince); setOpenDistrict(false); }}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${
-                      province ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
-                    }`}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${province ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                      }`}
                   >
                     {province || "시/도"}
                     <ChevronDown className="size-3 opacity-70" />
@@ -201,9 +210,8 @@ function BrowsePage() {
                           <button
                             key={r}
                             onClick={() => { setProvince(r); setDistrict(""); setOpenProvince(false); }}
-                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${
-                              province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
-                            }`}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${province === r ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                              }`}
                           >
                             <span>{r}</span>
                             {province === r && <Check className="size-4" />}
@@ -217,12 +225,11 @@ function BrowsePage() {
                 <div className="relative">
                   <button
                     onClick={() => {
-                      setOpenDistrict(!openDistrict); 
-                      setOpenProvince(false); 
+                      setOpenDistrict(!openDistrict);
+                      setOpenProvince(false);
                     }}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${
-                      district ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
-                    }`}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border transition focus:outline-none ${district ? "bg-primary text-primary-foreground border-primary" : "bg-surface border-line text-ink-soft hover:text-ink hover:border-ink-soft"
+                      }`}
                   >
                     {district || "시/구/군"}
                     <ChevronDown className="size-3 opacity-70" />
@@ -242,9 +249,8 @@ function BrowsePage() {
                               }
                               setOpenDistrict(false);
                             }}
-                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${
-                              district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
-                            }`}
+                            className={`w-full flex items-center justify-between px-4 py-2 text-sm transition ${district === d ? "font-medium text-primary bg-primary/5" : "text-ink hover:bg-surface"
+                              }`}
                           >
                             <span>{d}</span>
                             {district === d && <Check className="size-4" />}
@@ -286,9 +292,9 @@ function BrowsePage() {
                 const isBlurred = isGuest && i >= 3;
                 return (
                   <div key={p.id} className={isBlurred ? "opacity-30 blur-[6px] pointer-events-none select-none transition-all duration-500" : ""}>
-                    <Link 
-                      to="/portfolio/$id" 
-                      params={{ id: String(p.id) }} 
+                    <Link
+                      to="/portfolio/$id"
+                      params={{ id: String(p.id) }}
                       className="surface-card group flex flex-col justify-between overflow-hidden hover:-translate-y-1 transition duration-300 block h-full"
                     >
                       <article className="flex flex-col h-full">

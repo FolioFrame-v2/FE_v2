@@ -45,6 +45,7 @@ import { Route as TemplatesIdRouteImport } from './routes/templates.$id'
 import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
 import { Route as MessagesNewRouteImport } from './routes/messages.new'
 import { Route as MessagesIdRouteImport } from './routes/messages.$id'
+import { Route as JobsNewRouteImport } from './routes/jobs.new'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 
 const TemplatesRoute = TemplatesRouteImport.update({
@@ -227,6 +228,11 @@ const MessagesIdRoute = MessagesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => MessagesRoute,
 } as any)
+const JobsNewRoute = JobsNewRouteImport.update({
+  id: '/jobs/new',
+  path: '/jobs/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsIdRoute = JobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
@@ -265,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
+  '/jobs/new': typeof JobsNewRoute
   '/messages/$id': typeof MessagesIdRoute
   '/messages/new': typeof MessagesNewRoute
   '/portfolio/$id': typeof PortfolioIdRoute
@@ -302,6 +309,7 @@ export interface FileRoutesByTo {
   '/signupdeveloper': typeof SignupdeveloperRoute
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/jobs/$id': typeof JobsIdRoute
+  '/jobs/new': typeof JobsNewRoute
   '/messages/$id': typeof MessagesIdRoute
   '/messages/new': typeof MessagesNewRoute
   '/portfolio/$id': typeof PortfolioIdRoute
@@ -342,6 +350,7 @@ export interface FileRoutesById {
   '/signuprecruiter': typeof SignuprecruiterRoute
   '/templates': typeof TemplatesRouteWithChildren
   '/jobs/$id': typeof JobsIdRoute
+  '/jobs/new': typeof JobsNewRoute
   '/messages/$id': typeof MessagesIdRoute
   '/messages/new': typeof MessagesNewRoute
   '/portfolio/$id': typeof PortfolioIdRoute
@@ -383,6 +392,7 @@ export interface FileRouteTypes {
     | '/signuprecruiter'
     | '/templates'
     | '/jobs/$id'
+    | '/jobs/new'
     | '/messages/$id'
     | '/messages/new'
     | '/portfolio/$id'
@@ -420,6 +430,7 @@ export interface FileRouteTypes {
     | '/signupdeveloper'
     | '/signuprecruiter'
     | '/jobs/$id'
+    | '/jobs/new'
     | '/messages/$id'
     | '/messages/new'
     | '/portfolio/$id'
@@ -459,6 +470,7 @@ export interface FileRouteTypes {
     | '/signuprecruiter'
     | '/templates'
     | '/jobs/$id'
+    | '/jobs/new'
     | '/messages/$id'
     | '/messages/new'
     | '/portfolio/$id'
@@ -499,6 +511,7 @@ export interface RootRouteChildren {
   SignuprecruiterRoute: typeof SignuprecruiterRoute
   TemplatesRoute: typeof TemplatesRouteWithChildren
   JobsIdRoute: typeof JobsIdRoute
+  JobsNewRoute: typeof JobsNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -755,6 +768,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MessagesIdRouteImport
       parentRoute: typeof MessagesRoute
     }
+    '/jobs/new': {
+      id: '/jobs/new'
+      path: '/jobs/new'
+      fullPath: '/jobs/new'
+      preLoaderRoute: typeof JobsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/$id': {
       id: '/jobs/$id'
       path: '/jobs/$id'
@@ -839,6 +859,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignuprecruiterRoute: SignuprecruiterRoute,
   TemplatesRoute: TemplatesRouteWithChildren,
   JobsIdRoute: JobsIdRoute,
+  JobsNewRoute: JobsNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

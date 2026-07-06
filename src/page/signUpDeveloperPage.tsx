@@ -32,9 +32,9 @@ const signUpDeveloperPage = () => {
     violation: false,
   });
 
-  const handleCheckBoxClick = (value: any) => {
+  const handleCheckBoxClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     setIsModalOpen(true);
-    setAgree(value);
   };
   const closeModal = (value: any) => {
     setIsModalOpen(false);
