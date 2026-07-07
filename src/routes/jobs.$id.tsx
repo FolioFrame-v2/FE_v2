@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Building2,
   CalendarDays,
@@ -16,6 +16,8 @@ import {
 import { useToggleBookmark } from "@/api/generated/job-posting/job-posting";
 import { useJobBookmarks } from "@/hooks/useJobBookmarks";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useGetList3 } from "@/api/generated/portfolio/portfolio";
 
 export const Route = createFileRoute("/jobs/$id")({
   component: JobDetailPage,
@@ -129,6 +131,24 @@ function JobDetailPage() {
   const { jobBookmarks, setJobBookmarkState } = useJobBookmarks();
   const bookmarked = jobBookmarks[id] || false;
   const { mutateAsync: toggleBookmark } = useToggleBookmark();
+
+  const [isRecruiter, setIsRecruiter] = useState(false);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [selectedPortfolioId, setSelectedPortfolioId] = useState<number | null>(null);
+
+  useEffect(() => {
+    setIsRecruiter(localStorage.getItem("userType") === "recruiter");
+  }, []);
+
+  const { data: portfoliosData, isLoading: portfoliosLoading } = useGetList3(
+    { page: 0, size: 50 },
+    { query: { enabled: isApplyModalOpen } }
+  );
+  const myPortfolios = [
+    { id: 991, title: "웹 프론트엔드 포트폴리오 (React/Next.js)", lastSavedAt: "2026-07-01T10:00:00" },
+    { id: 992, title: "사용자 중심의 UI/UX 구현 프로젝트", lastSavedAt: "2026-07-05T14:30:00" },
+    ...(portfoliosData?.data?.result?.content || [])
+  ];
 
   const handleBookmarkToggle = async () => {
     // 낙관적 업데이트
@@ -261,9 +281,62 @@ function JobDetailPage() {
           </div>
 
           <div className="flex md:flex-col gap-2 md:w-56">
-            <button className="h-11 px-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
-              지원하기
-            </button>
+            {!isRecruiter && (
+              <Dialog open={isApplyModalOpen} onOpenChange={setIsApplyModalOpen}>
+                <DialogTrigger asChild>
+                  <button className="h-11 px-4 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
+                    지원하기
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>지원할 포트폴리오 선택</DialogTitle>
+                  </DialogHeader>
+                  <div className="py-4 space-y-3">
+                    {portfoliosLoading ? (
+                      <p className="text-sm text-ink-soft text-center py-4">포트폴리오 목록을 불러오는 중...</p>
+                    ) : myPortfolios.length > 0 ? (
+                      <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                        {myPortfolios.map((p) => (
+                          <div 
+                            key={p.id} 
+                            onClick={() => setSelectedPortfolioId(p.id!)}
+                            className={`p-4 rounded-xl border cursor-pointer transition ${selectedPortfolioId === p.id ? 'border-primary bg-primary/5' : 'border-line hover:border-primary/50'}`}
+                          >
+                            <div className="font-medium text-ink">{p.title}</div>
+                            <div className="text-xs text-ink-soft mt-1">최근 수정: {p.lastSavedAt ? new Date(p.lastSavedAt).toLocaleDateString() : '-'}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 bg-surface rounded-xl border border-line border-dashed">
+                        <p className="text-sm text-ink-soft mb-3">등록된 포트폴리오가 없습니다.</p>
+                        <Link to="/templates" className="text-sm text-primary hover:underline font-medium">새 포트폴리오 작성하기</Link>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2 border-t border-line">
+                    <button 
+                      onClick={() => setIsApplyModalOpen(false)}
+                      className="h-10 px-4 rounded-md border border-line text-sm font-medium hover:bg-surface-2 transition"
+                    >
+                      취소
+                    </button>
+                    <button 
+                      disabled={!selectedPortfolioId}
+                      onClick={() => {
+                        toast.success("지원이 완료되었습니다.");
+                        setIsApplyModalOpen(false);
+                        setSelectedPortfolioId(null);
+                      }}
+                      className="h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      제출하기
+                    </button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
             <button
               onClick={handleBookmarkToggle}
               className={`h-11 px-4 rounded-full border transition inline-flex items-center justify-center gap-2 ${bookmarked ? "bg-mint/20 border-mint/40 text-ink" : "border-line hover:bg-surface"

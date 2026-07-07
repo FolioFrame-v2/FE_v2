@@ -14,13 +14,39 @@ export default BrowsePage;
 // 목업 PORTFOLIOS 데이터 및 Portfolio 타입 제거
 
 const GROUPS: FilterGroup[] = [
-  { key: "part", label: "파트", options: ["전체", "Frontend", "Backend", "Fullstack", "Mobile", "Data", "DevOps", "Embedded"] },
-  { key: "field", label: "분야", options: ["전체", "AI/ML", "이커머스", "협업툴", "헬스케어", "에듀테크", "미디어", "IoT", "인프라"] },
-  { key: "experience", label: "경력", options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"] },
+  {
+    key: "part",
+    label: "파트",
+    className: "shrink-0 max-w-[340px] lg:ml-auto",
+    optionsClassName: "flex-wrap gap-1.5",
+    options: ["전체", "프론트엔드", "백엔드", "풀스택", "안드로이드", "iOS", "데이터 엔지니어", "DevOps", "AI 엔지니어", "QA", "보안", "게임", "임베디드"]
+  },
+  {
+    key: "experience",
+    label: "경력",
+    className: "shrink-0 max-w-[480px]",
+    optionsClassName: "flex-wrap gap-1.5",
+    options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"]
+  },
 ];
 
+const PART_MAPPING: Record<string, string> = {
+  "프론트엔드": "FRONTEND",
+  "백엔드": "BACKEND",
+  "풀스택": "FULLSTACK",
+  "안드로이드": "ANDROID",
+  "iOS": "IOS",
+  "데이터 엔지니어": "DATA_ENGINEER",
+  "DevOps": "DEVOPS",
+  "AI 엔지니어": "AI_ENGINEER",
+  "QA": "QA",
+  "보안": "SECURITY",
+  "게임": "GAME",
+  "임베디드": "EMBEDDED"
+};
+
 function BrowsePage() {
-  const [filters, setFilters] = useState<Record<string, string>>({ part: "전체", field: "전체", experience: "전체" });
+  const [filters, setFilters] = useState<Record<string, string>>({ part: "전체", experience: "전체" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("최신순");
   const [showBookmarked, setShowBookmarked] = useState(false);
@@ -136,7 +162,10 @@ function BrowsePage() {
       if (selectedRegion && selectedRegion !== "전체") {
         if (!p.authorRegion?.name?.includes(selectedRegion)) return false;
       }
-      if (filters.part !== "전체" && p.jobRole !== filters.part) return false;
+      if (filters.part !== "전체") {
+        const backendPart = PART_MAPPING[filters.part] || filters.part;
+        if (p.jobRole !== backendPart && p.jobRole !== filters.part) return false;
+      }
       if (filters.experience !== "전체" && p.careerLevel !== filters.experience) return false;
       if (search && !(p.title + p.authorName + (p.techstacks?.map((t: any) => t.name).join(" "))).toLowerCase().includes(search.toLowerCase())) return false;
       return true;
@@ -183,7 +212,7 @@ function BrowsePage() {
           sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
-          layoutClassName="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 relative z-20"
+          layoutClassName="flex flex-col lg:flex-row gap-6 relative z-20"
           customFiltersPosition="start"
           customFilters={
             <div className="space-y-1.5 shrink-0">
