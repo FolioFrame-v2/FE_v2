@@ -235,8 +235,33 @@ function EditorPage() {
         setLocation(p.talentProfile.region?.name || "");
         setIntro(p.talentProfile.oneLiner || "");
       }
+    } else if (!portfolioId) {
+      // ==== 프론트엔드 임시 처리: 신규 작성 시 모의 데이터 자동 완성 ====
+      setTitle("3년차 프론트엔드 엔지니어 김도현");
+      setOneLiner("사용자 경험을 최우선으로 하는 프론트엔드 개발자입니다.");
+      setDetail("React와 TypeScript 생태계를 사랑하며, 성능 최적화와 웹 접근성에 관심이 많습니다. 여러 번의 B2B SaaS 프로덕트 런칭 경험이 있습니다.");
+      setJobRole("프론트엔드");
+      setLocation("서울, 대한민국");
+      setEmail("dohyun.kim@example.com");
+      setGithub("github.com/dohyunkim");
+      setWebsite("dohyun.dev");
+      setIntro("주도적으로 문제를 찾고 해결하는 과정을 즐깁니다.");
+
+      setProjects([
+        {
+          id: "p1",
+          name: "FolioFrame 프로젝트",
+          role: "프론트엔드 리드",
+          period: "2024.01 - 2024.06",
+          summary: "React와 TailwindCSS를 활용한 개발자 포트폴리오 플랫폼 프론트엔드 개발",
+          stack: ["React", "TypeScript", "TailwindCSS", "Zustand"],
+          link: "https://github.com/folioframe",
+        }
+      ]);
+
+      setStack(["React", "TypeScript", "Next.js", "Zustand", "TailwindCSS"]);
     }
-  }, [portfolioData]);
+  }, [portfolioData, portfolioId]);
 
   useEffect(() => {
     if (educationsData?.data?.result) {
@@ -386,7 +411,7 @@ function EditorPage() {
   const [publishedVersionId, setPublishedVersionId] = useState<number | null>(null);
 
 
-  const saveVersion = (type: "diagnose", currentSuggestions?: Record<string, string>) => {
+  const saveVersion = (type: "diagnose" | "original" | "revision", currentSuggestions?: Record<string, string>) => {
     const snapshot = {
       title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
     };
@@ -567,10 +592,11 @@ function EditorPage() {
 
   // ✨ 저장 핸들러
   const handleSave = async () => {
+    const snapshot = {
+      title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
+    };
+
     if (activeVersionId) {
-      const snapshot = {
-        title, oneLiner, detail, jobRole, location, email, github, website, certifications, educations, experiences, intro, projects, stack, customFields
-      };
       setVersions(prev => prev.map(v => {
         if (v.id === activeVersionId) {
           return { ...v, snapshot, timestamp: new Date().toISOString() };
@@ -581,47 +607,27 @@ function EditorPage() {
         }
         return v;
       }));
+    } else {
+      const newId = Date.now();
+      setActiveVersionId(newId);
+      setVersions(prev => [...prev, {
+        id: newId,
+        timestamp: new Date().toISOString(),
+        type: "original",
+        title: "자동 저장됨",
+        snapshot,
+        revisions: []
+      }]);
     }
 
     let activePortfolioId = portfolioId;
 
     try {
+      // ==== 프론트엔드 임시 처리 시작 ====
       if (!activePortfolioId) {
-        let tid = 1;
-        if (templateId === "minimal") tid = 1;
-        else if (templateId === "editorial") tid = 2;
-        else if (templateId === "terminal") tid = 3;
-        else if (templateId === "playful") tid = 4;
-
-        const res = await createPortfolioApi({
-          data: {
-            title: title || "제목 없는 포트폴리오",
-            templateId: tid,
-            visibility: visibility === "public" ? "PUBLIC" : "PRIVATE",
-            jobRole: jobRole as any || "BACKEND"
-          }
-        });
-        activePortfolioId = res.data?.result?.id || null;
-
-        if (!activePortfolioId) {
-          throw new Error("포트폴리오 생성 결과에 ID가 없습니다.");
-        }
+        activePortfolioId = Date.now();
       }
 
-      await syncEntities(activePortfolioId);
-
-      await updatePortfolioApi({
-        portfolioId: activePortfolioId,
-        data: {
-          title: title || "제목 없는 포트폴리오",
-          oneLiner: oneLiner,
-          description: detail,
-          jobRole: jobRole as any || "BACKEND",
-          visibility: visibility === "public" ? "PUBLIC" : "PRIVATE",
-        } as any
-      });
-
-      await confirmSavePortfolioApi({ portfolioId: activePortfolioId });
       alert("포트폴리오가 성공적으로 저장되었습니다!");
 
       if (!portfolioId && activePortfolioId) {
@@ -633,6 +639,7 @@ function EditorPage() {
         });
         setTimeout(() => { isSaving.current = false; }, 500);
       }
+      // ==== 프론트엔드 임시 처리 끝 ====
     } catch (err: any) {
       alert("포트폴리오 저장 중 오류가 발생했습니다: " + (err.message || "알 수 없는 오류"));
     }
@@ -672,12 +679,26 @@ function EditorPage() {
   };
 
   const handlePublish = () => {
-    if (!activeVersionId) {
-      alert("게시할 버전을 선택해주세요.");
-      return;
-    }
-    setPublishedVersionId(activeVersionId);
-    alert("현재 적용된 버전이 성공적으로 게시되었습니다!");
+    // ==== 프론트엔드 임시 처리: 로컬스토리지에 저장하고 상세 보기로 이동 ====
+    const mockData = {
+      title,
+      oneLiner,
+      detail,
+      jobRole,
+      location,
+      email,
+      github,
+      website,
+      intro,
+      projects,
+      stack,
+      certifications,
+      educations,
+      experiences,
+    };
+    localStorage.setItem("mock_portfolio", JSON.stringify(mockData));
+    alert("현재 적용된 버전이 성공적으로 게시되었습니다! 상세 페이지로 이동합니다.");
+    navigate({ to: "/portfolio/$id", params: { id: "mock" } });
   };
 
   const loadVersion = (v: Version) => {
@@ -747,76 +768,39 @@ function EditorPage() {
 
   // --- AI 진단 ---
   const runDiagnose = async () => {
-    if (!portfolioId) {
-      alert("AI 진단을 받으려면 먼저 포트폴리오를 우측 상단의 [저장하기] 버튼으로 저장해주세요.");
-      return;
-    }
-
+    // 임시 프론트엔드 처리: 포트폴리오 저장 여부와 상관없이 동작하도록 수정
     setDiagnosing(true);
     try {
-      const res = await generateAiFeedback({ portfolioId });
-      // 백엔드 응답 구조가 wrapper 유무에 따라 다를 수 있으므로 유연하게 추출
-      const feedbackData = (res.data as any)?.result || res.data;
+      // ==== 프론트엔드 임시 AI 피드백 생성 ====
+      await new Promise(resolve => setTimeout(resolve, 1500)); // 로딩 딜레이
 
       const next: Record<string, string> = {};
 
-      if (feedbackData?.fields && Array.isArray(feedbackData.fields)) {
-        let projectSummaryIndex = 0; // 프로젝트 식별자가 없을 경우 순서대로 매핑하기 위한 인덱스
+      if (oneLiner) next["oneLiner"] = "AI 추천: " + oneLiner + " (더 매력적인 문구로 수정해보세요!)";
+      else next["oneLiner"] = "AI 추천: 열정적인 백엔드 개발자입니다. (기본 추천 문구)";
 
-        feedbackData.fields.forEach((field: any) => {
-          // camelCase와 snake_case 모두 지원
-          const revisedText = field.aiRevisedText || field.ai_revised_text;
-          const targetType = field.targetType || field.field_type;
-          
-          if (!revisedText) return;
+      if (detail) next["detail"] = "AI 추천: " + detail + " (구체적인 성과를 수치로 표현하면 좋습니다.)";
+      else next["detail"] = "AI 추천: 문제 해결 경험과 기술적 고민을 자세히 작성해보세요.";
 
-          switch (targetType) {
-            case 'PORTFOLIO_ONE_LINER':
-              next["oneLiner"] = revisedText;
-              break;
-            case 'PORTFOLIO_DESCRIPTION':
-              next["detail"] = revisedText;
-              break;
-            case 'PROFILE_ONE_LINER':
-              next["intro"] = revisedText;
-              break;
-            case 'PROJECT_SUMMARY':
-              if (field.portfolioProjectId) {
-                const localProj = projects.find(p => p._id === field.portfolioProjectId);
-                if (localProj) {
-                  next[`project:${localProj.id}`] = revisedText;
-                }
-              } else {
-                // 백엔드에서 projectId를 안 보내줄 경우 화면에 있는 순서대로 임시 매핑
-                if (projectSummaryIndex < projects.length) {
-                  const localProj = projects[projectSummaryIndex];
-                  next[`project:${localProj.id}`] = revisedText;
-                  projectSummaryIndex++;
-                }
-              }
-              break;
-            case 'CUSTOM_FIELD':
-              // 커스텀 필드는 DB 매핑 이슈로 임시 보류
-              break;
-          }
-        });
-      }
+      if (intro) next["intro"] = "AI 추천: " + intro + " (자신의 강점이 잘 드러나도록 다듬어보세요.)";
 
-      if (feedbackData?.comment) {
-        next["summary"] = feedbackData.comment;
-        if (feedbackData.score !== undefined) {
-          next["score"] = String(feedbackData.score);
+      projects.forEach((p) => {
+        if (p.summary) {
+          next[`project:${p.id}`] = "AI 추천: " + p.summary + " (어떤 기술적 도전이 있었나요?)";
+        } else {
+          next[`project:${p.id}`] = "AI 추천: 이 프로젝트에서 맡은 역할과 성과를 구체적으로 작성하세요.";
         }
-      } else {
-        next["summary"] = "AI 진단이 완료되었습니다. 각 항목의 추천 결과를 확인해보세요.";
-      }
+      });
+
+      next["summary"] = "AI 진단이 완료되었습니다. 각 항목에 대한 피드백을 확인하고 적용해보세요! (프론트엔드 임시 피드백)";
+      next["score"] = "85";
 
       setSuggestions(next);
       const newId = saveVersion("diagnose", next);
       if (newId) setActiveVersionId(newId);
     } catch (e: any) {
       console.error(e);
-      alert("AI 진단 중 오류가 발생했습니다: " + (e.response?.data?.message || e.message));
+      alert("AI 진단 중 오류가 발생했습니다: " + (e.message || "알 수 없는 오류"));
     } finally {
       setDiagnosing(false);
     }
@@ -886,14 +870,14 @@ function EditorPage() {
             <Button variant="outline" size="sm" className="gap-2" onClick={handleSave}>
               <Save className="size-4" /> 저장하기
             </Button>
-            <Button size="sm" className="gap-2">
+            <Button size="sm" className="gap-2" onClick={handlePublish}>
               <Globe className="size-4" /> 게시하기
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1400px] gap-8 px-5 py-8 xl:grid-cols-[220px_1fr_260px] lg:grid-cols-[220px_1fr]">
+      <div className="mx-auto grid max-w-[1400px] gap-8 px-5 py-8 lg:grid-cols-[220px_1fr_260px] md:grid-cols-[220px_1fr]">
         {/* Sidebar */}
         <aside className="lg:sticky lg:top-20 lg:self-start">
           <div className="surface-card p-4">
@@ -1355,7 +1339,7 @@ function EditorPage() {
         <aside className="lg:sticky lg:top-20 lg:self-start">
           <div className="surface-card p-4">
             <div className="flex items-center justify-between mb-4">
-              <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">AI 진단 기록</p>
+              <p className="font-mono text-xs uppercase tracking-wider text-ink-soft">버전 및 진단 기록</p>
             </div>
 
             <div className="space-y-3">

@@ -44,6 +44,12 @@ const INITIAL_JOB_POSTINGS: JobPosting[] = [
   { id: 6, company: "Woowa Bros", title: "Fullstack Engineer", experience: "1~3년", region: "서울 송파구", status: "채용 중", skills: ["Node.js", "React", "TypeScript"], intro: "배달의민족 서비스의 신규 피처를 개발합니다.", accent: "var(--color-coral)", views: 420, likes: 50, createdAt: "2026-06-15" },
 ];
 
+const INITIAL_PROPOSED_CANDIDATES = [
+  { id: "pc1", name: "김도현", position: "Frontend Developer", portfolioTitle: "사용자 경험을 최우선으로 하는 프론트엔드 개발자", stage: "제안 대기", views: 120, date: "2026-07-01" },
+  { id: "pc2", name: "이민수", position: "Backend Engineer", portfolioTitle: "대용량 트래픽 처리를 경험한 백엔드 엔지니어", stage: "제안 거절", views: 450, date: "2026-06-28" },
+  { id: "pc3", name: "박지은", position: "Data Scientist", portfolioTitle: "데이터로 비즈니스 가치를 창출하는 데이터 사이언티스트", stage: "수락완료", views: 320, date: "2026-06-20" },
+];
+
 export default function MyPage() {
   const [isRecruiter, setIsRecruiter] = useState(false);
 
@@ -90,6 +96,7 @@ export default function MyPage() {
   const bookmarkedJobs = INITIAL_JOB_POSTINGS.filter(job => jobBookmarks[String(job.id)]);
 
   const [companies, setCompanies] = useState(INITIAL_SAVED_COMPANIES);
+  const [proposedCandidates, setProposedCandidates] = useState(INITIAL_PROPOSED_CANDIDATES);
   const [cancelTarget, setCancelTarget] = useState<any>(null);
   const queryClient = useQueryClient();
 
@@ -137,7 +144,7 @@ export default function MyPage() {
               </div>
             </div>
             <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-              <Stat label="포폴" value={myPortfolios.length.toString()} />
+              <Stat label={isRecruiter ? "공고" : "포폴"} value={myPortfolios.length.toString()} />
               <Stat label="관심" value="0" />
               <Stat label="조회" value="0" />
             </div>
@@ -148,24 +155,36 @@ export default function MyPage() {
 
           <div className="surface-card p-6 space-y-3">
             <h3 className="font-display font-semibold tracking-tight">기본 정보</h3>
-            <InfoRow label="직군" value={p?.parts?.map((x: any) => x.name).join(", ") || "-"} />
-            <InfoRow label="지역" value={mappedRegion || "-"} />
-            <InfoRow label="경력" value={p?.careerYears === 0 ? "신입" : p?.careerYears ? `${p.careerYears}년차` : "-"} />
-            <InfoRow label="이메일" value={displayEmail} />
-            <InfoRow label="전화번호" value={displayPhone} />
-            <InfoRow label="GitHub" value={p?.githubUrl?.replace(/^https?:\/\//i, "") || "-"} />
-            <InfoRow label="웹사이트" value={p?.portfolioWebsite?.replace(/^https?:\/\//i, "") || "-"} />
+            <InfoRow label="직군" value={isRecruiter ? "IT / 인터넷" : (p?.parts?.map((x: any) => x.name).join(", ") || "-")} />
+            <InfoRow label="지역" value={isRecruiter ? "서울 · 강남구" : (mappedRegion || "-")} />
+            {isRecruiter ? (
+              <InfoRow label="설립년도" value="5년" />
+            ) : (
+              <InfoRow label="경력" value={p?.careerYears === 0 ? "신입" : p?.careerYears ? `${p.careerYears}년차` : "-"} />
+            )}
+            <InfoRow label="이메일" value={isRecruiter ? "recruit@company.com" : displayEmail} />
+            <InfoRow label="전화번호" value={isRecruiter ? "010-1234-5678" : displayPhone} />
+            {!isRecruiter && <InfoRow label="GitHub" value={p?.githubUrl?.replace(/^https?:\/\//i, "") || "-"} />}
+            <InfoRow label="웹사이트" value={isRecruiter ? "www.company.com" : (p?.portfolioWebsite?.replace(/^https?:\/\//i, "") || "-")} />
           </div>
 
           <div className="surface-card p-6 space-y-3">
             <h3 className="font-display font-semibold tracking-tight">관심 기술 스택</h3>
             <div className="flex flex-wrap gap-2 pt-1">
-              {p?.techStacks?.map((stack: any) => (
-                <span key={stack.name} className="chip bg-surface border-line text-ink text-xs">{stack.name}</span>
-              ))}
-              {(!p?.techStacks || p.techStacks.length === 0) && <span className="text-sm text-ink-soft">등록된 기술 스택이 없습니다.</span>}
+              {isRecruiter ? (
+                ["React", "TypeScript", "Node.js", "Java"].map((stack: string) => (
+                  <span key={stack} className="chip bg-surface border-line text-ink text-xs">{stack}</span>
+                ))
+              ) : (
+                <>
+                  {p?.techStacks?.map((stack: any) => (
+                    <span key={stack.name} className="chip bg-surface border-line text-ink text-xs">{stack.name}</span>
+                  ))}
+                  {(!p?.techStacks || p.techStacks.length === 0) && <span className="text-sm text-ink-soft">등록된 기술 스택이 없습니다.</span>}
+                </>
+              )}
             </div>
-            <p className="text-xs text-ink-soft mt-2">관련 기업 공고 알림 수신 중</p>
+            <p className="text-xs text-ink-soft mt-2">{isRecruiter ? "관심 포트폴리오 알림 수신 중" : "관련 기업 공고 알림 수신 중"}</p>
           </div>
         </aside>
 
@@ -185,17 +204,23 @@ export default function MyPage() {
               {isRecruiter ? (
                 jobsLoading ? (
                   <div className="text-sm text-ink-soft">공고 불러오는 중...</div>
-                ) : myJobPostings.length > 0 ? myJobPostings.map((job: any) => (
-                  <article key={job.id} className="surface-card p-5 hover:-translate-y-0.5 transition flex flex-col">
-                    <h3 className="font-display text-base font-semibold tracking-tight">{job.title}</h3>
-                    <div className="text-sm text-ink-soft mb-4">{job.positionName}</div>
-                    <div className="text-xs text-ink-soft mt-auto border-t border-line pt-3 flex justify-between">
-                      <span>{job.jobRole}</span>
-                      <span>{job.employmentType}</span>
-                    </div>
-                  </article>
-                )) : (
-                  <div className="col-span-2 text-center text-ink-soft py-10">등록된 공고가 없습니다.</div>
+                ) : (
+                  [
+                    { id: "job1", title: "Frontend Developer", positionName: "웹 프론트엔드 엔지니어", jobRole: "프론트엔드", employmentType: "정규직", status: "채용 중" },
+                    { id: "job2", title: "Backend Engineer", positionName: "서버/백엔드 엔지니어", jobRole: "백엔드", employmentType: "정규직", status: "채용 중" },
+                  ].map((job) => (
+                    <Link to="/jobs/$id" params={{ id: job.id }} key={job.id} className="surface-card p-5 hover:-translate-y-0.5 transition flex flex-col block">
+                      <div className="flex items-start justify-between">
+                        <h3 className="font-display text-base font-semibold tracking-tight">{job.title}</h3>
+                        <StatusChip status={job.status} />
+                      </div>
+                      <div className="text-sm text-ink-soft mb-4 mt-2">{job.positionName}</div>
+                      <div className="text-xs text-ink-soft mt-auto border-t border-line pt-3 flex justify-between">
+                        <span>{job.jobRole}</span>
+                        <span>{job.employmentType}</span>
+                      </div>
+                    </Link>
+                  ))
                 )
               ) : portfoliosLoading ? (
                 <div className="text-sm text-ink-soft">포트폴리오 불러오는 중...</div>
@@ -299,16 +324,34 @@ export default function MyPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {isRecruiter ? (
                     // 기업 회원: 제안한 인재 (Mock)
-                    <div className="col-span-2 surface-card p-10 text-center text-ink-soft">
-                      <div className="mx-auto w-12 h-12 bg-surface-2 rounded-full grid place-items-center mb-3">
-                        <Briefcase className="size-5" />
+                    proposedCandidates.length > 0 ? (
+                      proposedCandidates.map(candidate => (
+                        <article key={candidate.id} className="surface-card p-5 hover:-translate-y-0.5 transition block flex flex-col h-full">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">{candidate.name} · {candidate.position}</div>
+                              <h3 className="mt-1 font-display text-lg font-semibold tracking-tight">{candidate.portfolioTitle}</h3>
+                            </div>
+                            <StatusChip status={candidate.stage} />
+                          </div>
+                          <div className="text-xs text-ink-soft mt-auto border-t border-line pt-3 flex justify-between">
+                            <span>제안일: {candidate.date}</span>
+                            <span>{candidate.views} views</span>
+                          </div>
+                        </article>
+                      ))
+                    ) : (
+                      <div className="col-span-2 surface-card p-10 text-center text-ink-soft">
+                        <div className="mx-auto w-12 h-12 bg-surface-2 rounded-full grid place-items-center mb-3">
+                          <Briefcase className="size-5" />
+                        </div>
+                        <h4 className="font-display font-medium text-ink mb-1">제안 내역이 없습니다</h4>
+                        <p className="text-sm">마음에 드는 인재에게 채용 제안을 보내보세요.</p>
+                        <Link to="/" className="mt-4 inline-flex h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium items-center transition hover:opacity-90">
+                          인재 탐색하기
+                        </Link>
                       </div>
-                      <h4 className="font-display font-medium text-ink mb-1">제안 내역이 없습니다</h4>
-                      <p className="text-sm">마음에 드는 인재에게 채용 제안을 보내보세요.</p>
-                      <Link to="/" className="mt-4 inline-flex h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium items-center transition hover:opacity-90">
-                        인재 탐색하기
-                      </Link>
-                    </div>
+                    )
                   ) : (
                     // 인재 회원: 제안 받은 회사 (Mock - INITIAL_SAVED_COMPANIES 활용)
                     companies.filter(c => c.stage === "제안받음").length > 0 ? (
@@ -482,5 +525,5 @@ function StatusChip({ status }: { status: string }) {
       status === "비공개" || status === "수락완료" ? "bg-surface-2 text-ink-soft border-line" :
         status === "제안받음" ? "bg-primary/10 text-primary border-primary/20" :
           "bg-coral/15 text-ink border-coral/40";
-  return <span className={"chip border " + tone}>{status}</span>;
+  return <span className={"chip border whitespace-nowrap px-3 py-1 " + tone}>{status}</span>;
 }

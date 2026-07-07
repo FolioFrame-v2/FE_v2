@@ -2,13 +2,17 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 const INITIAL_PROPOSED_PORTFOLIOS = [
-  { id: "p1", name: "김도현", role: "Frontend Engineer", stage: "제안 대기중", date: "2024.03.15", targetPortfolio: "React 기반 실시간 협업 툴", profileInitials: "김" },
-  { id: "p2", name: "이서연", role: "UX/UI Designer", stage: "수락완료", date: "2024.03.14", targetPortfolio: "금융 앱 리디자인", profileInitials: "이" },
+  { id: "p1", name: "김도현", role: "Frontend Engineer", stage: "대기", date: "2024.03.15", targetPortfolio: "React 기반 실시간 협업 툴", profileInitials: "김" },
+  { id: "p2", name: "이서연", role: "UX/UI Designer", stage: "완료", date: "2024.03.14", targetPortfolio: "금융 앱 리디자인", profileInitials: "이" },
   { id: "p3", name: "박지성", role: "Backend Engineer", stage: "거절", date: "2024.03.10", targetPortfolio: "대용량 트래픽 처리 아키텍처", profileInitials: "박" },
+];
+const INITIAL_MY_JOB_POSTINGS = [
+  { id: "job1", title: "Frontend Developer", positionName: "웹 프론트엔드 엔지니어", jobRole: "프론트엔드", employmentType: "정규직", status: "채용 중" },
+  { id: "job2", title: "Backend Engineer", positionName: "서버/백엔드 엔지니어", jobRole: "백엔드", employmentType: "정규직", status: "채용 중" },
 ];
 
 export default function CompanyMyPage() {
-  const [tab, setTab] = useState<"proposed">("proposed");
+  const [tab, setTab] = useState<"proposed" | "postings">("proposed");
   const [portfolios, setPortfolios] = useState(INITIAL_PROPOSED_PORTFOLIOS);
 
   return (
@@ -58,6 +62,7 @@ export default function CompanyMyPage() {
         <section className="lg:col-span-8 space-y-6">
           <div className="flex items-center gap-2 surface-card p-1.5 w-fit">
             <TabBtn active={tab === "proposed"} onClick={() => setTab("proposed")}>제안한 포트폴리오</TabBtn>
+            <TabBtn active={tab === "postings"} onClick={() => setTab("postings")}>등록한 공고</TabBtn>
           </div>
 
           {tab === "proposed" && (
@@ -92,6 +97,30 @@ export default function CompanyMyPage() {
                   </div>
                 </article>
               ))}
+            </div>
+          )}
+
+          {tab === "postings" && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {INITIAL_MY_JOB_POSTINGS.map((job) => (
+                <Link to="/jobs/$id" params={{ id: job.id }} key={job.id} className="surface-card p-5 hover:-translate-y-0.5 transition flex flex-col block">
+                  <div className="flex items-start justify-between">
+                    <h3 className="font-display text-base font-semibold tracking-tight">{job.title}</h3>
+                    <StatusChip status={job.status} />
+                  </div>
+                  <div className="text-sm text-ink-soft mb-4 mt-2">{job.positionName}</div>
+                  <div className="text-xs text-ink-soft mt-auto border-t border-line pt-3 flex justify-between">
+                    <span>{job.jobRole}</span>
+                    <span>{job.employmentType}</span>
+                  </div>
+                </Link>
+              ))}
+              <Link to="/jobs/new" className="surface-card border-dashed border-2 p-5 grid place-items-center text-ink-soft hover:text-ink hover:border-ink-soft transition min-h-[180px]">
+                <div className="text-center">
+                  <div className="text-3xl font-display">＋</div>
+                  <div className="mt-1 text-sm">새 공고 작성</div>
+                </div>
+              </Link>
             </div>
           )}
         </section>
@@ -131,9 +160,9 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
 
 function StatusChip({ status }: { status: string }) {
   const tone =
-    status === "수락완료" ? "bg-mint/20 text-ink border-mint/40" :
+    status === "완료" ? "bg-mint/20 text-ink border-mint/40" :
       status === "거절" ? "bg-surface-2 text-ink-soft border-line" :
-        status === "제안 대기중" ? "bg-primary/10 text-primary border-primary/20" :
+        status === "대기" ? "bg-primary/10 text-primary border-primary/20" :
           "bg-coral/15 text-ink border-coral/40";
-  return <span className={"chip border " + tone}>{status}</span>;
+  return <span className={"chip border whitespace-nowrap px-3 py-1 " + tone}>{status}</span>;
 }

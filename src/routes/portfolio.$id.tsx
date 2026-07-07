@@ -52,48 +52,84 @@ function PortfolioPage() {
   const { mutateAsync: addBookmark } = useBookmark();
   const { mutateAsync: removeBookmark } = useCancelBookmark();
 
-  const mappedData: PortfolioData = portfolioData ? {
-    name: (portfolioData.talentProfile as any)?.name || "이름 없음",
-    title: portfolioData.title || "제목 없는 포트폴리오",
-    oneLiner: portfolioData.oneLiner || "",
-    detail: portfolioData.description || "",
-    location: portfolioData.talentProfile?.region?.name || "",
-    email: portfolioData.talentProfile?.contactEmail || "",
-    github: portfolioData.talentProfile?.githubUrl || "",
-    website: portfolioData.talentProfile?.portfolioWebsite || "",
-    intro: portfolioData.talentProfile?.oneLiner || "",
-    educations: portfolioData.educations?.map((e: any) => ({
-      schoolName: e.schoolName || "",
-      major: e.major || "",
-      degree: e.degree === "MASTER" ? "석사" : e.degree === "DOCTOR" ? "박사" : "학사",
-      admissionDate: e.startedAt || "",
-      graduationDate: e.endedAt || "",
-      status: e.status === "LEAVE_OF_ABSENCE" ? "휴학" : e.status === "GRADUATED" ? "졸업" : e.status === "DROPOUT" ? "중퇴" : "재학중"
-    })) || [],
-    experiences: portfolioData.careers?.map((c: any) => ({
-      companyName: c.companyName || "",
-      position: c.position || "",
-      description: c.description || "",
-      startDate: c.startedAt || "",
-      endDate: c.endedAt || ""
-    })) || [],
-    stacks: portfolioData.techstacks?.map((t: any) => t.name) || [],
-    roles: portfolioData.jobRole ? [portfolioData.jobRole] : [],
-    projects: portfolioData.projects?.map((p: any) => ({
-      title: p.name || "",
-      summary: p.description || "",
-      role: "",
-      period: `${p.startedAt || ""} ~ ${p.endedAt || ""}`,
-      stacks: [],
-      link: p.githubUrl || ""
-    })) || [],
-    certifications: portfolioData.certificates?.map((c: any) => ({
-      name: c.name || "",
-      organization: c.issuer || "",
-      issueDate: c.issuedAt || ""
-    })) || [],
-    customFields: []
-  } : SAMPLE_PORTFOLIO;
+  const mappedData: PortfolioData = (() => {
+    if (id === "mock") {
+      try {
+        const saved = localStorage.getItem("mock_portfolio");
+        if (saved) {
+          const m = JSON.parse(saved);
+          return {
+            name: "김도현", // fallback
+            title: m.title || "제목 없는 포트폴리오",
+            oneLiner: m.oneLiner || "",
+            detail: m.detail || "",
+            location: m.location || "",
+            email: m.email || "",
+            github: m.github || "",
+            website: m.website || "",
+            intro: m.intro || "",
+            educations: m.educations || [],
+            experiences: m.experiences || [],
+            stacks: m.stack || [],
+            roles: m.jobRole ? [m.jobRole] : [],
+            projects: (m.projects || []).map((p: any) => ({
+              title: p.name || "",
+              summary: p.summary || "",
+              role: p.role || "",
+              period: p.period || "",
+              stacks: p.stack || [],
+              link: p.link || ""
+            })),
+            certifications: m.certifications || [],
+            customFields: m.customFields || []
+          };
+        }
+      } catch (e) { console.error("Mock portfolio parse error", e); }
+    }
+    
+    return portfolioData ? {
+      name: (portfolioData.talentProfile as any)?.name || "이름 없음",
+      title: portfolioData.title || "제목 없는 포트폴리오",
+      oneLiner: portfolioData.oneLiner || "",
+      detail: portfolioData.description || "",
+      location: portfolioData.talentProfile?.region?.name || "",
+      email: portfolioData.talentProfile?.contactEmail || "",
+      github: portfolioData.talentProfile?.githubUrl || "",
+      website: portfolioData.talentProfile?.portfolioWebsite || "",
+      intro: portfolioData.talentProfile?.oneLiner || "",
+      educations: portfolioData.educations?.map((e: any) => ({
+        schoolName: e.schoolName || "",
+        major: e.major || "",
+        degree: e.degree === "MASTER" ? "석사" : e.degree === "DOCTOR" ? "박사" : "학사",
+        admissionDate: e.startedAt || "",
+        graduationDate: e.endedAt || "",
+        status: e.status === "LEAVE_OF_ABSENCE" ? "휴학" : e.status === "GRADUATED" ? "졸업" : e.status === "DROPOUT" ? "중퇴" : "재학중"
+      })) || [],
+      experiences: portfolioData.careers?.map((c: any) => ({
+        companyName: c.companyName || "",
+        position: c.position || "",
+        description: c.description || "",
+        startDate: c.startedAt || "",
+        endDate: c.endedAt || ""
+      })) || [],
+      stacks: portfolioData.techstacks?.map((t: any) => t.name) || [],
+      roles: portfolioData.jobRole ? [portfolioData.jobRole] : [],
+      projects: portfolioData.projects?.map((p: any) => ({
+        title: p.name || "",
+        summary: p.description || "",
+        role: "",
+        period: `${p.startedAt || ""} ~ ${p.endedAt || ""}`,
+        stacks: [],
+        link: p.githubUrl || ""
+      })) || [],
+      certifications: portfolioData.certificates?.map((c: any) => ({
+        name: c.name || "",
+        organization: c.issuer || "",
+        issueDate: c.issuedAt || ""
+      })) || [],
+      customFields: []
+    } : SAMPLE_PORTFOLIO;
+  })();
 
   const handleBookmarkToggle = async () => {
     if (isOwner) return;
@@ -127,7 +163,8 @@ function PortfolioPage() {
       });
     } else {
       setProposed(true);
-      toast.success("제안이 성공적으로 전송되었습니다.", {
+      const targetName = mappedData.name && mappedData.name !== "이름 없음" ? mappedData.name : "김도현";
+      toast.success(`${targetName}님에게 제안이 성공적으로 전송되었습니다.`, {
         description: "해당 인재에게 알림이 발송되었습니다. (추후 알림 페이지 연동)"
       });
     }

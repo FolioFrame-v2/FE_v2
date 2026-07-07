@@ -65,7 +65,8 @@ function BrowsePage() {
 
   const handleProposalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`${proposalTarget?.author}님에게 매칭 제안이 전송되었습니다.`);
+    const targetName = proposalTarget?.authorName || "김도현";
+    alert(`${targetName}님에게 매칭 제안이 전송되었습니다.`);
     setProposalTarget(null);
   };
 
@@ -381,7 +382,7 @@ function BrowsePage() {
               <form onSubmit={handleProposalSubmit} className="p-6 space-y-4">
                 <div>
                   <p className="text-sm font-medium mb-1">대상 인재</p>
-                  <p className="text-sm text-ink-soft">{proposalTarget.author} ({proposalTarget.part})</p>
+                  <p className="text-sm text-ink-soft">{proposalTarget.authorName || "김도현"} ({proposalTarget.jobRole || "직무 미정"})</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">제안 메시지</label>

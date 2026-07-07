@@ -128,31 +128,54 @@ const STACK_LIB: { id: number; name: string }[] = [
 ];
 
 const INITIAL: Form = {
-  title: "",
-  positionName: "",
+  title: "Toss 프론트엔드 개발자 (React/Next.js) 채용",
+  positionName: "웹 프론트엔드 엔지니어",
   jobRole: "FRONTEND",
   employmentType: "FULL_TIME",
-  careerLevel: "NONE",
-  minCareerYear: 0,
-  maxCareerYear: 0,
+  careerLevel: "MID",
+  minCareerYear: 3,
+  maxCareerYear: 7,
   regionId: 1,
-  workLocation: "",
-  minSalary: 0,
-  maxSalary: 0,
-  fieldDescription: "",
-  responsibilities: [""],
-  qualifications: [""],
-  preferredQualifications: [""],
-  preferredConditions: [""],
-  preferredTalents: [""],
-  hiringProcess: [
-    { stepOrder: 1, stepName: "서류 전형", description: "이력서 및 포트폴리오 검토" },
-    { stepOrder: 2, stepName: "1차 인터뷰", description: "실무진 면접" },
+  workLocation: "서울 강남구 테헤란로 142, 아크플레이스",
+  minSalary: 5000,
+  maxSalary: 8000,
+  fieldDescription: "토스팀의 코어 서비스를 함께 만들어갈 열정적인 프론트엔드 개발자를 찾고 있습니다.\n수백만 명이 사용하는 앱의 웹뷰 및 관리자 도구를 개발합니다.",
+  responsibilities: [
+    "토스 앱 내 웹뷰 서비스 개발 및 유지보수",
+    "공통 UI 컴포넌트 설계 및 디자인 시스템 구축",
+    "웹 성능 최적화 및 사용자 경험 개선",
   ],
-  additionalNotes: "",
-  deadline: "",
+  qualifications: [
+    "React, Next.js 등 모던 웹 프론트엔드 프레임워크 사용 경험이 3년 이상이신 분",
+    "TypeScript를 활용한 정적 타입 기반 개발에 익숙하신 분",
+    "디자이너, 백엔드 개발자 등 다양한 직군과 원활하게 소통할 수 있는 분",
+  ],
+  preferredQualifications: [
+    "대규모 트래픽을 처리하는 B2C 서비스 개발 경험",
+    "웹 접근성(a11y) 및 SEO 최적화 경험",
+  ],
+  preferredConditions: [
+    "오픈소스 생태계 기여 경험",
+    "기술 블로그 운영 또는 사내 기술 세미나 발표 경험",
+  ],
+  preferredTalents: [
+    "문제의 본질을 파악하고 주도적으로 해결하는 분",
+    "끊임없이 학습하고 동료들과 지식을 나누는 분",
+  ],
+  hiringProcess: [
+    { stepOrder: 1, stepName: "서류 전형", description: "이력서 및 포트폴리오 검토 (최대 1주일 소요)" },
+    { stepOrder: 2, stepName: "코딩 테스트", description: "알고리즘 및 프론트엔드 실무 역량 평가" },
+    { stepOrder: 3, stepName: "1차 직무 인터뷰", description: "실무진과의 기술적 깊이 확인" },
+    { stepOrder: 4, stepName: "2차 컬처핏 인터뷰", description: "조직 적합성 및 성장 가능성 확인" },
+  ],
+  additionalNotes: "포트폴리오 제출은 필수이며, 본인이 기여한 부분을 명확히 기재해 주세요.",
+  deadline: "2026-08-31",
   status: "ACTIVE",
-  techStacks: [],
+  techStacks: [
+    { techStackId: 1, name: "React", stackType: "REQUIRED" },
+    { techStackId: 2, name: "Next.js", stackType: "REQUIRED" },
+    { techStackId: 3, name: "TypeScript", stackType: "REQUIRED" },
+  ],
 };
 
 // ---------- Page ----------
@@ -196,8 +219,11 @@ function JobCreatePage() {
     } else if (payload.deadline.length === 10) {
       payload.deadline = payload.deadline + "T23:59:59";
     }
-    console.log("공고 제출", payload);
-    createJob({ data: payload as any });
+    
+    // 프론트엔드 임시 처리: API 대신 localStorage에 저장 후 /jobs/mock 상세 페이지로 이동
+    localStorage.setItem("mock_job_posting", JSON.stringify(payload));
+    setSaved(true);
+    setTimeout(() => navigate({ to: "/jobs/$id", params: { id: "mock" } }), 1000);
   };
 
   return (

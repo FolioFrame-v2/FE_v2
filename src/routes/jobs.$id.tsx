@@ -150,6 +150,54 @@ function JobDetailPage() {
   };
 
   const job = useMemo<Job>(() => {
+    if (id === "mock") {
+      try {
+        const saved = localStorage.getItem("mock_job_posting");
+        if (saved) {
+          const f = JSON.parse(saved);
+          
+          let empType: Job["employmentType"] = "정규직";
+          if (f.employmentType === "CONTRACT") empType = "계약직";
+          if (f.employmentType === "INTERN") empType = "인턴";
+          if (f.employmentType === "FREELANCE") empType = "프리랜서";
+
+          let carLevel: Job["careerLevel"] = "경력";
+          if (f.careerLevel === "NONE" || f.careerLevel === "ANY") carLevel = "신입/경력";
+          if (f.careerLevel === "NEWBIE") carLevel = "신입";
+          
+          let pos = "프론트엔드" as Job["position"];
+          const rMap: any = { FRONTEND: "프론트엔드", BACKEND: "백엔드", FULLSTACK: "풀스택", IOS: "iOS", ANDROID: "안드로이드", DATA: "데이터", DEVOPS: "DevOps" };
+          if (rMap[f.jobRole]) pos = rMap[f.jobRole];
+
+          return {
+            id: "mock",
+            title: f.title || "제목 없음",
+            company: { name: "Toss", logo: "T", size: "1,000명 이상", industry: "IT / 금융", site: "toss.im" },
+            position: pos,
+            field: f.positionName || "",
+            description: f.fieldDescription || "",
+            requirements: (f.qualifications || []).filter((x: string) => x.trim() !== ""),
+            preferred: (f.preferredQualifications || []).filter((x: string) => x.trim() !== ""),
+            employmentType: empType,
+            location: f.workLocation || "서울 강남구",
+            careerLevel: carLevel,
+            careerYears: f.minCareerYear || f.maxCareerYear ? `${f.minCareerYear}~${f.maxCareerYear}년` : undefined,
+            salary: { min: f.minSalary || 0, max: f.maxSalary || 0 },
+            responsibilities: (f.responsibilities || []).filter((x: string) => x.trim() !== ""),
+            idealCandidate: (f.preferredTalents || []).filter((x: string) => x.trim() !== ""),
+            preferredDetail: (f.preferredConditions || []).filter((x: string) => x.trim() !== ""),
+            hiringProcess: (f.hiringProcess || []).map((s: any) => ({ step: s.stepName, desc: s.description })),
+            notes: f.additionalNotes || "",
+            deadline: f.deadline ? f.deadline.split('T')[0] : "2026-12-31",
+            views: 0,
+            bookmarks: 0
+          };
+        }
+      } catch (e) {
+        console.error("Mock parse error", e);
+      }
+    }
+
     const base = SAMPLE[id] ?? SAMPLE["1"];
     switch (id) {
       case "job1": return { ...base, id, title: "Frontend Developer", company: { ...base.company, name: "Toss", logo: "T" }, position: "프론트엔드" };
