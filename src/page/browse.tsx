@@ -17,14 +17,14 @@ const GROUPS: FilterGroup[] = [
   {
     key: "part",
     label: "파트",
-    className: "shrink-0 max-w-[340px] lg:ml-auto",
+    className: "shrink-0 max-w-[340px]",
     optionsClassName: "flex-wrap gap-1.5",
     options: ["전체", "프론트엔드", "백엔드", "풀스택", "안드로이드", "iOS", "데이터 엔지니어", "DevOps", "AI 엔지니어", "QA", "보안", "게임", "임베디드"]
   },
   {
     key: "experience",
     label: "경력",
-    className: "shrink-0 max-w-[480px]",
+    className: "shrink-0 min-w-[500px]",
     optionsClassName: "flex-wrap gap-1.5",
     options: ["전체", "없음", "1년 미만", "1~3년", "3~5년", "5~7년", "7~10년", "10년 이상"]
   },
@@ -212,7 +212,7 @@ function BrowsePage() {
           sortOptions={["최신순", "인기순", "조회순"]}
           sort={sort}
           onSortChange={setSort}
-          layoutClassName="flex flex-col lg:flex-row gap-6 relative z-20"
+          layoutClassName="flex flex-col lg:flex-row justify-between gap-6 relative z-20"
           customFiltersPosition="start"
           customFilters={
             <div className="space-y-1.5 shrink-0">
